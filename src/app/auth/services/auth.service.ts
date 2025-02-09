@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs';
-import { LoginResponse } from '../auth.types';
+import { LoginResponse, UserPayload } from '../auth.types';
 
 @Injectable({
   providedIn: 'root'
@@ -13,13 +13,17 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
 
-  login(id: string, password: string): Observable<LoginResponse> {
-    // return this.http.post<LoginResponse>('/api/login', { id, password });
+  login(email: string, password: string): Observable<LoginResponse> {
+    this.http.post(`${this.API_URL}/auth/signin`, { email, password });
 
     return of({
       status: 200,
       description: 'Login successful'
     }).pipe(delay(1000));
 
+  }
+
+  signup(user: UserPayload) {
+    return this.http.post(`${this.API_URL}/auth/singup`, user);
   }
 }

@@ -6,7 +6,7 @@
 
       <form class="mt-4 space-y-4" [formGroup]="form" (ngSubmit)="submit()">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Nombre -->
+
           <div class="grid gap-2">
             <label for="name" class="text-sm font-medium text-gray-700">Nombre</label>
             <input
@@ -16,7 +16,7 @@
               placeholder="Juan"
               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
             />
-            <!-- Mensaje de error para el nombre -->
+
             <p>
               <span class="text-xs text-red-500" *ngIf="form.get('name')?.hasError('required') && form.get('name')?.touched">
                 El nombre es requerido
@@ -24,7 +24,7 @@
             </p>
           </div>
 
-          <!-- Apellido -->
+
           <div class="grid gap-2">
             <label for="lastName" class="text-sm font-medium text-gray-700">Apellido</label>
             <input
@@ -34,7 +34,7 @@
               placeholder="Pérez"
               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
             />
-            <!-- Mensaje de error para el apellido -->
+
             <p>
               <span class="text-xs text-red-500" *ngIf="form.get('lastName')?.hasError('required') && form.get('lastName')?.touched">
                 El apellido es requerido
@@ -43,7 +43,7 @@
           </div>
         </div>
 
-        <!-- Correo Electrónico -->
+
         <div class="grid gap-2">
           <label for="email" class="text-sm font-medium text-gray-700">Correo Electrónico</label>
           <input
@@ -53,7 +53,7 @@
             placeholder="correo@example.com"
             class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
           />
-          <!-- Mensaje de error para el correo electrónico -->
+
           <p>
             <span class="text-xs text-red-500" *ngIf="form.get('email')?.hasError('required') && form.get('email')?.touched">
               El correo electrónico es requerido
@@ -65,7 +65,7 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Contraseña -->
+
           <div class="grid gap-2">
             <label for="password" class="text-sm font-medium text-gray-700">Contraseña</label>
             <input
@@ -74,7 +74,7 @@
               formControlName="password"
               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
             />
-            <!-- Mensaje de error para la contraseña -->
+
             <p>
               <span class="text-xs text-red-500" *ngIf="form.get('password')?.hasError('required') && form.get('password')?.touched">
                 La contraseña es requerida
@@ -85,7 +85,7 @@
             </p>
           </div>
 
-          <!-- Confirmar Contraseña -->
+
           <div class="grid gap-2">
             <label for="confirmPassword" class="text-sm font-medium text-gray-700">Confirmar Contraseña</label>
             <input
@@ -94,7 +94,7 @@
               formControlName="confirmPassword"
               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
             />
-            <!-- Mensaje de error para confirmar contraseña -->
+
             <p>
               <span class="text-xs text-red-500" *ngIf="form.get('confirmPassword')?.hasError('required') && form.get('confirmPassword')?.touched">
                 Confirmar contraseña es requerida
@@ -106,7 +106,6 @@
           </div>
         </div>
 
-        <!-- Botón de Registro -->
         <button type="submit" class="w-full rounded-md bg-black px-4 py-2 font-bold text-white hover:bg-gray-900 cursor-pointer">
           Registrarse
         </button>
