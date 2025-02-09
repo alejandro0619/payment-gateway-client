@@ -3,10 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "start": "nx serve",
+    "build": "nx build",
+    "watch": "nx build --watch --configuration development",
+    "test": "nx test"
   },
   "private": true,
   "dependencies": {
@@ -18,21 +18,32 @@
     "@angular/platform-browser": "^19.1.0",
     "@angular/platform-browser-dynamic": "^19.1.0",
     "@angular/router": "^19.1.0",
+    "@tailwindcss/postcss": "^4.0.5",
+    "lucide-angular": "^0.475.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.1.5",
+    "@angular-devkit/core": "^19.1.5",
+    "@angular-devkit/schematics": "^19.1.5",
     "@angular/cli": "^19.1.5",
     "@angular/compiler-cli": "^19.1.0",
+    "@nx/angular": "20.4.2",
+    "@nx/workspace": "20.4.2",
+    "@schematics/angular": "^19.1.5",
     "@types/jasmine": "~5.1.0",
+    "autoprefixer": "^10.4.20",
     "jasmine-core": "~5.5.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "nx": "20.4.2",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^4.0.5",
     "typescript": "~5.7.2"
   }
 }

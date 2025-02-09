@@ -1,0 +1,52 @@
+<div class="flex min-h-screen w-full items-center justify-center p-6 md:p-10">
+  <div class="w-full max-w-sm">
+    <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-md">
+      <h2 class="text-2xl font-bold text-gray-900">Iniciar sesión</h2>
+      <p class="text-sm text-gray-600">Ingresa tu correo electrónico para acceder a tu cuenta</p>
+
+      <form class="mt-4 space-y-4" (submit)="onSubmit()">
+        <div class="grid gap-2">
+          <label for="id" class="text-sm font-medium text-gray-700">Correo electrónico</label>
+          <input
+            id="id"
+            type="id"
+            [value]="id"
+
+            placeholder="V12345678"
+            class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-black focus:ring-black focus:ring-1"
+            required
+          />
+        </div>
+
+        <div class="grid gap-2">
+          <div class="flex items-center justify-between">
+            <label for="password" class="text-sm font-medium text-gray-700">Contraseña</label>
+            <a href="#" class="text-sm text-blue-600 hover:underline">¿Olvidaste tu contraseña?</a>
+          </div>
+          <input
+            [value]="password"
+
+            id="password"
+            type="password"
+            class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-black focus:ring-black focus:ring-1"
+            required
+          />
+        </div>
+
+        <button type="submit" class="w-full rounded-md bg-black px-4 py-2 font-bold text-white hover:bg-gray-900">
+          Iniciar sesión
+        </button>
+        <p class="mt-4 text-center text-sm text-red-500" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </p>
+
+        <p class="mt-4 text-center text-sm text-gray-600">
+          ¿No tienes cuenta?
+          <a href="#" class="text-blue-600 hover:underline">Regístrate</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+
+
