@@ -1,10 +1,10 @@
 <div class="flex min-h-screen w-full items-center justify-center p-6 md:p-10">
-  <div class="w-full max-w-2xl">
+  <div class="w-full max-w-xl">
     <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-md">
       <h2 class="text-2xl font-bold text-gray-900">Registro</h2>
       <p class="text-sm text-gray-600">Crea una cuenta para continuar</p>
 
-      <form class="mt-4 space-y-4" [formGroup]="form()" (ngSubmit)="submit()">
+      <form class="mt-4 space-y-4" [formGroup]="form" (ngSubmit)="submit()">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <!-- Nombre -->
           <div class="grid gap-2">
@@ -16,6 +16,12 @@
               placeholder="Juan"
               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
             />
+            <!-- Mensaje de error para el nombre -->
+            <p>
+              <span class="text-xs text-red-500" *ngIf="form.get('name')?.hasError('required') && form.get('name')?.touched">
+                El nombre es requerido
+              </span>
+            </p>
           </div>
 
           <!-- Apellido -->
@@ -28,6 +34,12 @@
               placeholder="Pérez"
               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
             />
+            <!-- Mensaje de error para el apellido -->
+            <p>
+              <span class="text-xs text-red-500" *ngIf="form.get('lastName')?.hasError('required') && form.get('lastName')?.touched">
+                El apellido es requerido
+              </span>
+            </p>
           </div>
         </div>
 
@@ -41,6 +53,15 @@
             placeholder="correo@example.com"
             class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
           />
+          <!-- Mensaje de error para el correo electrónico -->
+          <p>
+            <span class="text-xs text-red-500" *ngIf="form.get('email')?.hasError('required') && form.get('email')?.touched">
+              El correo electrónico es requerido
+            </span>
+            <span class="text-xs text-red-500" *ngIf="form.get('email')?.hasError('email') && form.get('email')?.touched">
+              El correo electrónico no es válido
+            </span>
+          </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -53,6 +74,15 @@
               formControlName="password"
               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
             />
+            <!-- Mensaje de error para la contraseña -->
+            <p>
+              <span class="text-xs text-red-500" *ngIf="form.get('password')?.hasError('required') && form.get('password')?.touched">
+                La contraseña es requerida
+              </span>
+              <span class="text-xs text-red-500" *ngIf="form.get('password')?.hasError('minlength') && form.get('password')?.touched">
+                La contraseña debe tener al menos 8 caracteres
+              </span>
+            </p>
           </div>
 
           <!-- Confirmar Contraseña -->
@@ -64,64 +94,29 @@
               formControlName="confirmPassword"
               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
             />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <!-- País -->
-          <div class="grid gap-2">
-            <label for="country" class="text-sm font-medium text-gray-700">País</label>
-            <input
-              id="country"
-              type="text"
-              formControlName="country"
-              placeholder="Venezuela"
-              class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
-            />
-            <p *ngIf="!passwordsMatch" class="text-red-500 text-xs">
-              Las contraseñas no coinciden.
+            <!-- Mensaje de error para confirmar contraseña -->
+            <p>
+              <span class="text-xs text-red-500" *ngIf="form.get('confirmPassword')?.hasError('required') && form.get('confirmPassword')?.touched">
+                Confirmar contraseña es requerida
+              </span>
+              <span class="text-xs text-red-500" *ngIf="form.hasError('passwordsMismatch') && form.get('confirmPassword')?.touched">
+                Las contraseñas no coinciden
+              </span>
             </p>
-          </div>
-          
-          <!-- Estado -->
-          <div class="grid gap-2">
-            <label for="state" class="text-sm font-medium text-gray-700">Estado</label>
-            <input
-              id="state"
-              type="text"
-              formControlName="state"
-              placeholder="Distrito Capital"
-              class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
-            />
-          </div>
-          
-          <!-- Ciudad -->
-          <div class="grid gap-2">
-            <label for="city" class="text-sm font-medium text-gray-700">Ciudad</label>
-            <input
-              id="city"
-              type="text"
-              formControlName="city"
-              placeholder="Caracas"
-              class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
-            />
           </div>
         </div>
 
         <!-- Botón de Registro -->
-        <button type="submit" class="w-full rounded-md bg-black px-4 py-2 font-bold text-white hover:bg-gray-900">
+        <button type="submit" class="w-full rounded-md bg-black px-4 py-2 font-bold text-white hover:bg-gray-900 cursor-pointer">
           Registrarse
         </button>
 
         <p class="mt-4 text-center text-sm text-gray-600">
           ¿Ya tienes una cuenta?
-          <a href="#" class="text-blue-600 hover:underline">Inicia sesión</a>
+          <a href="/auth/login" class="text-blue-600 hover:underline">Inicia sesión</a>
         </p>
       </form>
     </div>
   </div>
 </div>
 
-<pre>
-  {{ form().value | json }}
-</pre>
