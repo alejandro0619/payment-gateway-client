@@ -1,1 +1,127 @@
-<p>signup works!</p>
+<div class="flex min-h-screen w-full items-center justify-center p-6 md:p-10">
+  <div class="w-full max-w-2xl">
+    <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-md">
+      <h2 class="text-2xl font-bold text-gray-900">Registro</h2>
+      <p class="text-sm text-gray-600">Crea una cuenta para continuar</p>
+
+      <form class="mt-4 space-y-4" [formGroup]="form()" (ngSubmit)="submit()">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Nombre -->
+          <div class="grid gap-2">
+            <label for="name" class="text-sm font-medium text-gray-700">Nombre</label>
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              placeholder="Juan"
+              class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
+            />
+          </div>
+
+          <!-- Apellido -->
+          <div class="grid gap-2">
+            <label for="lastName" class="text-sm font-medium text-gray-700">Apellido</label>
+            <input
+              id="lastName"
+              type="text"
+              formControlName="lastName"
+              placeholder="Pérez"
+              class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
+            />
+          </div>
+        </div>
+
+        <!-- Correo Electrónico -->
+        <div class="grid gap-2">
+          <label for="email" class="text-sm font-medium text-gray-700">Correo Electrónico</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="correo@example.com"
+            class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
+          />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Contraseña -->
+          <div class="grid gap-2">
+            <label for="password" class="text-sm font-medium text-gray-700">Contraseña</label>
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
+            />
+          </div>
+
+          <!-- Confirmar Contraseña -->
+          <div class="grid gap-2">
+            <label for="confirmPassword" class="text-sm font-medium text-gray-700">Confirmar Contraseña</label>
+            <input
+              id="confirmPassword"
+              type="password"
+              formControlName="confirmPassword"
+              class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- País -->
+          <div class="grid gap-2">
+            <label for="country" class="text-sm font-medium text-gray-700">País</label>
+            <input
+              id="country"
+              type="text"
+              formControlName="country"
+              placeholder="Venezuela"
+              class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
+            />
+            <p *ngIf="!passwordsMatch" class="text-red-500 text-xs">
+              Las contraseñas no coinciden.
+            </p>
+          </div>
+          
+          <!-- Estado -->
+          <div class="grid gap-2">
+            <label for="state" class="text-sm font-medium text-gray-700">Estado</label>
+            <input
+              id="state"
+              type="text"
+              formControlName="state"
+              placeholder="Distrito Capital"
+              class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
+            />
+          </div>
+          
+          <!-- Ciudad -->
+          <div class="grid gap-2">
+            <label for="city" class="text-sm font-medium text-gray-700">Ciudad</label>
+            <input
+              id="city"
+              type="text"
+              formControlName="city"
+              placeholder="Caracas"
+              class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"
+            />
+          </div>
+        </div>
+
+        <!-- Botón de Registro -->
+        <button type="submit" class="w-full rounded-md bg-black px-4 py-2 font-bold text-white hover:bg-gray-900">
+          Registrarse
+        </button>
+
+        <p class="mt-4 text-center text-sm text-gray-600">
+          ¿Ya tienes una cuenta?
+          <a href="#" class="text-blue-600 hover:underline">Inicia sesión</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<pre>
+  {{ form().value | json }}
+</pre>
