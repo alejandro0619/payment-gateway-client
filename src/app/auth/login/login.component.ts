@@ -4,6 +4,8 @@ import { AuthService } from '../services/auth.service';
 import { LoginResponse } from '../auth.types';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -12,6 +14,7 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
+  private toastr = inject(ToastrService); 
   private authService: AuthService = inject(AuthService);
   private router: Router = inject(Router);
   loginResponse: LoginResponse | null = null;
@@ -44,9 +47,11 @@ export class LoginComponent {
         },
       });
       console.log('Inicio de sesión exitoso:', this.loginResponse);
+      this.toastr.success('¡Registro exitoso!', 'Bienvenido');
       this.router.navigate(['/auth/onboarding']);
     } catch (error) {
       this.errorMessage = 'Error al iniciar sesión. Verifica tus credenciales.';
+      this.toastr.error('Error en el registro', 'Por favor, verifica los datos.');
       console.error(error);
     }
   }
