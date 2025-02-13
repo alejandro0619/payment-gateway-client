@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule, JsonPipe } from '@angular/common';
 import { AuthService } from '../services/auth.service';
-import { LoginResponse } from '../auth.types';
+import { SignInResponse } from '../auth.types';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -14,11 +14,12 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
-  private toastr = inject(ToastrService); 
+  private toastr = inject(ToastrService);
   private authService: AuthService = inject(AuthService);
   private router: Router = inject(Router);
-  loginResponse: LoginResponse | null = null;
+  loginResponse: SignInResponse | null = null;
   errorMessage: string | null = null;
+  isLoading = false;
 
   form = signal(
     new FormGroup({
@@ -34,25 +35,30 @@ export class LoginComponent {
     }
 
     this.errorMessage = null;
+    this.isLoading = true;
     const { id, password } = this.form().value;
 
     try {
-      this.authService.login(id as string, password as string).subscribe({
-        next: (response: LoginResponse) => {
+      this.authService.signIn(id as string, password as string).subscribe({
+        next: (response: SignInResponse) => {
           this.loginResponse = response;
+          this.toastr.success('¡Registro exitoso!', 'Bienvenido');
+          this.router.navigate(['/auth/onboarding']);
         },
         error: (error: any) => {
           this.errorMessage = 'Error al iniciar sesión. Verifica tus credenciales.';
-          console.error(error);
+          this.toastr.error('Error en el registro', 'Por favor, verifica los datos.');
         },
+
+        complete: () => {
+          this.isLoading = false;
+        }
       });
-      console.log('Inicio de sesión exitoso:', this.loginResponse);
-      this.toastr.success('¡Registro exitoso!', 'Bienvenido');
-      this.router.navigate(['/auth/onboarding']);
+
+
     } catch (error) {
-      this.errorMessage = 'Error al iniciar sesión. Verifica tus credenciales.';
+      this.errorMessage = 'Error al iniciar sesión. Ha ocurrido un error inesperado.';
       this.toastr.error('Error en el registro', 'Por favor, verifica los datos.');
-      console.error(error);
     }
   }
 }

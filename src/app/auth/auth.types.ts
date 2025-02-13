@@ -1,17 +1,26 @@
 import { Roles } from "../global.types";
 
 
-export type LoginResponse = {
-  status: number;
-  description: string;
+
+type UserRoles = 'admin' | 'user' | 'student'; 
+
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  identificationNumber: string;
+  firstName: string;
+  lastName: string;
+  role: UserRoles
 }
 
-export type UserPayload = {
-  name: string,
-  email: string,
-  password: string,
-  identificationNumber: string,
-  firstName: string,
-  lastName: string,
-  role: Roles
+export interface SignInResponse {
+  user: User;
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface CreateUser extends User {
+  password: string; 
 }
