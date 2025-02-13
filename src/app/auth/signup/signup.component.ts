@@ -1,13 +1,15 @@
 import { CommonModule, JsonPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
-
+import { ToastrService } from 'ngx-toastr';
+import { inject } from '@angular/core';
 @Component({
   selector: 'app-signup',
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './signup.component.html',
 })
 export class SignupComponent {
+  private toastr = inject(ToastrService); 
   form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(3)]),
     lastName: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -29,8 +31,12 @@ export class SignupComponent {
   submit() {
     if (this.form.valid) {
       console.log('Form Submitted', this.form.value);
+      this.toastr.success('¡Registro exitoso!', 'Bienvenido');
+
     } else {
       console.log('Form is invalid');
+      this.toastr.error('Error en el registro', 'Por favor, verifica los datos.');
+
     }
   }
 }
