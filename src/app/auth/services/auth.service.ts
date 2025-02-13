@@ -9,12 +9,12 @@ import { LoginResponse, UserPayload } from '../auth.types';
 })
   
 export class AuthService {
-  private API_URL = 'http://localhost:3000';
+  private API_URL = process.env['BACKEND_URL'] || 'http://localhost:3000';
   constructor(private http: HttpClient) { }
 
 
-  login(email: string, password: string): Observable<LoginResponse> {
-    this.http.post(`${this.API_URL}/auth/signin`, { email, password });
+  login(identification: string, password: string): Observable<LoginResponse> {
+    this.http.post(`${this.API_URL}/auth/signin`, { identification, password });
 
     return of({
       status: 200,
