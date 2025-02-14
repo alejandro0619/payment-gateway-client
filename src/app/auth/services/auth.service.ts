@@ -1,16 +1,18 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { CreateUser, SignInResponse, User } from '../auth.types';
 import { environment } from '../../../envs/env.dev';
+import { Router } from '@angular/router';
+
 @Injectable({
   providedIn: 'root'
 })
   
 export class AuthService {
   private API_URL = environment.BACKEND_URL;
-
+  private router = inject(Router);
   constructor(private http: HttpClient) { }
 
 
@@ -22,6 +24,7 @@ export class AuthService {
         map((response) => {
           // Puedes realizar alguna transformación en la respuesta si es necesario
           console.log('Inicio de sesión exitoso:', response);
+          localStorage.setItem('accessToken', response.accessToken);
           return response;
         }),
         catchError((error: HttpErrorResponse) => {
@@ -52,5 +55,17 @@ export class AuthService {
        })
 
     );
+  }
+
+  refreshToken(refreshToken: string): Observable<{ accessToken: string }> {
+    return this.http.post<{ accessToken: string }>(`${this.API_URL}/auth/refresh-token`, {
+      refreshToken,
+    });
+  }
+
+  logout() {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    this.router.navigate(['/signin']);
   }
 }
