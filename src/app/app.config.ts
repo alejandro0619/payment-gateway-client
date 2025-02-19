@@ -8,6 +8,13 @@ import { provideAnimations } from '@angular/platform-browser/animations'
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { AuthGuard } from './auth/auth.guard';
 
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
+import { TableModule } from 'primeng/table'; 
+import { BreadcrumbModule } from 'primeng/breadcrumb';
+
+
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideHttpClient(),provideToastr({
     preventDuplicates: true,
@@ -23,6 +30,13 @@ export const appConfig: ApplicationConfig = {
       useClass: AuthInterceptor,
       multi: true
     },
-    AuthGuard
+    AuthGuard,
+
+        providePrimeNG({
+            theme: {
+                preset: Aura
+            }
+        })
+        
   ],
 };

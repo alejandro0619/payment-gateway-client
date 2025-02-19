@@ -1,0 +1,120 @@
+<div class="flex min-h-screen w-full items-center justify-center p-6 md:p-10 bg-blue-200">
+    <div class="w-full max-w-xl">
+      <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-md">
+        <h2 class="text-2xl font-bold text-gray-900">Registro Administrador</h2>
+        <p class="text-sm text-gray-600">Crea una cuenta de Administrador para continuar</p>
+  
+        <form class="mt-4 space-y-4" [formGroup]="form" (ngSubmit)="submit()">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  
+            <div class="grid gap-2">
+              <label for="name" class="text-sm font-medium text-gray-700">Nombre </label>
+              <input id="name" type="text" formControlName="name" placeholder="John"
+                class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black" />
+  
+              <p>
+                <span class="text-xs text-red-500"
+                  *ngIf="form.get('name')?.hasError('required') && form.get('name')?.touched">
+                  El nombre es requerido
+                </span>
+              </p>
+            </div>
+  
+  
+            <div class="grid gap-2">
+              <label for="lastName" class="text-sm font-medium text-gray-700">Apellido</label>
+              <input id="lastName" type="text" formControlName="lastName" placeholder="Pérez"
+                class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black" />
+  
+              <p>
+                <span class="text-xs text-red-500"
+                  *ngIf="form.get('lastName')?.hasError('required') && form.get('lastName')?.touched">
+                  El apellido es requerido
+                </span>
+              </p>
+            </div>
+          </div>
+  
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid gap-2">
+              <label for="email" class="text-sm font-medium text-gray-700">Correo Electrónico</label>
+              <input id="email" type="email" formControlName="email" placeholder="correo@example.com"
+                class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black" />
+  
+              <p>
+                <span class="text-xs text-red-500"
+                  *ngIf="form.get('email')?.hasError('required') && form.get('email')?.touched">
+                  El correo electrónico es requerido
+                </span>
+                <span class="text-xs text-red-500"
+                  *ngIf="form.get('email')?.hasError('email') && form.get('email')?.touched">
+                  El correo electrónico no es válido
+                </span>
+              </p>
+            </div>
+            <div class="grid gap-2">
+              <label for="identificationNumber" class="text-sm font-medium text-gray-700">Cédula</label>
+              <input id="identificationNumber" type="text" formControlName="identificationNumber" placeholder="12345678"
+                class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black" />
+  
+              <p>
+                <span class="text-xs text-red-500"
+                  *ngIf="form.get('identificationNumber')?.hasError('required') && form.get('identificationNumber')?.touched">
+                  La cédula es requerida
+                </span>
+              </p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  
+            <div class="grid gap-2">
+              <label for="password" class="text-sm font-medium text-gray-700">Contraseña</label>
+              <input id="password" type="password" formControlName="password"
+                class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black" />
+  
+              <p>
+                <span class="text-xs text-red-500"
+                  *ngIf="form.get('password')?.hasError('required') && form.get('password')?.touched">
+                  La contraseña es requerida
+                </span>
+                <span class="text-xs text-red-500"
+                  *ngIf="form.get('password')?.hasError('minlength') && form.get('password')?.touched">
+                  La contraseña debe tener al menos 8 caracteres
+                </span>
+              </p>
+            </div>
+  
+  
+            <div class="grid gap-2">
+              <label for="confirmPassword" class="text-sm font-medium text-gray-700">Confirmar Contraseña</label>
+              <input id="confirmPassword" type="password" formControlName="confirmPassword"
+                class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black" />
+  
+              <p>
+                <span class="text-xs text-red-500"
+                  *ngIf="form.get('confirmPassword')?.hasError('required') && form.get('confirmPassword')?.touched">
+                  Confirmar contraseña es requerida
+                </span>
+                <span class="text-xs text-red-500"
+                  *ngIf="form.hasError('passwordsMismatch') && form.get('confirmPassword')?.touched">
+                  Las contraseñas no coinciden
+                </span>
+              </p>
+            </div>
+          </div>
+  
+          <button type="submit"
+            class="w-full rounded-md bg-black px-4 py-2 font-bold text-white hover:bg-gray-900 cursor-pointer"
+            (click)="submit()">
+            Registrarse
+          </button>
+  
+          <p class="mt-4 text-center text-sm text-gray-600">
+            ¿Ya tienes una cuenta?
+            <a href="/auth/login" class="text-blue-600 hover:underline">Inicia sesión</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+  
