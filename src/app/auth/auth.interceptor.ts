@@ -21,7 +21,7 @@ export class AuthInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
 
     const accessToken = localStorage.getItem('accessToken');
-
+    console.log("puede ser")
 
     if (this.isProtectedRoute(request.url)) {
 
