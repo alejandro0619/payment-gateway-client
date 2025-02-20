@@ -1,10 +1,5 @@
 import { Roles } from "../global.types";
 
-
-
-type UserRoles = 'admin' | 'user' | 'student'; 
-
-
 export interface User {
   id: string;
   name: string;
@@ -12,7 +7,7 @@ export interface User {
   identificationNumber: string;
   firstName: string;
   lastName: string;
-  role: UserRoles
+  role: Roles
 }
 
 export interface SignInResponse {

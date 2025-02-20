@@ -21,7 +21,7 @@ export const routes: Routes = [
     path: 'auth/onboarding', component: OnboardingComponent, canActivate: [AuthGuard]
   },
   {
-    path: 'auth/signup-admin', component: SignupAdminComponent, canActivate:[AuthGuard]
+    path: 'auth/signup-admin', component: SignupAdminComponent, //canActivate:[AuthGuard]
   },
   {
     path: 'user/dashboard', component: UserDashboard, //canActivate: [AuthGuard]
@@ -30,7 +30,7 @@ export const routes: Routes = [
     path: 'operator/dashboard', component: OperatorDashboard, canActivate: [AuthGuard]
   },
   {
-    path: 'admin/dashboard', component: AdminDashboard, //canActivate: [AuthGuard]
+    path: 'admin/dashboard', component: AdminDashboard, canActivate: [AuthGuard]
   },
   
 

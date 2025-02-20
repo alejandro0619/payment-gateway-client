@@ -43,13 +43,12 @@ export class AuthInterceptor implements HttpInterceptor {
       );
     }
 
-    // If the route is not protected, just return the request
     return next.handle(request);
   }
 
   // Verify if the requested route is protected
   private isProtectedRoute(url: string): boolean {
-    const protectedRoutes = ['/protected']; 
+    const protectedRoutes = ['/protected', 'localhost:3000/auth/signup-admin']; 
     return protectedRoutes.some((route) => url.includes(route));
   }
 

@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { Roles } from '../../global.types';
 @Component({
   selector: 'app-signup',
   imports: [ReactiveFormsModule, CommonModule],
@@ -49,7 +50,7 @@ export class SignupComponent {
         email: email as string,
         identificationNumber: identificationNumber as string,
         password: this.form.get('password')?.value as string,
-        role: 'user'
+        role: Roles.USER
 
       }).subscribe({
         next: (response: any) => {

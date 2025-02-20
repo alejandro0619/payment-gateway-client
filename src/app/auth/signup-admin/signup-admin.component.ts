@@ -6,6 +6,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { ReactiveFormsModule } from '@angular/forms';
+import { Roles } from '../../global.types';
 
 @Component({
   selector: 'app-signup-admin',
@@ -45,14 +46,14 @@ private toastr = inject(ToastrService);
     if (this.form.valid) {
       const { name, lastName, email, identificationNumber } = this.form.value;
       
-      this.authService.signup({
+      this.authService.signupAdmin({
         name: name as string,
         firstName: name as string,
         lastName: lastName as string,
         email: email as string,
         identificationNumber: identificationNumber as string,
         password: this.form.get('password')?.value as string,
-        role: 'user'
+        role: Roles.ADMIN
 
       }).subscribe({
         next: (response: any) => {

@@ -5,17 +5,20 @@ import { SignInResponse } from '../auth.types';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { RedirectService } from '../services/redirect.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  providers: [AuthService],
+  providers: [AuthService, RedirectService],
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
   private toastr = inject(ToastrService);
   private authService: AuthService = inject(AuthService);
+  private redirectService: RedirectService = inject(RedirectService);
+
   private router: Router = inject(Router);
   loginResponse: SignInResponse | null = null;
   errorMessage: string | null = null;
@@ -42,8 +45,9 @@ export class LoginComponent {
       this.authService.signIn(id as string, password as string).subscribe({
         next: (response: SignInResponse) => {
           this.loginResponse = response;
-          this.toastr.success('¡Registro exitoso!', 'Bienvenido');
-          this.router.navigate(['/auth/onboarding']);
+          console.log(response.user)
+          this.toastr.success('¡Registro exitoso!', this.redirectService.redirect(response.user.role));
+          this.router.navigate([this.redirectService.redirect(response.user.role)]);
         },
         error: (error: any) => {
           this.errorMessage = 'Error al iniciar sesión. Verifica tus credenciales.';

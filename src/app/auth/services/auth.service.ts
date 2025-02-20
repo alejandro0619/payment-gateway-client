@@ -22,8 +22,7 @@ export class AuthService {
       .post<SignInResponse>(`${this.API_URL}/auth/signin`, { identification, password })
       .pipe(
         map((response) => {
-          // Puedes realizar alguna transformación en la respuesta si es necesario
-          console.log('Inicio de sesión exitoso:', response);
+
           localStorage.setItem('accessToken', response.accessToken);
           return response;
         }),
@@ -53,6 +52,29 @@ export class AuthService {
         }
 
        })
+
+    );
+  }
+
+
+  signupAdmin(user: Partial<CreateUser>) {  
+    // TODO: ADD THE INTERCEPTOR TO THIS REQUEST, FN, IT IS HARDCODED 
+    return this.http.post(`${this.API_URL}/auth/signup-admin`, user, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+      },
+    }).pipe(
+      map((response) => {
+        return response
+      }),
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          return throwError(() => new Error('Credenciales inválidas'));
+        } else {
+          return throwError(() => new Error('Ocurrió un error inesperado'));
+        }
+
+      })
 
     );
   }
