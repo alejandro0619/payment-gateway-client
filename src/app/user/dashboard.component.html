@@ -1,6 +1,6 @@
 <div class="h-screen w-screen flex flex-col bg-white overflow-hidden">
 
-  <div class="bg-white shadow-md p-2 w-full flex justify-between items-center">
+  <div class="bg-white shadow-md p-4 w-full flex justify-between items-center">
     <span class="font-bold text-lg">LOGO</span>
     <ul class="flex space-x-6">
 
@@ -25,13 +25,23 @@
         <i class="pi pi-clock"></i>
         <span>Histórico de pagos</span>
       </li>
-      <li class="cursor-pointer text-gray-800 hover:text-blue-600 flex items-center space-x-2">
-        <i class="pi pi-user"></i>
-        <span>Cuenta</span>
-      </li>
-      <li class="cursor-pointer text-gray-800 hover:text-blue-600 flex items-center space-x-2">
-        <i class="pi pi-sign-out"></i>
-        <span>Cerrar sesión</span>
+     
+      <li class="relative group">
+        <a class="flex items-center space-x-2 cursor-pointer left-4 text-gray-800 hover:text-blue-600">
+          <i class="pi pi-users"></i>
+          <span>Cuenta</span>
+        </a>
+        <ul class="absolute right-0 mt-2 bg-white shadow-lg rounded-lg hidden group-hover:block w-32">
+          <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2">
+            <i class="pi pi-user"></i>
+            <span>Perfil</span>
+          </li>
+          <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2">
+            <i class="pi pi-sign-out"></i>
+            <span>Cerrar</span>
+          </li>
+        </ul>
+        
       </li>
     </ul>
   </div>
