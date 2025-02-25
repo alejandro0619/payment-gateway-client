@@ -1,18 +1,20 @@
-import { CommonModule, JsonPipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormGroup, FormControl, ReactiveFormsModule, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Roles } from '../../global.types';
+import { concatMap, switchMap } from 'rxjs/operators';
+
 @Component({
-  selector: 'app-signup',
-  imports: [ReactiveFormsModule, CommonModule],
-  providers: [AuthService],
-  templateUrl: './signup.component.html',
+  selector: 'app-signup-operator',
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './signup-operator.component.html'
 })
-export class SignupComponent {
+export class SignupOperatorComponent {
   private toastr = inject(ToastrService); 
   private router: Router = inject(Router);
   private authService = inject(AuthService);
@@ -29,7 +31,6 @@ export class SignupComponent {
   errorMessage: string | null = null;
   isLoading = false;
 
-
   passwordsMatchValidator(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
       const formGroup = control as FormGroup; 
@@ -42,7 +43,9 @@ export class SignupComponent {
   submit() {
     if (this.form.valid) {
       const { name, lastName, email, identificationNumber } = this.form.value;
-      
+
+      this.isLoading = true; 
+
       this.authService.signup({
         name: name as string,
         firstName: name as string,
@@ -51,10 +54,10 @@ export class SignupComponent {
         identificationNumber: identificationNumber as string,
         password: this.form.get('password')?.value as string,
         role: Roles.USER
-
       }).subscribe({
         next: (response: any) => {
-          console.log('Registro exitoso:', response);
+          console.log('Registro exitoso:', response.user.id);
+          this.authService.signupOperator(response.user.id)
           this.toastr.success('¡Registro exitoso!', 'Bienvenido');
           this.router.navigate(['/auth/login']);
         },
@@ -66,13 +69,9 @@ export class SignupComponent {
           this.isLoading = false;
         }
       });
-;
-
     } else {
       console.log('Form is invalid');
-      console.log(this.form.errors);
       this.toastr.error('Error en el registro', 'Por favor, verifica los datos.');
-
     }
   }
 }

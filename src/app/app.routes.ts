@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './auth/login/login.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { SignupAdminComponent } from './auth/signup-admin/signup-admin.component';
+import { SignupOperatorComponent } from './auth/signup-operator/signup-operator.component';
 import { OnboardingComponent } from './auth/onboarding/onboarding.component';
 import { ProtectedComponent } from './protected/protected.component';
 import { DashboardComponent as AdminDashboard } from './admin/dashboard.component';
@@ -49,7 +50,11 @@ export const routes: Routes = [
         component: AdminDashboard,
         canActivate: [AuthGuard],
       },
-
+      {
+        path: 'auth/signup-operator',
+        component: SignupOperatorComponent,
+        //canActivate: [AuthGuard],
+      },
     ],
   },
   

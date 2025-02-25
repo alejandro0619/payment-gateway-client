@@ -45,6 +45,7 @@ export class AuthService {
         return response
       }),
       catchError((error: HttpErrorResponse) => {
+        console.error('Error en la petición de signup:', error); 
         if (error.status === 401) {
           return throwError(() => new Error('Credenciales inválidas'));
         } else {
@@ -78,6 +79,26 @@ export class AuthService {
 
     );
   }
+///newwww
+  signupOperator(id: string) {
+    return this.http.post(`${this.API_URL}/auth/signup-operator`, {
+      id
+    }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+      },
+    }).pipe(
+      map((response) => response),
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          return throwError(() => new Error('Credenciales inválidas'));
+        } else {
+          return throwError(() => new Error('Ocurrió un error inesperadito'));
+        }
+      })
+    );
+  }
+  
 
   refreshToken(refreshToken: string): Observable<{ accessToken: string }> {
     return this.http.post<{ accessToken: string }>(`${this.API_URL}/auth/refresh-token`, {
