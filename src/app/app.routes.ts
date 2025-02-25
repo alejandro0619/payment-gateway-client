@@ -43,12 +43,12 @@ export const routes: Routes = [
       {
         path: 'operator/dashboard',
         component: OperatorDashboard,
-        canActivate: [AuthGuard],
+        //canActivate: [AuthGuard],
       },
       {
         path: 'admin/dashboard',
         component: AdminDashboard,
-        canActivate: [AuthGuard],
+        //canActivate: [AuthGuard],
       },
       {
         path: 'auth/signup-operator',

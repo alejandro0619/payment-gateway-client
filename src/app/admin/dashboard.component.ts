@@ -4,15 +4,33 @@ import { TableModule } from 'primeng/table';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { MenuItem } from 'primeng/api';
 import { Router, NavigationEnd } from '@angular/router';
+import { ViewChild } from '@angular/core';
+import { DrawerModule } from 'primeng/drawer';
+import { ButtonModule } from 'primeng/button';
+import { Ripple } from 'primeng/ripple';
+import { AvatarModule } from 'primeng/avatar';
+import { StyleClass } from 'primeng/styleclass';
+import { Drawer } from 'primeng/drawer';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, TableModule, BreadcrumbModule],
+  imports: [CommonModule, TableModule, BreadcrumbModule, DrawerModule, ButtonModule, Ripple, AvatarModule ],
   templateUrl: './dashboard.component.html',
 })
-export class DashboardComponent implements OnInit {
-  
+export class DashboardComponent  {
+
+  visible: boolean = false;
+  coursesVisible: boolean = false; 
+  transactionsVisible = false; 
+  employeesVisible = false; 
+
+  closeCallback(event: Event) {
+    this.visible = false;
+  }
+
+ 
+    
   items: MenuItem[] = [];
   home: MenuItem = { icon: 'pi pi-home', routerLink: '/' };
 
@@ -28,44 +46,13 @@ export class DashboardComponent implements OnInit {
 
   constructor(private router: Router) {}
 
-  ngOnInit() {
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        this.updateBreadcrumb();
-      }
-    });
-
-    // Breadcrumb inicial
-    this.updateBreadcrumb();
-  }
-
-  updateBreadcrumb() {
-    const segments = this.router.url.split('/').filter(segment => segment); 
-    this.items = segments.map((segment, index) => {
-      return {
-        label: this.capitalize(segment.replace('-', ' ')), 
-        routerLink: '/' + segments.slice(0, index + 1).join('/')
-      };
-    });
-  }
-
   capitalize(text: string): string {
     return text.charAt(0).toUpperCase() + text.slice(1);
-  }
-
-  toggleMenu() {
-    this.menuOpen = !this.menuOpen;
   }
 
   onProductClick(product: any) {
     console.log('Producto seleccionado:', product);
   }
 
-  //menu
-  @HostListener('document:click', ['$event'])
-  closeMenuOnOutsideClick(event: Event) {
-    if (!(event.target as HTMLElement).closest('.relative')) {
-      this.menuOpen = false;
-    }
-  }
+  
 }

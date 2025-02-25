@@ -20,11 +20,17 @@
           {
             "glob": "**/*",
             "input": "public"
+          },
+          {
+            "glob": "**/*",
+            "input": "node_modules/primeicons/fonts",
+            "output": "assets/fonts/"
           }
         ],
         "styles": [
           "src/styles.css",
-          "node_modules/ngx-toastr/toastr.css"
+          "node_modules/ngx-toastr/toastr.css",
+          "node_modules/primeicons/primeicons.css"
         ],
         "scripts": []
       },
