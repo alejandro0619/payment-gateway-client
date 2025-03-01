@@ -79,9 +79,9 @@ export class AuthService {
 
     );
   }
-///newwww
+
   signupOperator(id: string) {
-    return this.http.post(`${this.API_URL}/auth/signup-operator`, {
+    return this.http.patch(`${this.API_URL}/auth/signup-operator`, {
       id
     }, {
       headers: {

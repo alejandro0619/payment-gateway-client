@@ -1,0 +1,101 @@
+<nav class="bg-white shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16">
+      <!-- Logo o nombre de la aplicación -->
+      <div class="flex items-center">
+        <a routerLink="/dashboard" class="text-lg font-semibold text-gray-900">
+          Mi Aplicación
+        </a>
+      </div>
+
+      <!-- Menú de navegación -->
+      <div class="flex items-center space-x-4">
+        <!-- Menú desplegable de Usuarios -->
+        <div class="relative" (clickOutside)="closeDropdown('users')">
+          <button
+            (click)="toggleDropdown('users')"
+            class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none"
+          >
+            Usuarios
+            <svg
+              class="ml-1 h-5 w-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </button>
+          <div
+            *ngIf="isDropdownOpen('users')"
+            class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+          >
+            <a
+              routerLink="/dashboard/crear-usuario"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              Crear usuario
+            </a>
+            <a
+              routerLink="/dashboard/lista-usuarios"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              Ver lista de usuarios
+            </a>
+          </div>
+        </div>
+
+        <!-- Menú desplegable de Cursos -->
+        <div class="relative" (clickOutside)="closeDropdown('courses')">
+          <button
+            (click)="toggleDropdown('courses')"
+            class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none"
+          >
+            Cursos
+            <svg
+              class="ml-1 h-5 w-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </button>
+          <div
+            *ngIf="isDropdownOpen('courses')"
+            class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+          >
+            <a
+              routerLink="/dashboard/crear-curso"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              Crear curso
+            </a>
+            <a
+              routerLink="/dashboard/lista-cursos"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              Ver lista de cursos
+            </a>
+          </div>
+        </div>
+
+        <!-- Enlace simple para Transacciones -->
+        <a
+          routerLink="/dashboard/transacciones"
+          class="text-sm font-medium text-gray-700 hover:text-gray-900"
+        >
+          Transacciones
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
