@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component,HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
@@ -11,26 +11,32 @@ import { Ripple } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
 import { StyleClass } from 'primeng/styleclass';
 import { Drawer } from 'primeng/drawer';
+import { CreateCourseComponent } from './courses/create-course.component';
+import { CoursesComponent } from './courses/courses.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, TableModule, BreadcrumbModule, DrawerModule, ButtonModule, Ripple, AvatarModule ],
+  imports: [CommonModule, TableModule, BreadcrumbModule, DrawerModule, ButtonModule, Ripple, AvatarModule, CreateCourseComponent,CoursesComponent],
   templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent  {
+  @ViewChild('createCourseModal') createCourseModal!: CreateCourseComponent;
 
+  openCreateCourseModal() {
+    this.createCourseModal.openModal();
+  }
+  
   visible: boolean = false;
   coursesVisible: boolean = false; 
   transactionsVisible = false; 
   employeesVisible = false; 
+  showCourses: boolean = false;  
 
   closeCallback(event: Event) {
     this.visible = false;
   }
 
- 
-    
   items: MenuItem[] = [];
   home: MenuItem = { icon: 'pi pi-home', routerLink: '/' };
 

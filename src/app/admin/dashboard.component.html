@@ -33,13 +33,15 @@
               </div>
               <ul *ngIf="coursesVisible" class="list-none pl-4 space-y-1">
                 <li>
-                  <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
+                  <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition"
+                    (click)="openCreateCourseModal()">
                     <i class="pi pi-file text-sm mr-1"></i>
                     <span class="font-medium text-sm">Crear curso</span>
                   </a>
                 </li>
                 <li>
-                  <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
+                  <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition"
+                    (click)="showCourses = true">
                     <i class="pi pi-table text-sm mr-1"></i>
                     <span class="font-medium text-sm">Ver cursos</span>
                   </a>
@@ -120,7 +122,7 @@
 <div class="flex flex-col items-start p-4 w-full">
   <p-button (click)="visible = true" icon="pi pi-bars" class="shadow-lg p-0 rounded-md mb-4" />
   
-  <div class="flex items-center justify-center w-full">
+  <div *ngIf="!showCourses" class="flex items-center justify-center w-full">
     <div class="overflow-hidden rounded-lg shadow-lg w-full">
       <p-table [value]="products" stripedRows [scrollable]="true" scrollHeight="500px" [tableStyle]="{'min-width': '100rem'}">
         <ng-template #header>
@@ -143,3 +145,7 @@
     </div>
   </div>
 </div>
+
+<app-create-course #createCourseModal></app-create-course>
+<app-courses *ngIf="showCourses"></app-courses>
+
