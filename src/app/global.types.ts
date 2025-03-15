@@ -4,4 +4,14 @@ export enum Roles {
   USER = 'user'
 }
 
+export type Course = {
+  id: string;
+  name: string;
+  description: string;
+  price: string;
+  createdAt: string;
+  updatedAt: string | null;
+  deletedAt: string | null;
+  image: string | null;
+}
 export const BASE_URL = 'http://localhost:3000';

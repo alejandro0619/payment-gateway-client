@@ -11,6 +11,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { CreateCourseComponent } from './courses/create-course.component';
 import { CoursesComponent } from './courses/courses.component';
 import { DashboardService } from './dashboard.service';
+import { parse } from 'path';
 
 @Component({
   selector: 'app-dashboard',
@@ -55,7 +56,7 @@ export class DashboardComponent implements OnInit {
       next: (courses) => {
         this.courses = courses.map(course => ({
           ...course,
-          price: parseFloat(course.price),
+          price: parseFloat(course.price).toFixed(2),
           createdAt: new Date(course.createdAt)
         }));
         console.log('Courses loaded:', this.courses);
