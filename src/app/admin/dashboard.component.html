@@ -119,26 +119,33 @@
   </p-drawer>
 </div>
 
+
 <div class="flex flex-col items-start p-4 w-full">
   <p-button (click)="visible = true" icon="pi pi-bars" class="shadow-lg p-0 rounded-md mb-4" />
   
   <div *ngIf="!showCourses" class="flex items-center justify-center w-full">
     <div class="overflow-hidden rounded-lg shadow-lg w-full">
-      <p-table [value]="products" stripedRows [scrollable]="true" scrollHeight="500px" [tableStyle]="{'min-width': '100rem'}">
+      <p-table 
+        [value]="courses" 
+        stripedRows 
+        [scrollable]="true" 
+        scrollHeight="500px"
+        [tableStyle]="{'min-width': '100rem'}"
+      >
         <ng-template #header>
           <tr class="bg-gray-700 text-white">
-            <th class="text-xl p-5">Code</th>
-            <th class="text-xl p-5">Name</th>
-            <th class="text-xl p-5">Category</th>
-            <th class="text-xl p-5">Quantity</th>
+            <th class="text-xl p-5">Nombre</th>
+            <th class="text-xl p-5">Descripción</th>
+            <th class="text-xl p-5">Precio</th>
+            <th class="text-xl p-5">Fecha de Creación</th>
           </tr>
         </ng-template>
-        <ng-template #body let-product>
+        <ng-template #body let-course>
           <tr class="hover:bg-gray-200 transition duration-300">
-            <td class="text-lg p-5">{{ product.code }}</td>
-            <td class="text-lg p-5">{{ product.name }}</td>
-            <td class="text-lg p-5">{{ product.category }}</td>
-            <td class="text-lg p-5">{{ product.quantity }}</td>
+            <td class="text-lg p-5">{{ course.name }}</td>
+            <td class="text-lg p-5">{{ course.description }}</td>
+            <td class="text-lg p-5">{{ course.price | currency:'USD':'symbol':'1.2-2' }}</td>
+            <td class="text-lg p-5">{{ course.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
           </tr>
         </ng-template>
       </p-table>
@@ -146,6 +153,9 @@
   </div>
 </div>
 
-<app-create-course #createCourseModal></app-create-course>
+<app-create-course 
+  #createCourseModal 
+  (courseCreated)="loadCourses()"
+></app-create-course>
 <app-courses *ngIf="showCourses"></app-courses>
 
