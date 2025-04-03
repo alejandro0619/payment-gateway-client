@@ -23,6 +23,7 @@
     "@coreui/icons-angular": "^5.3.15",
     "@primeng/themes": "^19.0.6",
     "@tailwindcss/postcss": "^4.0.5",
+    "chart.js": "^4.4.8",
     "lucide-angular": "^0.475.0",
     "ngx-toastr": "^19.0.0",
     "primeng": "^19.0.6",

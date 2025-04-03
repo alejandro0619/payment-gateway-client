@@ -6,9 +6,10 @@ import { SignupAdminComponent } from './auth/signup-admin/signup-admin.component
 import { SignupOperatorComponent } from './auth/signup-operator/signup-operator.component';
 import { OnboardingComponent } from './auth/onboarding/onboarding.component';
 import { ProtectedComponent } from './protected/protected.component';
-import { DashboardComponent as AdminDashboard } from './admin/dashboard.component';
+import { CoursesComponent } from './admin/courses/courses.component';
 import { DashboardComponent as UserDashboard } from './user/dashboard.component';
 import { DashboardComponent as OperatorDashboard } from './operator/dashboard.component';
+import { DashboardComponent as AdminDashboard } from './admin/dashboard.component';
 
 import { AuthGuard } from './auth/auth.guard';
 import { FirstRunGuard } from '../core/guards/first-run.guard';
@@ -30,25 +31,32 @@ export const routes: Routes = [
       {
         path: 'auth/onboarding',
         component: OnboardingComponent,
-        canActivate: [AuthGuard],
+        // canActivate: [AuthGuard],
       },
       {
         path: 'auth/signup-admin',
         component: SignupAdminComponent,
+        // canActivate: [AuthGuard],
       },
       {
         path: 'user/dashboard',
         component: UserDashboard,
+        // canActivate: [AuthGuard],
       },
       {
         path: 'operator/dashboard',
         component: OperatorDashboard,
-        //canActivate: [AuthGuard],
+        // canActivate: [AuthGuard],
       },
       {
         path: 'admin/dashboard',
         component: AdminDashboard,
         //canActivate: [AuthGuard],
+      },
+      {
+        path: 'admin/courses',
+        component: CoursesComponent,
+        // canActivate: [AuthGuard],
       },
       {
         path: 'auth/signup-operator',

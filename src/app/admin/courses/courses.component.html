@@ -1,41 +1,161 @@
-<div class="flex flex-col justify-center items-center min-h-screen space-y-4 p-4">
-    <p-card 
-        [style]="{ width: '25rem', overflow: 'hidden' }"
-        class="transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
-    >
-        <ng-template #header>
-            <img alt="Card" class="w-full" src="https://primefaces.org/cdn/primeng/images/card-ng.jpg" />
-        </ng-template>
-        <ng-template #title> Advanced Card </ng-template>
-        <ng-template #subtitle> Card subtitle </ng-template>
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt
-            quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate neque quas!
-        </p>
-        <ng-template #footer>
-            <div class="flex gap-4 mt-1">
-                <p-button label="Ver detalles" class="w-full" styleClass="w-full"/>
-            </div>
-        </ng-template>
-    </p-card>
+<div class="card flex justify-center">
+  <p-drawer #drawerRef [(visible)]="visible">
+    <ng-template #headless>
+      <div class="flex flex-col h-full">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 pt-4 shrink-0">
+          <span class="inline-flex items-center gap-1">
+            <i class="pi pi-star text-xl text-primary"></i>
+            <span class="font-semibold text-xl text-primary">Your Logo</span>
+          </span>
+          <p-button type="button" (click)="visible = false" icon="pi pi-times" rounded="true" outlined="true"
+            styleClass="h-8 w-8"></p-button>
+        </div>
 
-    <p-card 
-        [style]="{ width: '25rem', overflow: 'hidden' }"
-        class="transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
-    >
-        <ng-template #header>
-            <img alt="Card" class="w-full" src="https://primefaces.org/cdn/primeng/images/card-ng.jpg" />
-        </ng-template>
-        <ng-template #title> Advanced Card </ng-template>
-        <ng-template #subtitle> Card subtitle </ng-template>
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt
-            quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate neque quas!
-        </p>
-        <ng-template #footer>
-            <div class="flex gap-4 mt-1">
-                <p-button label="Ver detalles" class="w-full" styleClass="w-full"/>
-            </div>
-        </ng-template>
-    </p-card>
+        <div class="overflow-y-auto flex-grow p-4">
+          <ul class="list-none space-y-2">
+
+            <li>
+              <div pRipple class="py-3 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition">
+                <span class="flex items-center gap-1">
+                  <i class="pi pi-home text-base"></i>
+                  <span class="font-medium text-sm">Home</span>
+                </span>
+              </div>
+              <!-- Courses -->
+              <div pRipple class="py-2 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
+                (click)="coursesVisible = !coursesVisible">
+                <span class="flex items-center gap-1">
+                  <i class="pi pi-book text-base"></i>
+                  <span class="font-medium text-sm">Cursos</span>
+                </span>
+                <i class="pi text-sm" [ngClass]="{'pi-chevron-down': !coursesVisible, 'pi-chevron-up': coursesVisible}"></i>
+              </div>
+              <ul *ngIf="coursesVisible" class="list-none pl-4 space-y-1">
+                <li>
+                  <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition"
+                    (click)="openCreateCourseModal()">
+                    <i class="pi pi-file text-sm mr-1"></i>
+                    <span class="font-medium text-sm">Crear curso</span>
+                  </a>
+                </li>
+                <li>
+                  <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition"
+                    (click)="showCourses = true">
+                    <i class="pi pi-table text-sm mr-1"></i>
+                    <span class="font-medium text-sm">Ver cursos</span>
+                  </a>
+                </li>
+              </ul>
+            </li>
+
+            <!-- Transactions -->
+            <li>
+              <div pRipple class="py-2 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
+                (click)="transactionsVisible = !transactionsVisible">
+                <span class="flex items-center gap-1">
+                  <i class="pi pi-wallet text-base"></i>
+                  <span class="font-medium text-sm">Transacciones</span>
+                </span>
+                <i class="pi text-sm" [ngClass]="{'pi-chevron-down': !transactionsVisible, 'pi-chevron-up': transactionsVisible}"></i>
+              </div>
+              <ul *ngIf="transactionsVisible" class="list-none pl-4 space-y-1">
+                <li>
+                  <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
+                    <i class="pi pi-clock text-sm mr-1"></i>
+                    <span class="font-medium text-sm">Historial de Pagos</span>
+                  </a>
+                </li>
+                <li>
+                  <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
+                    <i class="pi pi-chart-bar text-sm mr-1"></i>
+                    <span class="font-medium text-sm">Reportes Financieros</span>
+                  </a>
+                </li>
+              </ul>
+            </li>
+
+            <!-- employees -->
+            <li>
+              <div pRipple class="py-2 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
+                (click)="employeesVisible = !employeesVisible">
+                <span class="flex items-center gap-1">
+                  <i class="pi pi-users text-base"></i>
+                  <span class="font-medium text-sm">Empleados</span>
+                </span>
+                <i class="pi text-sm" [ngClass]="{'pi-chevron-down': !employeesVisible, 'pi-chevron-up': employeesVisible}"></i>
+              </div>
+              <ul *ngIf="employeesVisible" class="list-none pl-4 space-y-1">
+                
+                <li>
+                  <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
+                    <i class="pi pi-user-plus text-sm mr-1"></i>
+                    <span class="font-medium text-sm">Registrar Empleado</span>
+                  </a>
+                </li>
+                <li>
+                  <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
+                    <i class="pi pi-user-minus text-sm mr-1"></i>
+                    <span class="font-medium text-sm">Eliminar Empleado</span>
+                  </a>
+                </li>
+                <li>
+                  <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
+                    <i class="pi pi-list text-sm mr-1"></i>
+                    <span class="font-medium text-sm">Lista de Empleados</span>
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="shrink-0 border-t border-gray-300 bg-white p-4 flex items-center gap-2">
+          <button pButton icon="pi pi-user" class="w-full" outlined>Cuenta</button>
+          <button pButton icon="pi pi-sign-out" class="w-full" severity="danger" text>Salir</button>
+        </div>
+      </div>
+    </ng-template>
+  </p-drawer>
 </div>
+
+
+<div class="flex flex-col items-start p-4 w-full">
+  <p-button (click)="visible = true" icon="pi pi-bars" class="shadow-lg p-0 rounded-md mb-4" />
+  
+  <div *ngIf="!showCourses" class="flex items-center justify-center w-full">
+    <div class="overflow-hidden rounded-lg shadow-lg w-full">
+      <p-table 
+        [value]="courses" 
+        stripedRows 
+        [scrollable]="true" 
+        scrollHeight="500px"
+        [tableStyle]="{'min-width': '100rem'}"
+      >
+        <ng-template #header>
+          <tr class="bg-gray-700 text-white">
+            <th class="text-xl p-5">Nombre</th>
+            <th class="text-xl p-5">Descripción</th>
+            <th class="text-xl p-5">Precio</th>
+            <th class="text-xl p-5">Fecha de Creación</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-course>
+          <tr class="hover:bg-gray-200 transition duration-300">
+            <td class="text-lg p-5">{{ course.name }}</td>
+            <td class="text-lg p-5">{{ course.description }}</td>
+            <td class="text-lg p-5">{{ course.price | currency:'USD':'symbol':'1.2-2' }}</td>
+            <td class="text-lg p-5">{{ course.createdAt | date:'dd/MM/yyyy - HH:mm' }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<app-create-course 
+  #createCourseModal 
+  (courseCreated)="loadCourses()"
+></app-create-course>
+<app-courses *ngIf="showCourses"></app-courses>
+
