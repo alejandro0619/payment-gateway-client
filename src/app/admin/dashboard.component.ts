@@ -10,6 +10,8 @@ import { AvatarModule } from 'primeng/avatar';
 import { LineChart } from '../ui/charts/line-chart.component';
 import { InsightCard } from '../ui/global/insight-card.component';
 import { BarChart } from '../ui/charts/bar-chart.component';
+import { MainMenu } from '../ui/navs/main-menu.component';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -26,6 +28,7 @@ import { BarChart } from '../ui/charts/bar-chart.component';
     LineChart,
     InsightCard,
     BarChart,
+    MainMenu
   ],
   templateUrl: './dashboard.component.html',
 })
