@@ -13,6 +13,8 @@ import { NotificationComponent } from '../ui/global/notification.component';
 import { DashboardIncomeChartComponent } from '../ui/charts/dashboard-income-chart.component';
 import { PaymentMethodChartComponent } from '../ui/charts/payment-method.component';
 import { InsightCard } from "../ui/global/insight-card.component";
+import { TransactionsTableComponent } from '../ui/tables/transaction-dashboard.component';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -28,7 +30,9 @@ import { InsightCard } from "../ui/global/insight-card.component";
     NotificationComponent,
     SectionNavigatorComponent,
     MainMenu,
-    InsightCard
+    InsightCard,
+    TransactionsTableComponent,
+
 ],
   templateUrl: './dashboard.component.html',
 })

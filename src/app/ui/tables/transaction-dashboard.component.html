@@ -1,0 +1,34 @@
+<!-- Transacciones component HTML -->
+<div class="card w-full ">
+  <p-table
+      [value]="transactions"
+      [paginator]="true"
+      [rows]="4"
+      [tableStyle]="{ 'min-width': '400px' }"
+      
+      selectionMode="single"
+      (onRowSelect)="onRowClick($event)"
+      dataKey="id"
+  >
+      <ng-template #header>
+          <tr>
+              <th style="width:25%">ID Transacción</th>
+              <th style="width:35%">Curso</th>
+              <th style="width:20%">Monto</th>
+              <th style="width:20%">Estado</th>
+          </tr>
+      </ng-template>
+      <ng-template #body let-transaction>
+          <tr class="cursor-pointer hover:bg-gray-50">
+              <td class="truncate">{{ transaction.id | slice:0:8 }}...</td>
+              <td>{{ transaction.courseName }}</td>
+              <td>{{ transaction.amount | currency }}</td>
+              <td>
+                  <p-tag [value]="transaction.status" 
+                        [severity]="getStatusSeverity(transaction.status)">
+                  </p-tag>
+              </td>
+          </tr>
+      </ng-template>
+  </p-table>
+</div>
