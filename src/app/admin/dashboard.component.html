@@ -1,107 +1,33 @@
-<main class="w-screen h-screen flex flex-col overflow-y-scroll bg-white px-10">
+<main class="py-5">
 
-  <!-- NAVIGATION BAR -->
-  <nav class="w-full flex flex-row justify-between h-[100px] sticky top-0 z-10 text-black">
-    <!-- BREADCBRUMBS - IMPLEMENT THIS USING PRIMENG NATIVELY -->
-    <div class="justify-around py-2 w-[250px] flex items-center ">
-      <h1 class="text-xl font-bold text-center ">
-        <main-menu> </main-menu> Insights
-      </h1>
+  <!-- Sidebar menu-->
+  <aside class="absolute top-5 left-5">
+    <main-menu />
+  </aside>
 
-      <div class="flex gap-4">
-        <i class="pi pi-chevron-left"> </i>
-
-        <i class="pi pi-chevron-right"></i>
-      </div>
-    </div>
-
-    <!-- DO NOT TOUCH -->
-    <div class=" justify-around  py-2 w-[250px] flex items-center">
-
-      <span>
-        <i class="pi pi-bell"></i>
-      </span>
-
-      <span>
-        <i class="pi pi-search"></i>
-      </span>
-
-      <p-avatar label="P" class="mr-2" size="normal" shape="circle"
-        [style]="{ 'background-color': '#dee9fc', color: '#1a2551' }" />
-
-    </div>
-
+  <!-- Navigation bar -->
+  <nav class="w-full flex flex-row px-[100px] h-fit items-center justify-between">
+    <!-- Page's title -->
+    <span>
+      <h1 class="text-slate-400 text-xl font-semibold">Overview</h1>
+      <h2 class="text-slate-800 text-2xl font-bold"> Welcome to your dashboard </h2>
+    </span>
+    <span class="flex flex-row gap-4 items-center">
+      <app-section-navigator />
+      <app-notification />
+      
+    </span>
   </nav>
+  <section class="w-full h-full flex flex-row gap-4 px-[100px] py-10">
 
+    <div class="w-[70%] border-slate-300 border-2 rounded-2xl p-4">
+      <dashboard-income-chart />
+    </div>
 
-  <section class="w-full h-[calc(100%-100px)] flex flex-col px-[30px] gap-2 mb-[5px]">
+    <div class="w-[30%] p-4 flex flex-col gap-4">
+      <app-payment-method-chart />
+      <insight-card />
+    </div>
 
-    <article class="w-full h-[500px] flex flex-row gap-2">
-      <div class="w-[75%] h-fit rounded-2xl flex flex-col gap-2 p-3 border-[#F3F3F3] border-2">
-        <header class="text-xl font-bold text-black">Commerce</header>
-        <line-chart />
-      </div>
-
-
-      <div class="w-[50%] flex flex-col gap-2 text-black font-bold ">
-        
-        <insight-card />
-        <insight-card />
-
-        <div class="h-[80%] w-full  rounded-2xl relative">
-          <div class="h-full w-full rounded-2xl border-[#F3F3F3] border-2 p-3 flex flex-col gap-2">
-            <header class="text-xl font-bold text-black">Actividades Recientes</header>
-            <div class="flex flex-col gap-2 overflow-y-auto h-full">
-              <div class="flex items-center gap-3 p-2 border-b border-[#E5E5E5]">
-                <i class="pi pi-bell text-blue-500"></i>
-                <p class="text-sm text-black">Nueva transacción completada</p>
-                <span class="text-xs text-gray-500 ml-auto">Hace 5 min</span>
-              </div>
-              <div class="flex items-center gap-3 p-2 border-b border-[#E5E5E5]">
-                <i class="pi pi-bell text-green-500"></i>
-                <p class="text-sm text-black">Usuario registrado exitosamente</p>
-                <span class="text-xs text-gray-500 ml-auto">Hace 10 min</span>
-              </div>
-              <div class="flex items-center gap-3 p-2 border-b border-[#E5E5E5]">
-                <i class="pi pi-bell text-orange-500"></i>
-                <p class="text-sm text-black">Pago pendiente de revisión</p>
-                <span class="text-xs text-gray-500 ml-auto">Hace 20 min</span>
-              </div>
-              <div class="flex items-center gap-3 p-2">
-                <i class="pi pi-bell text-red-500"></i>
-                <p class="text-sm text-black">Error en la transacción</p>
-                <span class="text-xs text-gray-500 ml-auto">Hace 30 min</span>
-              </div>
-              <div class="flex items-center gap-3 p-2">
-                <i class="pi pi-bell text-red-500"></i>
-                <p class="text-sm text-black">Error en la transacción</p>
-                <span class="text-xs text-gray-500 ml-auto">Hace 30 min</span>
-              </div>
-              <div class="flex items-center gap-3 p-2">
-                <i class="pi pi-bell text-red-500"></i>
-                <p class="text-sm text-black">Error en la transacción</p>
-                <span class="text-xs text-gray-500 ml-auto">Hace 30 min</span>
-              </div>
-              <div class="flex items-center gap-3 p-2">
-                <i class="pi pi-bell text-red-500"></i>
-                <p class="text-sm text-black">Error en la transacción</p>
-                <span class="text-xs text-gray-500 ml-auto">Hace 30 min</span>
-              </div>
-              <div class="flex items-center gap-3 p-2">
-                <i class="pi pi-bell text-red-500"></i>
-                <p class="text-sm text-black">Error en la transacción</p>
-                <span class="text-xs text-gray-500 ml-auto">Hace 30 min</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        
-      </div>
-    </article>
-
-    <aside class="w-full h-[350px] flex flex-row  rounded-2xl mt-3">
-
-    </aside>
   </section>
 </main>

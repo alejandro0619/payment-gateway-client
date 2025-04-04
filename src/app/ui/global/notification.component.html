@@ -1,0 +1,27 @@
+<!-- En tu template -->
+<div class="z-50">
+  <!-- Botón de notificaciones -->
+  <p-button 
+      severity="secondary"
+      (onClick)="notificationsVisible = true"
+      raised="true"
+  >
+      <i class="pi pi-bell text-xl"></i>
+  </p-button>
+
+  <!-- Drawer de notificaciones -->
+  <p-sidebar 
+      [(visible)]="notificationsVisible" 
+      position="right"
+      [style]="{ width: '25vw', 'min-width': '300px' }"
+      class="shadow-2xl"
+  >
+      <div class="p-4 h-full">
+          <h2 class="text-xl font-bold mb-4">Notificaciones</h2>
+          <div class="border-t pt-4">
+              <!-- Contenido futuro aquí -->
+              <p class="text-gray-500">No hay nuevas notificaciones</p>
+          </div>
+      </div>
+  </p-sidebar>
+</div>

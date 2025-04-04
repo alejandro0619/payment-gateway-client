@@ -1,0 +1,14 @@
+<!-- payment-method-chart.component.html -->
+<div class="w-full  p-4 border-2 border-gray-200 rounded-lg shadow-md bg-white">
+  <div class="mb-4">
+      <h3 class="text-xl font-bold mb-2">Distribución de pagos</h3>
+      <p class="text-2xl text-primary-500">Total: $4,850.00 USD</p>
+  </div>
+  <p-chart 
+      type="bar" 
+      [data]="data" 
+      [options]="options" 
+      style="height: 80px"
+  ></p-chart>
+  
+</div>

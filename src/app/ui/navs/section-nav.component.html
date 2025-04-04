@@ -1,0 +1,16 @@
+<!-- template -->
+<div class="p-4">
+  <p-treeselect 
+      class="md:w-80 w-full mb-4"
+      containerStyleClass="w-full"
+      [(ngModel)]="selectedNode"
+      [options]="navigationNodes"
+      placeholder="Buscar sección..."
+      [filter]="true"
+      [filterInputAutoFocus]="true"
+      selectionMode="single"
+      [showClear]="true"
+      (ngModelChange)="navigateToSection()"
+  />
+
+</div>
