@@ -16,20 +16,23 @@
           <ul class="list-none space-y-2">
 
             <li>
-              <div pRipple class="py-3 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition">
+              <div pRipple
+                class="py-3 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition">
                 <span class="flex items-center gap-1">
                   <i class="pi pi-home text-base"></i>
                   <span class="font-medium text-sm">Home</span>
                 </span>
               </div>
               <!-- Courses -->
-              <div pRipple class="py-2 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
+              <div pRipple
+                class="py-2 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
                 (click)="coursesVisible = !coursesVisible">
                 <span class="flex items-center gap-1">
                   <i class="pi pi-book text-base"></i>
                   <span class="font-medium text-sm">Cursos</span>
                 </span>
-                <i class="pi text-sm" [ngClass]="{'pi-chevron-down': !coursesVisible, 'pi-chevron-up': coursesVisible}"></i>
+                <i class="pi text-sm"
+                  [ngClass]="{'pi-chevron-down': !coursesVisible, 'pi-chevron-up': coursesVisible}"></i>
               </div>
               <ul *ngIf="coursesVisible" class="list-none pl-4 space-y-1">
                 <li>
@@ -51,13 +54,15 @@
 
             <!-- Transactions -->
             <li>
-              <div pRipple class="py-2 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
+              <div pRipple
+                class="py-2 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
                 (click)="transactionsVisible = !transactionsVisible">
                 <span class="flex items-center gap-1">
                   <i class="pi pi-wallet text-base"></i>
                   <span class="font-medium text-sm">Transacciones</span>
                 </span>
-                <i class="pi text-sm" [ngClass]="{'pi-chevron-down': !transactionsVisible, 'pi-chevron-up': transactionsVisible}"></i>
+                <i class="pi text-sm"
+                  [ngClass]="{'pi-chevron-down': !transactionsVisible, 'pi-chevron-up': transactionsVisible}"></i>
               </div>
               <ul *ngIf="transactionsVisible" class="list-none pl-4 space-y-1">
                 <li>
@@ -77,16 +82,18 @@
 
             <!-- employees -->
             <li>
-              <div pRipple class="py-2 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
+              <div pRipple
+                class="py-2 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
                 (click)="employeesVisible = !employeesVisible">
                 <span class="flex items-center gap-1">
                   <i class="pi pi-users text-base"></i>
                   <span class="font-medium text-sm">Empleados</span>
                 </span>
-                <i class="pi text-sm" [ngClass]="{'pi-chevron-down': !employeesVisible, 'pi-chevron-up': employeesVisible}"></i>
+                <i class="pi text-sm"
+                  [ngClass]="{'pi-chevron-down': !employeesVisible, 'pi-chevron-up': employeesVisible}"></i>
               </div>
               <ul *ngIf="employeesVisible" class="list-none pl-4 space-y-1">
-                
+
                 <li>
                   <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
                     <i class="pi pi-user-plus text-sm mr-1"></i>
@@ -122,40 +129,58 @@
 
 <div class="flex flex-col items-start p-4 w-full">
   <p-button (click)="visible = true" icon="pi pi-bars" class="shadow-lg p-0 rounded-md mb-4" />
-  
+
   <div *ngIf="!showCourses" class="flex items-center justify-center w-full">
     <div class="overflow-hidden rounded-lg shadow-lg w-full">
-      <p-table 
-        [value]="courses" 
-        stripedRows 
-        [scrollable]="true" 
-        scrollHeight="500px"
-        [tableStyle]="{'min-width': '100rem'}"
-      >
-        <ng-template #header>
-          <tr class="bg-gray-700 text-white">
-            <th class="text-xl p-5">Nombre</th>
-            <th class="text-xl p-5">Descripción</th>
-            <th class="text-xl p-5">Precio</th>
-            <th class="text-xl p-5">Fecha de Creación</th>
-          </tr>
-        </ng-template>
-        <ng-template #body let-course>
-          <tr class="hover:bg-gray-200 transition duration-300">
-            <td class="text-lg p-5">{{ course.name }}</td>
-            <td class="text-lg p-5">{{ course.description }}</td>
-            <td class="text-lg p-5">{{ course.price | currency:'USD':'symbol':'1.2-2' }}</td>
-            <td class="text-lg p-5">{{ course.createdAt | date:'dd/MM/yyyy - HH:mm' }}</td>
-          </tr>
-        </ng-template>
-      </p-table>
+      <div class="card">
+        <p-table [value]="courses" [tableStyle]="{ 'min-width': '60rem' }" stripedRows>
+          <ng-template #caption>
+            <div class="flex items-center justify-between">
+              <span class="text-xl font-bold">Cursos</span>
+              <p-button label="Refrescar tabla" raised [loading]="loading" (onClick)="ngOnInit()"/>
+            </div>
+          </ng-template>
+
+          <ng-template #header>
+            <tr>
+              <th>Nombre</th>
+              <th>Portada</th>
+              <th>Precio</th>
+              <th>Tipo de Pago</th>
+              <th>Fecha de Creación</th>
+              <th>Estado</th>
+            </tr>
+          </ng-template>
+
+          <ng-template #body let-course>
+            <tr>
+              <td>{{ course.name }}</td>
+              <td>
+                <img
+                  [src]="course.image ? course.image : 'https://primefaces.org/cdn/primeng/images/demo/product/null.jpg'"
+                  [alt]="course.name" class="w-24 rounded" />
+              </td>
+              <td>{{ course.price | currency:'USD':'symbol':'1.2-2' }}</td>
+              <td>
+                <p-tag [value]="course.paymentScheme === 'single_payment' ? 'Pago Único' : 'Cuotas'"
+                  [severity]="course.paymentScheme === 'single_payment' ? 'success' : 'warn'" />
+              </td>
+              <td>{{ course.createdAt | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <p-tag [value]="course.deletedAt ? 'Eliminado' : 'Activo'"
+                  [severity]="course.deletedAt ? 'danger' : 'success'" />
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template #footer>
+            Total de cursos: {{ courses ? courses.length : 0 }}
+          </ng-template>
+        </p-table>
+      </div>
     </div>
   </div>
 </div>
 
-<app-create-course 
-  #createCourseModal 
-  (courseCreated)="loadCourses()"
-></app-create-course>
-<app-courses *ngIf="showCourses"></app-courses>
+<app-create-course #createCourseModal (courseCreated)="loadCourses()"></app-create-course>
 

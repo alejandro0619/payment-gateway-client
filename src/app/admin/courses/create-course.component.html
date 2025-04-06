@@ -1,31 +1,153 @@
-<p-dialog header="Crear Curso" [(visible)]="visible" [modal]="true" [style]="{ width: '25rem' }">
-    <span class="p-text-secondary block mb-8">Ingrese los detalles del curso.</span>
-    <div class="flex items-center gap-4 mb-4">
-      <label for="courseName" class="font-semibold w-24">Nombre del curso</label>
-      <input pInputText id="courseName" class="flex-auto" autocomplete="off" />
-    </div>
-    <div class="flex items-center gap-4 mb-4">
-        <label for="courseName" class="font-semibold w-24">Nombre del curso</label>
-        <input pInputText id="courseName" class="flex-auto" autocomplete="off" />
-    </div>
-    
-    <div class="flex items-center gap-4 mb-4">
-        <label for="courseName" class="font-semibold w-24">Nombre del curso</label>
-        <input pInputText id="courseName" class="flex-auto" autocomplete="off" />
-    </div>
-    <div class="flex items-center gap-4 mb-4">
-        <label for="courseName" class="font-semibold w-24">Nombre del curso</label>
-        <input pInputText id="courseName" class="flex-auto" autocomplete="off" />
-    </div>
-    <div class="flex items-center gap-4 mb-4">
-        <label for="courseName" class="font-semibold w-24">Nombre del curso</label>
-        <input pInputText id="courseName" class="flex-auto" autocomplete="off" />
-    </div>
-    <div class="flex justify-end gap-2">
-        <p-button label="Cancelar" severity="secondary" />
-        <p-button label="Guardar"/>
-    </div>
-      
-  </p-dialog>
-  
-  
+<p-dialog header="Crear Curso" [(visible)]="visible" [modal]="true" [style]="{ width: '50rem', heigth: '150rem' }"
+    [baseZIndex]="10000" [closeOnEscape]="true" [dismissableMask]="true" [showHeader]="true" [resizable]="false"
+    [draggable]="false">
+    <p-stepper [value]="1" class="basis-[50rem]">
+        <p-step-list>
+            <p-step [value]="1">Configuración del curso</p-step>
+
+            <p-step [value]="2">Publicar curso</p-step>
+        </p-step-list>
+
+        <p-step-panels>
+            <p-step-panel [value]="1">
+                <ng-template #content let-activateCallback="activateCallback"
+                    let-deactivateCallback="deactivateCallback">
+                    
+                    <form [formGroup]="courseForm">
+                        <div class="flex items-center gap-4 mb-4">
+                          <label for="courseName" class="font-semibold w-32">Nombre del curso</label>
+                          <input 
+                            pInputText 
+                            id="courseName" 
+                            class="flex-auto" 
+                            autocomplete="off"
+                            formControlName="name"
+                          />
+                          <small *ngIf="courseForm.get('name')?.touched && courseForm.get('name')?.errors" class="text-red-500">
+                            El nombre es requerido (máx. 100 caracteres)
+                          </small>
+                        </div>
+                    
+                        <div class="flex items-center gap-4 mb-4">
+                          <label for="coursePrice" class="font-semibold w-32">Precio del curso</label>
+                          <p-inputNumber 
+                            inputId="coursePrice" 
+                            mode="currency" 
+                            currency="USD" 
+                            locale="en-US"
+                            class="flex-auto"
+                            formControlName="price"
+                          ></p-inputNumber>
+                          <small *ngIf="courseForm.get('price')?.touched && courseForm.get('price')?.errors" class="text-red-500">
+                            El precio debe ser mayor a 0
+                          </small>
+                        </div>
+                        <div class="flex items-center gap-4 mb-4 ">
+                          <label for="courseDescription" class="font-semibold w-32">Descripción del curso</label>
+                          <textarea 
+                            rows="5" 
+                            cols="30" 
+                            pTextarea 
+                            [autoResize]="false" 
+                            class="flex-auto h-full"
+                            formControlName="description"
+                          ></textarea>
+                          <small *ngIf="courseForm.get('description')?.touched && courseForm.get('description')?.errors" class="text-red-500">
+                            La descripción es requerida (máx. 500 caracteres)
+                          </small>
+                        </div>
+                    
+                        <div class="flex items-center gap-4 mb-4">
+                          <label for="courseImage" class="font-semibold w-32">Imagen del curso</label>
+                          <p-fileUpload 
+                            name="courseImage" 
+                            url="https://www.primefaces.org/cdn/api/upload.php"
+                            (onUpload)="onUpload($event)" 
+                            accept="image/*" 
+                            class="flex-auto" 
+                            [maxFileSize]="1000000"
+                            [style]="{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }"
+                          >
+                            <ng-template #empty>
+                              <div>Arrastre hasta aquí una imagen para subirla como portada del curso.</div>
+                            </ng-template>
+                          </p-fileUpload>
+                        </div>
+                    
+                        <div class="flex items-center gap-4 mb-4">
+                          <label for="paymentScheme" class="font-semibold w-32">Esquema de pagos</label>
+                          <p-selectButton 
+                            [options]="payment_scheme" 
+                            optionLabel="name" 
+                            optionValue="code"
+                            formControlName="paymentScheme"
+                            aria-labelledby="basic"
+                          ></p-selectButton>
+                          <small *ngIf="courseForm.get('paymentScheme')?.touched && courseForm.get('paymentScheme')?.errors" class="text-red-500">
+                            Seleccione un esquema de pago
+                          </small>
+                        </div>
+                    
+                        <div class="flex justify-end gap-3 mt-5">
+                          <p-button 
+                            label="Cancelar" 
+                            severity="secondary" 
+                            (click)="closeModal()" 
+                            [disabled]="loading"
+                          ></p-button>
+                          <p-button 
+                            label="Siguiente" 
+                            (click)="activateCallback(2)"
+                            [loading]="loading" 
+                            [disabled]="courseForm.invalid"
+                          />
+                        </div>
+                      </form>
+                </ng-template>
+            </p-step-panel>
+
+
+            <p-step-panel [value]="2">
+                <ng-template #content let-activateCallback="activateCallback"
+                    let-deactivateCallback="deactivateCallback">
+                    <div class="mb-4 p-8 flex items-center justify-center">
+                        <p-card [style]="{ width: '25rem', overflow: 'hidden' }">
+                            <!-- Cabecera con la imagen -->
+                            <ng-template #header>
+                                <img 
+                                    alt="Portada del curso" 
+                                    class="w-full h-[200px] object-cover" 
+                                    [src]="courseForm.value.image || 'https://primefaces.org/cdn/primeng/images/card-ng.jpg'" 
+                                />
+                            </ng-template>
+                            
+                            <!-- Título y subtítulo -->
+                            <ng-template #title>{{ courseForm.value.name || 'Nombre del curso' }}</ng-template>
+                            <ng-template #subtitle>{{ courseForm.value.price | currency: 'USD' }}</ng-template>
+                            
+                            <!-- Descripción -->
+                            <p class="line-clamp-3">{{ courseForm.value.description || 'Descripción del curso' }}</p>
+                            
+                            <!-- Footer con botón -->
+                            <ng-template #footer>
+                                <div class="flex gap-4 mt-1">
+                                    <p-button 
+                                        label="Publicar" 
+                                        class="w-full" 
+                                        styleClass="w-full" 
+                                        (click)="onSubmit()"
+                                        [disabled]="courseForm.invalid"
+                                    />
+                                </div>
+                            </ng-template>
+                        </p-card>
+                    </div>
+                    <p-button label="Volver" severity="secondary" (Click)="activateCallback(1)"></p-button>
+                </ng-template>
+            </p-step-panel>
+        </p-step-panels>
+
+    </p-stepper>
+
+
+</p-dialog>

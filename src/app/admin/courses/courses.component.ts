@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
@@ -10,6 +10,7 @@ import { Ripple } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
 import { CreateCourseComponent } from './create-course.component';
 import { CoursesService } from './courses.service';
+import { TagModule } from 'primeng/tag';
 
 
 @Component({
@@ -24,6 +25,7 @@ import { CoursesService } from './courses.service';
     Ripple,
     AvatarModule,
     CreateCourseComponent,
+    TagModule
   ],
   templateUrl: './courses.component.html',
 })
@@ -40,16 +42,21 @@ export class CoursesComponent implements OnInit {
   items: MenuItem[] = [];
   home: MenuItem = { icon: 'pi pi-home', routerLink: '/' };
 
+  // This state here is to show the loading spinner when the data is being fetched
+  loading: boolean = false;
+
   constructor(
     private router: Router,
-    private coursesService : CoursesService
-  ) {}
+    private coursesService: CoursesService,
+  ) { }
 
   ngOnInit() {
     this.loadCourses();
   }
 
+
   loadCourses() {
+    this.loading = true;
     this.coursesService.getCourses().subscribe({
       next: (courses) => {
         this.courses = courses.map(course => ({
@@ -57,7 +64,7 @@ export class CoursesComponent implements OnInit {
           price: parseFloat(course.price).toFixed(2),
           createdAt: new Date(course.createdAt)
         }));
-        console.log('Courses loaded:', this.courses);
+        this.loading = false;
       },
       error: (error) => {
         console.error('Error loading courses:', error);

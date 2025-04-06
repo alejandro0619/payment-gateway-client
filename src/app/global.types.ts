@@ -14,4 +14,10 @@ export type Course = {
   deletedAt: string | null;
   image: string | null;
 }
+
+export type PaymentScheme = {
+  name: string;
+  code: string;
+}
+
 export const BASE_URL = 'http://localhost:3000';
