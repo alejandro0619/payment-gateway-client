@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { 
-  ReactiveFormsModule, 
-  FormBuilder, 
-  FormGroup, 
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
   Validators,
-  FormControl 
+  FormControl
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
@@ -24,10 +24,15 @@ import { StepperModule } from 'primeng/stepper';
 import { CardModule } from 'primeng/card';
 import { DatePicker } from 'primeng/datepicker';
 import { PopoverModule } from 'primeng/popover';
+import { FormsModule } from '@angular/forms'; // Añade esta línea
 
 interface PaymentScheme {
   name: string;
   code: string;
+}
+interface Installments {
+  date: Date;
+  percentage: number;
 }
 
 @Component({
@@ -48,7 +53,8 @@ interface PaymentScheme {
     StepperModule,
     CardModule,
     DatePicker,
-    PopoverModule
+    PopoverModule,
+    FormsModule
   ],
   templateUrl: './create-course.component.html',
   providers: [MessageService]
@@ -59,6 +65,19 @@ export class CreateCourseComponent {
   uploadedFile: File | null = null;
   loading: boolean = false;
 
+  /*
+    First the user selects the payment scheme option, if it is "single_payment" the total is the one specified in the course's price.
+    Otherwise, when the user selects "installment" as payment scheme, the user must select the number of installments and the percentage of each installment.
+    First, selects the date of each installment, then, when clicking on the button with the date of the installment as a label, it will pop up a window to enter the percentage of the installment. Clicking on the "save installment" button will save the installment (date and its percentage) and close the window.
+    The user can add as many installments as he wants, but the sum of the percentages must be 100%.
+  */
+  selectedInstallMentIndex: null | number = null;
+  installments: Installments[] = [];
+
+  percentagePerInstallment: number = 0; // initially the percentage per installment is 0, this obviosly needs to be updated manually.
+
+  percentageLeftToCover: number = 100; // since the initial value of percentage per installment is 0, the percentage left to cover is 100%, when it reaches 0, the user can no longer add installments.
+  canAddInstallments: boolean = true; // initially the user can add installments, this will be updated when the percentage left to cover reaches 0.
   dates: Date[] | undefined;
   sortedDates: Date[] = [];
 
@@ -78,31 +97,31 @@ export class CreateCourseComponent {
       description: ['', [Validators.required, Validators.maxLength(500)]],
       image: [null],
       paymentScheme: ['single_payment', Validators.required],
-      dates: [null, Validators.required],
+      dates: [null,],
     });
 
     this.courseForm.get('dates')?.valueChanges.subscribe((dates: Date[]) => {
       this.sortDates(dates)
     })
-}
-
-sortDates(dates?: Date[]): void {
-  const datesToSort = dates || this.courseForm.get('dates')?.value;
-  
-  if (datesToSort?.length > 0) {
-    // Ordenar fechas
-    const sorted = [...datesToSort].sort((a, b) => a.getTime() - b.getTime());
-    
-    // Actualizar el formulario solo si el orden cambió
-    if (JSON.stringify(sorted) !== JSON.stringify(datesToSort)) {
-      this.courseForm.get('dates')?.setValue(sorted, { emitEvent: false });
-    }
-    
-    this.sortedDates = sorted;
-  } else {
-    this.sortedDates = [];
   }
-}
+
+  sortDates(dates?: Date[]): void {
+    const datesToSort = dates || this.courseForm.get('dates')?.value;
+
+    if (datesToSort?.length > 0) {
+
+      const sorted = [...datesToSort].sort((a, b) => a.getTime() - b.getTime());
+
+      // Actualizar el formulario solo si el orden cambió
+      if (JSON.stringify(sorted) !== JSON.stringify(datesToSort)) {
+        this.courseForm.get('dates')?.setValue(sorted, { emitEvent: false });
+      }
+
+      this.sortedDates = sorted;
+    } else {
+      this.sortedDates = [];
+    }
+  }
   onUpload(event: FileUploadEvent) {
     if (event.files.length > 0) {
       const file = event.files[0];
@@ -116,6 +135,28 @@ sortDates(dates?: Date[]): void {
     }
   }
 
+  saveInstallment() {
+    if (this.percentageLeftToCover === 0) {
+      console.log('Cannot add more installments, total percentage is 100% already.');
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No puedes agregar más cuotas, el porcentaje total ya es 100%'
+      });
+      return;
+    }
+
+    this.installments.push(
+      {
+        date: this.sortedDates[this.selectedInstallMentIndex!],
+        percentage: this.percentagePerInstallment
+      }
+    )
+    this.percentageLeftToCover = this.percentageLeftToCover - this.percentagePerInstallment;
+    this.selectedInstallMentIndex = null;
+    this.percentagePerInstallment = 0; // reset the percentage per installment to 0 after saving the installment
+    console.log(this.installments, this.percentageLeftToCover);
+  }
 
   onSubmit() {
     if (this.courseForm.invalid) {
@@ -124,23 +165,24 @@ sortDates(dates?: Date[]): void {
     }
 
     this.loading = true;
-     
-    // This data goes to the first endpoint: /courses
-    const formData = new FormData();
-    formData.append('name', this.courseForm.value.name);
-    formData.append('price', this.courseForm.value.price.toString());
-    formData.append('description', this.courseForm.value.description);
-    formData.append('paymentScheme', this.courseForm.value.paymentScheme);
-    formData.append('dates', JSON.stringify(this.courseForm.value.dates));
 
 
     const formDataImage = new FormData();
-    console.log(this.courseForm.value.dates)
+
+    const courseData = {
+      name: this.courseForm.value.name,
+      price: this.courseForm.value.price,
+      description: this.courseForm.value.description,
+      paymentScheme: this.courseForm.value.paymentScheme,
+      installments: this.installments.length > 0 ? this.installments : '[]'
+    }
     if (this.uploadedFile) {
       formDataImage.append('image', this.uploadedFile);
     }
-
-    this.http.post('http://localhost:3000/course/', formData)
+    console.log(courseData);
+    this.http.post('http://localhost:3000/course/', courseData, {
+      headers: { 'Content-Type': 'application/json' },
+    })
       .subscribe({
         next: () => {
           this.messageService.add({
