@@ -25,8 +25,9 @@ import { TagModule } from 'primeng/tag';
     Ripple,
     AvatarModule,
     CreateCourseComponent,
-    TagModule
-  ],
+    TagModule,
+    
+],
   templateUrl: './courses.component.html',
 })
 export class CoursesComponent implements OnInit {

@@ -125,10 +125,13 @@
     </ng-template>
   </p-drawer>
 </div>
+<app-create-course #createCourseModal (courseCreated)="loadCourses()"></app-create-course>
+
+
 
 
 <div class="flex flex-col items-start p-4 w-full">
-  <p-button (click)="visible = true" icon="pi pi-bars" class="shadow-lg p-0 rounded-md mb-4" />
+  <!--<p-button (click)="visible = true" icon="pi pi-bars" class="shadow-lg p-0 rounded-md mb-4" /> -->
 
   <div *ngIf="!showCourses" class="flex items-center justify-center w-full">
     <div class="overflow-hidden rounded-lg shadow-lg w-full">
@@ -182,5 +185,8 @@
   </div>
 </div>
 
-<app-create-course #createCourseModal (courseCreated)="loadCourses()"></app-create-course>
+
+
+
+
 

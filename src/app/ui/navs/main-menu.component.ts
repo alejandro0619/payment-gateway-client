@@ -48,7 +48,22 @@ export class MainMenu implements OnInit {
   ngOnInit() {
     this.loadCourses();
   }
-
+  goToDashboard() {
+    console.log("Navigating to dashboard...");
+    this.router.navigate(['admin/dashboard']); 
+  }
+  goToSignUpOperator(){
+    console.log("Navigating to signUp-Operator...");
+    this.router.navigate(['auth/signup-operator']); 
+  }
+  goToShowCourses(){
+    console.log("Navigating to Courses...");
+    this.router.navigate(['admin/courses']); 
+  }
+  goToTransactions(){
+    console.log("Navigating to Transactions...");
+    this.router.navigate(['admin/transactions']); 
+  }
   loadCourses() {
     this.coursesService.getCourses().subscribe({
       next: (courses) => {

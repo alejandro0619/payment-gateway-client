@@ -32,7 +32,7 @@ import { TransactionsTableComponent } from '../ui/tables/transaction-dashboard.c
     MainMenu,
     InsightCard,
     TransactionsTableComponent,
-
+    
 ],
   templateUrl: './dashboard.component.html',
 })
@@ -45,7 +45,7 @@ export class DashboardComponent implements OnInit {
   constructor(
     private router: Router,
   ) { }
-
+  
   ngOnInit(): void {
 
   }

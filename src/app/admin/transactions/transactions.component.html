@@ -1,0 +1,77 @@
+<div>
+  <div class="absolute top-5 left-5">
+    <main-menu />
+  </div>
+
+  <div class="mt-20 ml-20 mr-20 rounded-2xl">
+    <div class="mb-4 flex items-center">
+      <p-dropdown [options]="filterOptions" [(ngModel)]="selectedFilter" optionLabel="label"
+        placeholder="Seleccionar filtro" class="mr-4"></p-dropdown>
+      <input pInputText type="text" [(ngModel)]="searchText" (input)="filterTable()" placeholder="Buscar"
+        class="p-inputtext-sm border-2 rounded-md border-gray-300 " />
+      <button class="bg-gray-400 text-white py-1 px-4 rounded hover:bg-gray-300 transition ml-4"
+        (click)="filterTable()">
+        Buscar
+      </button>
+      <button class="pi pi-file-import bg-gray-200 px-4 py-2 rounded-md text-xl text-gray-700 hover:bg-gray-300 ml-2">
+      </button>
+
+    </div>
+
+    <p-table [value]="filteredTransactions" selectionMode="single" [(selection)]="selectedTransaction" dataKey="id"
+      [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="rows" [first]="first"
+      [rowsPerPageOptions]="[5, 10, 15]" (onPage)="onPageChange($event)" [responsiveLayout]="'scroll'">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Transaction ID</th>
+          <th>Course Name</th>
+          <th>Amount</th>
+          <th>Payment Method</th>
+          <th>Status</th>
+          <th>User Email</th>
+          <th>Validated By</th>
+          <th>Acciones</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-transaction>
+        <tr [pSelectableRow]="transaction">
+          <td>{{ transaction.id }}</td>
+          <td>{{ transaction.course?.name }}</td>
+          <td>{{ transaction.amount }}</td>
+          <td>{{ transaction.paymentMethod }}</td>
+          <td>{{ transaction.status }}</td>
+          <td>{{ transaction.user?.email }}</td>
+          <td>{{ transaction.validatedBy?.email || 'N/A' }}</td>
+          <td>
+            <button class="bg-green-300 text-white py-1 px-3 rounded hover:bg-green-400 transition"
+              (click)="viewDetails(transaction)">
+              Detalles
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-dialog header="Transaction Details" [(visible)]="displayDialog" [modal]="true" [style]="{ width: '40vw' }"
+    [baseZIndex]="10000" [dismissableMask]="true">
+    <ng-container *ngIf="selectedTransaction">
+      <div class="space-y-2">
+        <p><strong>ID:</strong> {{ selectedTransaction.id }}</p>
+        <p><strong>Created At:</strong> {{ selectedTransaction.createdAt }}</p>
+        <p><strong>Updated At:</strong> {{ selectedTransaction.updatedAt || 'N/A' }}</p>
+        <p><strong>Deleted At:</strong> {{ selectedTransaction.deletedAt || 'N/A' }}</p>
+        <p><strong>Description:</strong> {{ selectedTransaction.description || 'N/A' }}</p>
+        <p><strong>Payment Method:</strong> {{ selectedTransaction.paymentMethod }}</p>
+        <p><strong>Status:</strong> {{ selectedTransaction.status }}</p>
+        <p><strong>Course Description:</strong> {{ selectedTransaction.course?.description || 'N/A' }}</p>
+        <p><strong>Course Price:</strong> {{ selectedTransaction.course?.price || 'N/A' }}</p>
+        <p><strong>Course Created At:</strong> {{ selectedTransaction.course?.createdAt }}</p>
+        <p><strong>Course Updated At:</strong> {{ selectedTransaction.course?.updatedAt }}</p>
+        <p><strong>User ID:</strong> {{ selectedTransaction.user?.id }}</p>
+        <p><strong>Validated By:</strong> {{ selectedTransaction.validatedBy?.email || 'N/A' }}</p>
+      </div>
+    </ng-container>
+  </p-dialog>
+</div>

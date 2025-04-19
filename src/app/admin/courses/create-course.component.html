@@ -31,7 +31,7 @@
             </div>
             <div class="flex items-center gap-4 mb-4 ">
               <label for="courseDescription" class="font-semibold w-32">Descripción del curso</label>
-              <textarea rows="5" cols="30" pTextarea [autoResize]="false" class="flex-auto h-full"
+              <textarea id="courseDescription" ws="5" cols="30" pTextarea [autoResize]="false" class="flex-auto h-full"
                 formControlName="description"></textarea>
               <small *ngIf="courseForm.get('description')?.touched && courseForm.get('description')?.errors"
                 class="text-red-500">

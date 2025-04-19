@@ -10,7 +10,7 @@ import { CoursesComponent } from './admin/courses/courses.component';
 import { DashboardComponent as UserDashboard } from './user/dashboard.component';
 import { DashboardComponent as OperatorDashboard } from './operator/dashboard.component';
 import { DashboardComponent as AdminDashboard } from './admin/dashboard.component';
-
+import { TransactionsComponent } from './admin/transactions/transactions.component';
 import { AuthGuard } from './auth/auth.guard';
 import { FirstRunGuard } from '../core/guards/first-run.guard';
 
@@ -56,6 +56,11 @@ export const routes: Routes = [
       {
         path: 'admin/courses',
         component: CoursesComponent,
+        // canActivate: [AuthGuard],
+      },
+      {
+        path: 'admin/transactions',
+        component: TransactionsComponent,
         // canActivate: [AuthGuard],
       },
       {

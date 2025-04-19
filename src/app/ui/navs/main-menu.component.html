@@ -19,7 +19,7 @@
               <div pRipple class="py-3 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition">
                 <span class="flex items-center gap-1">
                   <i class="pi pi-home text-base"></i>
-                  <span class="font-medium text-sm">Home</span>
+                  <span (click)="goToDashboard()"class="font-medium text-sm">Home</span>
                 </span>
               </div>
               <!-- Courses -->
@@ -43,7 +43,7 @@
                   <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition"
                     (click)="showCourses = true">
                     <i class="pi pi-table text-sm mr-1"></i>
-                    <span class="font-medium text-sm">Ver cursos</span>
+                    <span (click)="goToShowCourses()"class="font-medium text-sm">Ver cursos</span>
                   </a>
                 </li>
               </ul>
@@ -63,7 +63,7 @@
                 <li>
                   <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
                     <i class="pi pi-clock text-sm mr-1"></i>
-                    <span class="font-medium text-sm">Historial de Pagos</span>
+                    <span (click)="goToTransactions()" class="font-medium text-sm">Historial de Pagos</span>
                   </a>
                 </li>
                 <li>
@@ -90,7 +90,7 @@
                 <li>
                   <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
                     <i class="pi pi-user-plus text-sm mr-1"></i>
-                    <span class="font-medium text-sm">Registrar Empleado</span>
+                    <span (click)="goToSignUpOperator()"class="font-medium text-sm">Registrar Empleado</span>
                   </a>
                 </li>
                 <li>
@@ -118,5 +118,5 @@
     </ng-template>
   </p-drawer>
 </div>
-
+<app-create-course #createCourseModal (courseCreated)="loadCourses()"></app-create-course>
 <p-button (click)="visible = true" icon="pi pi-bars" class="shadow-lg p-0 rounded-md mb-4" severity="secondary" raised="true"/>
