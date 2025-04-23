@@ -6,7 +6,10 @@ import {
   FormGroup,
   Validators,
   FormControl,
-  FormArray
+  FormArray,
+  ValidatorFn,
+  ValidationErrors,
+  AbstractControl
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
@@ -121,7 +124,7 @@ export class CreateCourseComponent {
     return this.courseForm.get('installments') as FormArray;
   }
   shouldDisableNextButton(): boolean {
-    return this.totalPercentage !== 100 || this.installmentsArray.invalid || this.courseForm.invalid;
+    return this.totalPercentage !== 100 || this.installmentsArray.invalid || this.courseForm.invalid || !this.isInstallmentsValid;
   }
   generateInstallmentsTable(): void {
     const num = this.courseForm.get('installmentsAmount')?.value || 1;
@@ -132,7 +135,7 @@ export class CreateCourseComponent {
 
     for (let i = 0; i < num; i++) {
       this.installmentsArray.push(this.fb.group({
-        date: [new Date(currentDate.setMonth(currentDate.getMonth() + 1)), Validators.required],
+        date: [new Date(currentDate.setMonth(currentDate.getMonth() + 1)), [Validators.required, this.dateAfterPreviousValidator(i)]],
         percentage: [
           i === num - 1
             ? 100 - (Math.floor(equalPercentage) * (num - 1))
@@ -145,6 +148,35 @@ export class CreateCourseComponent {
     this.updateTotalPercentage();
   }
 
+  private dateAfterPreviousValidator(index: number): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (index === 0) return null;
+
+      const previousControl = this.installmentsArray.at(index - 1);
+      if (!previousControl || !control.value) return null;
+
+      const previousDate = previousControl.get('date')?.value;
+      const currentDate = control.value;
+
+      return currentDate > previousDate ? null : { invalidDateOrder: true };
+    };
+  }
+  get isInstallmentsValid(): boolean {
+    if (this.courseForm.get('paymentScheme')?.value === 'single_payment') return true;
+
+    return this.totalPercentage === 100 &&
+      this.installmentsArray.valid &&
+      this.areDatesSequential();
+  }
+  areDatesSequential(): boolean {
+    for (let i = 1; i < this.installmentsArray.length; i++) {
+      const prevDate = this.installmentsArray.at(i - 1).get('date')?.value;
+      const currDate = this.installmentsArray.at(i).get('date')?.value;
+
+      if (!currDate || currDate <= prevDate) return false;
+    }
+    return true;
+  }
   // Actualizar total
   updateTotalPercentage(): void {
     this.totalPercentage = this.installmentsArray.controls
@@ -176,7 +208,6 @@ export class CreateCourseComponent {
 
       const sorted = [...datesToSort].sort((a, b) => a.getTime() - b.getTime());
 
-      // Actualizar el formulario solo si el orden cambió
       if (JSON.stringify(sorted) !== JSON.stringify(datesToSort)) {
         this.courseForm.get('dates')?.setValue(sorted, { emitEvent: false });
       }
@@ -230,7 +261,6 @@ export class CreateCourseComponent {
     }
 
     this.loading = true;
-
     try {
       // 1. Subir imagen primero si existe
       const imageUrl = this.courseForm.value.image
@@ -243,10 +273,10 @@ export class CreateCourseComponent {
         price: this.courseForm.value.price,
         description: this.courseForm.value.description,
         paymentScheme: this.courseForm.value.paymentScheme,
-        installments: this.installments.length > 0 ? this.installments : null,
+        installments: this.installmentsArray.value,
         image: imageUrl
       };
-
+      console.log("esto es lo que se va a guardar", courseData);
       // 3. Guardar el curso
       await this.http.post('http://localhost:3000/course/', courseData, {
         headers: { 'Content-Type': 'application/json' },

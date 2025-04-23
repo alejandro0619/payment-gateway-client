@@ -90,8 +90,12 @@
                     <tr [formGroup]="control">
                       <td>{{ rowIndex + 1 }}</td>
                       <td>
-                        <p-datePicker formControlName="date" dateFormat="dd/mm/yy" [showIcon]="true">
+                        <p-datePicker formControlName="date" dateFormat="dd/mm/yy" [showIcon]="true"
+                          [minDate]="rowIndex > 0 ? installmentsArray.at(rowIndex-1).value.date : null" appendTo="body">
                         </p-datePicker>
+                        <small *ngIf="control.get('date')?.errors?.invalidDateOrder" class="p-error block">
+                          La fecha debe ser posterior a la cuota {{ rowIndex }}
+                        </small>
                       </td>
                       <td>
                         <div class="flex align-items-center gap-2">
@@ -116,6 +120,10 @@
                 <div class="mt-4">
                   <p-message severity="error" *ngIf="totalPercentage !== 100">
                     Total: {{ totalPercentage }}% (Debe sumar 100%)
+                  </p-message>
+
+                  <p-message severity="error" *ngIf="totalPercentage === 100 && !areDatesSequential()" class="mt-2">
+                    Las fechas de las cuotas deben ser secuenciales
                   </p-message>
                 </div>
               </div>
