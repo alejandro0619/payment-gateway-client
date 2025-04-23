@@ -11,6 +11,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { CreateCourseComponent } from './create-course.component';
 import { CoursesService } from './courses.service';
 import { TagModule } from 'primeng/tag';
+import { MainMenu } from '../../ui/navs/main-menu.component';
 
 
 @Component({
@@ -22,10 +23,9 @@ import { TagModule } from 'primeng/tag';
     BreadcrumbModule,
     DrawerModule,
     ButtonModule,
-    Ripple,
     AvatarModule,
-    CreateCourseComponent,
     TagModule,
+    MainMenu
     
 ],
   templateUrl: './courses.component.html',

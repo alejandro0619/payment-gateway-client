@@ -24,7 +24,8 @@ import { StepperModule } from 'primeng/stepper';
 import { CardModule } from 'primeng/card';
 import { DatePicker } from 'primeng/datepicker';
 import { PopoverModule } from 'primeng/popover';
-import { FormsModule } from '@angular/forms'; // Añade esta línea
+import { FormsModule } from '@angular/forms';
+import { catchError, map } from 'rxjs/operators';
 
 interface PaymentScheme {
   name: string;
@@ -54,7 +55,7 @@ interface Installments {
     CardModule,
     DatePicker,
     PopoverModule,
-    FormsModule
+    FormsModule,
   ],
   templateUrl: './create-course.component.html',
   providers: [MessageService]
@@ -62,7 +63,7 @@ interface Installments {
 export class CreateCourseComponent {
   courseForm: FormGroup;
   visible: boolean = false;
-  uploadedFile: File | null = null;
+  uploadedFiles: File | null = null;
   loading: boolean = false;
 
   /*
@@ -123,14 +124,16 @@ export class CreateCourseComponent {
     }
   }
   onUpload(event: FileUploadEvent) {
+
     if (event.files.length > 0) {
       const file = event.files[0];
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.courseForm.patchValue({
-          image: e.target.result // URL temporal de la imagen
+          image: e.target.result 
         });
       };
+      this.uploadedFiles = file
       reader.readAsDataURL(file);
     }
   }
@@ -157,54 +160,67 @@ export class CreateCourseComponent {
     this.percentagePerInstallment = 0; // reset the percentage per installment to 0 after saving the installment
     console.log(this.installments, this.percentageLeftToCover);
   }
-
-  onSubmit() {
+  async onSubmit() {
     if (this.courseForm.invalid) {
       this.markAllAsTouched();
       return;
     }
-
+  
     this.loading = true;
-
-
-    const formDataImage = new FormData();
-
-    const courseData = {
-      name: this.courseForm.value.name,
-      price: this.courseForm.value.price,
-      description: this.courseForm.value.description,
-      paymentScheme: this.courseForm.value.paymentScheme,
-      installments: this.installments.length > 0 ? this.installments : '[]'
-    }
-    if (this.uploadedFile) {
-      formDataImage.append('image', this.uploadedFile);
-    }
-    console.log(courseData);
-    this.http.post('http://localhost:3000/course/', courseData, {
-      headers: { 'Content-Type': 'application/json' },
-    })
-      .subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Curso creado correctamente'
-          });
-          this.courseForm.reset();
-          this.visible = false;
-        },
-        error: (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'No se pudo crear el curso'
-          });
-          console.error('Error:', error);
-        },
-        complete: () => {
-          this.loading = false;
-        }
+  
+    try {
+      // 1. Subir imagen primero si existe
+      const imageUrl = this.courseForm.value.image 
+        ? await this.uploadImage().toPromise()
+        : null;
+  
+      // 2. Crear objeto del curso con la URL de la imagen
+      const courseData = {
+        name: this.courseForm.value.name,
+        price: this.courseForm.value.price,
+        description: this.courseForm.value.description,
+        paymentScheme: this.courseForm.value.paymentScheme,
+        installments: this.installments.length > 0 ? this.installments : null,
+        image: imageUrl
+      };
+  
+      // 3. Guardar el curso
+      await this.http.post('http://localhost:3000/course/', courseData, {
+        headers: { 'Content-Type': 'application/json' },
+      }).toPromise();
+  
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: 'Curso creado correctamente'
       });
+      
+      this.courseForm.reset();
+      this.visible = false;
+  
+    } catch (error) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail:  'Error en el proceso'
+      });
+      console.error('Error:', error);
+    } finally {
+      this.loading = false;
+    }
+  }
+  
+  private uploadImage() {
+    const formData = new FormData();
+
+    formData.append('file', this.uploadedFiles!, this.courseForm.value.name);
+  
+    return this.http.put<{ url: string }>('http://localhost:3000/course/upload', formData).pipe(
+      map(response => response.url),
+      catchError(error => {
+        throw new Error('Error al subir la imagen');
+      })
+    );
   }
 
   markAllAsTouched() {
