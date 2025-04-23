@@ -5,7 +5,8 @@ import {
   FormBuilder,
   FormGroup,
   Validators,
-  FormControl
+  FormControl,
+  FormArray
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
@@ -26,6 +27,10 @@ import { DatePicker } from 'primeng/datepicker';
 import { PopoverModule } from 'primeng/popover';
 import { FormsModule } from '@angular/forms';
 import { catchError, map } from 'rxjs/operators';
+import { MessageModule } from 'primeng/message';
+import { SliderModule } from 'primeng/slider';
+import { TableModule } from 'primeng/table';
+import { ChangeDetectorRef } from '@angular/core';
 
 interface PaymentScheme {
   name: string;
@@ -56,6 +61,9 @@ interface Installments {
     DatePicker,
     PopoverModule,
     FormsModule,
+    MessageModule,
+    SliderModule,
+    TableModule
   ],
   templateUrl: './create-course.component.html',
   providers: [MessageService]
@@ -74,6 +82,7 @@ export class CreateCourseComponent {
   */
   selectedInstallMentIndex: null | number = null;
   installments: Installments[] = [];
+  totalPercentage: number = 0;
 
   percentagePerInstallment: number = 0; // initially the percentage per installment is 0, this obviosly needs to be updated manually.
 
@@ -90,7 +99,8 @@ export class CreateCourseComponent {
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private cdRef: ChangeDetectorRef
   ) {
     this.courseForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
@@ -99,11 +109,64 @@ export class CreateCourseComponent {
       image: [null],
       paymentScheme: ['single_payment', Validators.required],
       dates: [null,],
+      installmentsAmount: [0],
+      installments: this.fb.array([]),
     });
 
     this.courseForm.get('dates')?.valueChanges.subscribe((dates: Date[]) => {
       this.sortDates(dates)
     })
+  }
+  get installmentsArray(): FormArray {
+    return this.courseForm.get('installments') as FormArray;
+  }
+  shouldDisableNextButton(): boolean {
+    return this.totalPercentage !== 100 || this.installmentsArray.invalid || this.courseForm.invalid;
+  }
+  generateInstallmentsTable(): void {
+    const num = this.courseForm.get('installmentsAmount')?.value || 1;
+    this.installmentsArray.clear();
+
+    const equalPercentage = 100 / num;
+    const currentDate = new Date();
+
+    for (let i = 0; i < num; i++) {
+      this.installmentsArray.push(this.fb.group({
+        date: [new Date(currentDate.setMonth(currentDate.getMonth() + 1)), Validators.required],
+        percentage: [
+          i === num - 1
+            ? 100 - (Math.floor(equalPercentage) * (num - 1))
+            : Math.floor(equalPercentage),
+          [Validators.required, Validators.min(1), Validators.max(100)]
+        ]
+      }));
+    }
+
+    this.updateTotalPercentage();
+  }
+
+  // Actualizar total
+  updateTotalPercentage(): void {
+    this.totalPercentage = this.installmentsArray.controls
+      .reduce((sum, control) => sum + (control.value.percentage || 0), 0);
+  }
+
+  // Eliminar cuota
+  removeInstallment(index: number): void {
+    this.installmentsArray.removeAt(index);
+    this.updateTotalPercentage();
+  }
+
+  getInstallmentsData() {
+    return this.installments.map((installments) => ({
+      date: installments.date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }),
+      percentage: installments.percentage,
+      amount: this.courseForm.value.price * (installments.percentage / 100)
+    }))
   }
 
   sortDates(dates?: Date[]): void {
@@ -130,7 +193,7 @@ export class CreateCourseComponent {
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.courseForm.patchValue({
-          image: e.target.result 
+          image: e.target.result
         });
       };
       this.uploadedFiles = file
@@ -165,15 +228,15 @@ export class CreateCourseComponent {
       this.markAllAsTouched();
       return;
     }
-  
+
     this.loading = true;
-  
+
     try {
       // 1. Subir imagen primero si existe
-      const imageUrl = this.courseForm.value.image 
+      const imageUrl = this.courseForm.value.image
         ? await this.uploadImage().toPromise()
         : null;
-  
+
       // 2. Crear objeto del curso con la URL de la imagen
       const courseData = {
         name: this.courseForm.value.name,
@@ -183,38 +246,38 @@ export class CreateCourseComponent {
         installments: this.installments.length > 0 ? this.installments : null,
         image: imageUrl
       };
-  
+
       // 3. Guardar el curso
       await this.http.post('http://localhost:3000/course/', courseData, {
         headers: { 'Content-Type': 'application/json' },
       }).toPromise();
-  
+
       this.messageService.add({
         severity: 'success',
         summary: 'Éxito',
         detail: 'Curso creado correctamente'
       });
-      
+
       this.courseForm.reset();
       this.visible = false;
-  
+
     } catch (error) {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail:  'Error en el proceso'
+        detail: 'Error en el proceso'
       });
       console.error('Error:', error);
     } finally {
       this.loading = false;
     }
   }
-  
+
   private uploadImage() {
     const formData = new FormData();
 
     formData.append('file', this.uploadedFiles!, this.courseForm.value.name);
-  
+
     return this.http.put<{ url: string }>('http://localhost:3000/course/upload', formData).pipe(
       map(response => response.url),
       catchError(error => {

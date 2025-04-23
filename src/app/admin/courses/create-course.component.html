@@ -60,35 +60,71 @@
               </small>
             </div>
 
-            <div *ngIf="courseForm.get('paymentScheme')?.value === 'installments'"
-              class="flex items-center gap-4 mb-4 ">
-              <label for="dates" class="font-semibold w-32">Fechas de cuotas</label>
-              <div class="flex flex-col gap-2">
-                <p-datepicker selectionMode="multiple" [readonlyInput]="true" formControlName="dates"
-                  dateFormat="dd/mm/yy" [showIcon]="true" (onSelect)="sortDates()"
-                  (onBlur)="sortDates()" [disabled]="percentageLeftToCover === 0"></p-datepicker>
-
-
+            <!-- En tu template -->
+            <div *ngIf="courseForm.get('paymentScheme')?.value === 'installments'" class="flex flex-col gap-4">
+              <div class="flex items-center gap-4 mb-4">
+                <label class="font-semibold w-32">Cantidad de cuotas</label>
+                <div class="flex items-center gap-4">
+                  <p-inputNumber formControlName="installmentsAmount" [min]="1" [max]="12" mode="decimal"
+                    [showButtons]="true" class="w-24">
+                  </p-inputNumber>
+                  <p-button label="Generar tabla" (onClick)="generateInstallmentsTable()"
+                    [disabled]="!courseForm.get('installmentsAmount')?.valid">
+                  </p-button>
+                </div>
               </div>
 
+              <div *ngIf="installmentsArray.length > 0">
+                <p-table [value]="installmentsArray.controls" responsiveLayout="scroll">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th>#</th>
+                      <th>Fecha</th>
+                      <th>Porcentaje</th>
+                      <th>Monto</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </ng-template>
 
-            </div>
+                  <ng-template pTemplate="body" let-control let-rowIndex="rowIndex">
+                    <tr [formGroup]="control">
+                      <td>{{ rowIndex + 1 }}</td>
+                      <td>
+                        <p-datePicker formControlName="date" dateFormat="dd/mm/yy" [showIcon]="true">
+                        </p-datePicker>
+                      </td>
+                      <td>
+                        <div class="flex align-items-center gap-2">
+                          <p-inputNumber formControlName="percentage" suffix="%" [min]="1" [max]="100" mode="decimal"
+                            (onInput)="updateTotalPercentage()">
+                          </p-inputNumber>
+                        </div>
+                      </td>
+                      <td>
+                        {{ (courseForm.value.price * (control.value.percentage / 100)) | currency }}
+                      </td>
+                      <td>
+                        <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm"
+                          (click)="removeInstallment(rowIndex)">
+                        </button>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
 
-            <div *ngIf="courseForm.get('paymentScheme')?.value === 'installments'" class="flex items-center gap-4 mb-4 ">
-              <label class="font-semibold w-32"> Porcentaje por cuota </label>
-              <div class="mt-2 grid grid-cols-3 gap-4">
-                
-                <p-button *ngFor="let date of sortedDates; let i = index;" label="{{ date | date:'dd/MM/yyyy' }}"
-                  class="mb-2" icon="pi pi-money-bill" (click)="selectedInstallMentIndex = i; op.toggle($event);">
-                </p-button>
+                <!-- Validación de total -->
+                <div class="mt-4">
+                  <p-message severity="error" *ngIf="totalPercentage !== 100">
+                    Total: {{ totalPercentage }}% (Debe sumar 100%)
+                  </p-message>
+                </div>
               </div>
             </div>
-
 
             <div class="flex justify-end gap-3 mt-5">
               <p-button label="Cancelar" severity="secondary" (click)="closeModal()" [disabled]="loading"></p-button>
               <p-button label="Siguiente" (click)="activateCallback(2)" [loading]="loading"
-                [disabled]="courseForm.invalid" />
+                [disabled]="shouldDisableNextButton()" />
             </div>
           </form>
         </ng-template>
@@ -134,7 +170,8 @@
 
 <p-popover #op>
   <label for="" class="mr-4">Porcentaje de la cuota</label>
-  <p-inputnumber inputId="integeronly"  prefix="%" [min]="1" [max]="percentageLeftToCover" [(ngModel)]="percentagePerInstallment " [disabled]="percentageLeftToCover === 0"/>
-  <p-button class="ml-4" label="Guardar" (click)=" saveInstallment()" [disabled]="percentageLeftToCover === 0"></p-button>
+  <p-inputnumber inputId="integeronly" prefix="%" [min]="1" [max]="percentageLeftToCover"
+    [(ngModel)]="percentagePerInstallment " [disabled]="percentageLeftToCover === 0" />
+  <p-button class="ml-4" label="Guardar" (click)=" saveInstallment()"
+    [disabled]="percentageLeftToCover === 0"></p-button>
 </p-popover>
-
