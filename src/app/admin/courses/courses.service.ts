@@ -26,11 +26,11 @@ export class CoursesService {
   constructor(private http: HttpClient) { }
 
   getCourses(): Observable<Course[]> {
-    return this.http.get<any[]>(`${this.API_URL}/course`);
+    return this.http.get<Course[]>(`${this.API_URL}/course`);
   }
 
   getCoursesByid(id: string): Observable<Course> {
-    return this.http.get<any>(`${this.API_URL}/course/${id}`).pipe(
+    return this.http.get<Course>(`${this.API_URL}/course/${id}`).pipe(
       catchError(this.handleError)
     );
   }

@@ -1,37 +1,65 @@
-export enum Roles {
-  ADMIN = 'admin',
-  OPERATOR = 'accounting',
-  USER = 'user'
+
+
+export interface Transaction {
+  id: string;
+  createdAt: string;
+  updatedAt: string | null;
+  deletedAt: string | null;
+  amount: string;
+  description: string;
+  paymentMethod: PaymentMethod;
+  status: TransactionStatus;
+  course: Course;
+  user: User;
+  validatedBy: User | null;
 }
 
-export type Course = {
+export interface Course {
   id: string;
+  createdAt: string;
+  updatedAt: string | null;
+  deletedAt: string | null;
+  price: string;
   name: string;
   description: string;
-  price: string;
-  createdAt: string;
-  updatedAt: string | null;
-  deletedAt: string | null;
   image: string | null;
+  paymentScheme: PaymentScheme;
 }
 
-export type PaymentScheme = {
-  name: string;
-  code: string;
-}
-
-export type Transaction = {
+export interface User {
   id: string;
   createdAt: string;
   updatedAt: string | null;
   deletedAt: string | null;
-  amount: string | null;
-  description: string | null;
-  paymentMethod: 'paypal' | 'zelle' | null;
-  status: 'completed' | 'in_process' | 'rejected' | 'ready_to_be_checked' | null;
-  course: Course | null;
-  user: { id: string; email: string } | null; 
-  validatedBy: { id: string; email: string } | null; 
+  identificationNumber: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: Roles;
+  balance: string;
 }
 
+// Tipos específicos
+export type TransactionStatus = 
+  | 'ready_to_be_checked' 
+  | 'completed'
+  | 'pending'
+  | 'rejected'
+  | 'canceled';
+
+export type PaymentMethod = 
+  | 'zelle' 
+  | 'paypal'
+
+export type PaymentScheme = 
+  | 'single_payment'
+  | 'installments';
+
+
+  export enum Roles {
+    ADMIN = 'admin',
+    OPERATOR = 'accounting',
+    USER = 'user'
+}
+  
 export const BASE_URL = 'http://localhost:3000';

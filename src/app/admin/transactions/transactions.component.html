@@ -23,13 +23,13 @@
       [rowsPerPageOptions]="[5, 10, 15]" (onPage)="onPageChange($event)" [responsiveLayout]="'scroll'">
       <ng-template pTemplate="header">
         <tr>
-          <th>Transaction ID</th>
-          <th>Course Name</th>
-          <th>Amount</th>
-          <th>Payment Method</th>
-          <th>Status</th>
-          <th>User Email</th>
-          <th>Validated By</th>
+          <th>ID de la transacción</th>
+          <th>Nombre del curso</th>
+          <th>Monto cancelado</th>
+          <th>Método de pago</th>
+          <th>Estado de la transacción</th>
+          <th>Estudiante</th>
+          <th>Validado por</th>
           <th>Acciones</th>
         </tr>
       </ng-template>
@@ -39,38 +39,105 @@
           <td>{{ transaction.id }}</td>
           <td>{{ transaction.course?.name }}</td>
           <td>{{ transaction.amount }}</td>
-          <td>{{ transaction.paymentMethod }}</td>
-          <td>{{ transaction.status }}</td>
+          <td>
+            <p-tag [value]="transaction.paymentMethod" [severity]="getPaymentMethodSeverity(transaction.paymentMethod)"
+              icon="pi pi-tag" />
+          </td>
+          <td>
+            <p-tag [value]="getStatusLabel(transaction.status)" [severity]="getStatusSeverity(transaction.status)"
+              icon="pi pi-circle-fill" />
+          </td>
           <td>{{ transaction.user?.email }}</td>
           <td>{{ transaction.validatedBy?.email || 'N/A' }}</td>
           <td>
-            <button class="bg-green-300 text-white py-1 px-3 rounded hover:bg-green-400 transition"
-              (click)="viewDetails(transaction)">
+            <p-button (click)="viewDetails(transaction)">
               Detalles
-            </button>
+            </p-button>
           </td>
         </tr>
       </ng-template>
     </p-table>
   </div>
 
-  <p-dialog header="Transaction Details" [(visible)]="displayDialog" [modal]="true" [style]="{ width: '40vw' }"
+  <p-dialog header="Detalles de la transacción" [(visible)]="displayDialog" [modal]="true" [style]="{ width: '40vw' }"
     [baseZIndex]="10000" [dismissableMask]="true">
     <ng-container *ngIf="selectedTransaction">
-      <div class="space-y-2">
-        <p><strong>ID:</strong> {{ selectedTransaction.id }}</p>
-        <p><strong>Created At:</strong> {{ selectedTransaction.createdAt }}</p>
-        <p><strong>Updated At:</strong> {{ selectedTransaction.updatedAt || 'N/A' }}</p>
-        <p><strong>Deleted At:</strong> {{ selectedTransaction.deletedAt || 'N/A' }}</p>
-        <p><strong>Description:</strong> {{ selectedTransaction.description || 'N/A' }}</p>
-        <p><strong>Payment Method:</strong> {{ selectedTransaction.paymentMethod }}</p>
-        <p><strong>Status:</strong> {{ selectedTransaction.status }}</p>
-        <p><strong>Course Description:</strong> {{ selectedTransaction.course?.description || 'N/A' }}</p>
-        <p><strong>Course Price:</strong> {{ selectedTransaction.course?.price || 'N/A' }}</p>
-        <p><strong>Course Created At:</strong> {{ selectedTransaction.course?.createdAt }}</p>
-        <p><strong>Course Updated At:</strong> {{ selectedTransaction.course?.updatedAt }}</p>
-        <p><strong>User ID:</strong> {{ selectedTransaction.user?.id }}</p>
-        <p><strong>Validated By:</strong> {{ selectedTransaction.validatedBy?.email || 'N/A' }}</p>
+      <div class="mb-4 p-8 flex items-center justify-center gap-4">
+        <p-card [style]="{ width: '25rem', overflow: 'hidden' }" class="h-full">
+          <!-- Cabecera con la imagen -->
+          <ng-template #header>
+            <img alt="Portada del curso" class="w-full h-[300px] object-cover"
+              [src]="selectedTransaction.course.image || '/cover_img_not_set.png'"
+              onerror="this.src='/cover_img_not_set.png'" />
+          </ng-template>
+
+          <!-- Course's title and amount being paid -->
+          <ng-template #title>
+            <div class="flex flex-column gap-4 align-items-center justify-content-center">
+              <span class="text-xl font-bold mb-1">{{ selectedTransaction.course.name }}</span>
+              <span class="text-green-600 font-semibold">{{ selectedTransaction.amount | currency: 'USD' }}</span>
+            </div>
+          </ng-template>
+
+          <!-- Payment description -->
+          <div class="grid gap-3 p-2">
+            <!-- Sección Estudiante -->
+            <div class="col-12">
+              <div class="flex items-center gap-2 text-color-secondary">
+                <i class="pi pi-user"></i>
+                <span class="font-semibold">Estudiante:</span>
+                <span class="line-clamp-1">{{ selectedTransaction.user.email }}</span>
+              </div>
+            </div>
+
+            <!-- Sección Validación -->
+            <div class="col-12">
+              <div class="flex items-center gap-2 text-color-secondary">
+                <i class="pi pi-check-circle"></i>
+                <span class="font-semibold">Operador:</span>
+                <span class="line-clamp-1">{{ selectedTransaction.validatedBy?.email || 'N/A' }}</span>
+              </div>
+            </div>
+
+            <!-- Detalles de transacción -->
+            <div class="col-12 grid gap-2">
+              <div class="col-6 flex items-center gap-2">
+                <i class="pi pi-credit-card"></i>
+                <span class="font-medium">Método:</span>
+                <p-tag [value]="selectedTransaction.paymentMethod"
+                  [severity]="getPaymentMethodSeverity(selectedTransaction.paymentMethod)" icon="pi pi-tag"></p-tag>
+              </div>
+
+              <div class="col-6 flex items-center gap-2">
+                <i class="pi pi-info-circle"></i>
+                <span class="font-medium">Estado:</span>
+                <p-tag [value]="getStatusLabel(selectedTransaction.status)"
+                  [severity]="getStatusSeverity(selectedTransaction.status)" icon="pi pi-circle-fill"></p-tag>
+              </div>
+            </div>
+
+            <!-- Fecha y descripción -->
+            <div class="col-12">
+              <div class="flex items-center gap-2 text-color-secondary">
+                <i class="pi pi-calendar"></i>
+                <span class="font-semibold">{{ selectedTransaction.createdAt | date: 'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+
+            <div class="col-12 border-top-1 surface-border pt-3">
+              <p class="text-sm line-clamp-3 m-0">
+                <span class="font-semibold">Descripción:</span>
+                {{ selectedTransaction.description || 'Sin descripción' }}
+              </p>
+            </div>
+          </div>
+          <span class="flex flex-col gap-4">
+            <p-splitter layout="horizontal" />
+            <p-panelmenu *ngIf="checkStatusToRenderActionMenu(selectedTransaction.status)" [model]="action_btn_on_trx"
+              styleClass="w-full md:w-20rem" />
+          </span>
+        </p-card>
+
       </div>
     </ng-container>
   </p-dialog>
