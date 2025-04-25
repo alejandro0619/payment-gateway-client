@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MainMenu } from '../../ui/navs/main-menu.component';
 import { TableModule } from 'primeng/table';
@@ -43,9 +43,10 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     ConfirmDialogModule,
   ],
   templateUrl: './transactions.component.html',
-  providers: [MessageService, ConfirmationService],
+  providers: [MessageService, ConfirmationService, TransactionsService],
 })
 export class TransactionsComponent {
+
   transactions: Transaction[] = [];
   selectedTransaction: Transaction | null = null;
   displayDialog: boolean = false;
@@ -72,9 +73,10 @@ export class TransactionsComponent {
   constructor(
     private transactionsService: TransactionsService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
   ) {}
 
+  
   onReview(e: Event) {
     this.showDialog(
       e,
@@ -96,6 +98,7 @@ export class TransactionsComponent {
   }
 
   showDialog(event: Event, message: string, action: string, severity: string, header: string = 'Confirmar') {
+    console.log(this.selectedTransaction)
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message,
@@ -113,7 +116,19 @@ export class TransactionsComponent {
         outlined: true,
       },
       accept: () => {
-
+        this.transactionsService.changeTransactionStatus(
+          this.selectedTransaction?.id as string,
+          action.toLowerCase() === 'validar' ? 'completed' : 'rejected',
+          // I shouldn't send any validatedById since the Authorization token is already in the header and it has the user id in it
+        ).subscribe({
+          next: (response) => {
+            console.log('Transacción actualizada:', response);
+          },
+          error: (error) => {
+            console.error('Error al actualizar la transacción:', error);
+          },
+        }
+        )
         this.messageService.add({
           severity: 'success',
           summary: action,

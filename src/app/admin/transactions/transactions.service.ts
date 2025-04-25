@@ -22,12 +22,16 @@ export class TransactionsService {
     );
   }
 
-  changeTransactionStatus(id: string, status: string): Observable<any> {
-    return this.http.put<any>(`${this.API_URL}/transaction/${id}`, { status }).pipe(
+  changeTransactionStatus(id: string, status: string, validatedById?: string): Observable<any> {
+    return this.http.patch<any>(
+      `${this.API_URL}/transaction`,
+      { id, status, validatedById }
+    ).pipe(
       catchError(this.handleError)
     );
+
   }
-  
+
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Ocurrió un error';
 
@@ -40,7 +44,7 @@ export class TransactionsService {
     } else {
       errorMessage = `Código de error: ${error.status}\nMensaje: ${error.message}`;
     }
-
+    console.error('Error en la solicitud:', errorMessage);
     return throwError(() => new Error(errorMessage));
   }
 }
