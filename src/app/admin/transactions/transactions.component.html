@@ -6,7 +6,7 @@
   <div class="mt-20 ml-20 mr-20 rounded-2xl">
     <div class="mb-4 flex items-center">
       <p-dropdown [options]="filterOptions" [(ngModel)]="selectedFilter" optionLabel="label"
-        placeholder="Seleccionar filtro" class="mr-4"></p-dropdown>
+        placeholder="Seleccionar filtro" class="mr-4" optionValue="value"></p-dropdown>
       <input pInputText type="text" [(ngModel)]="searchText" (input)="filterTable()" placeholder="Buscar"
         class="p-inputtext-sm border-2 rounded-md border-gray-300 " />
       <button class="bg-gray-400 text-white py-1 px-4 rounded hover:bg-gray-300 transition ml-4"
@@ -132,12 +132,11 @@
             </div>
           </div>
           <span class="flex flex-col gap-4">
-            <p-splitter layout="horizontal" />
             <p-panelmenu *ngIf="checkStatusToRenderActionMenu(selectedTransaction.status)" [model]="action_btn_on_trx"
               styleClass="w-full md:w-20rem" />
+            <p-confirmPopup></p-confirmPopup>
           </span>
         </p-card>
-
       </div>
     </ng-container>
   </p-dialog>
