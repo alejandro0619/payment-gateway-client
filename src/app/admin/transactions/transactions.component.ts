@@ -15,9 +15,11 @@ import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { SplitterModule } from 'primeng/splitter';
-
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { FieldsetModule } from 'primeng/fieldset';
+import { PanelModule } from 'primeng/panel';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-transactions',
@@ -36,7 +38,9 @@ import { MessageService, ConfirmationService } from 'primeng/api';
     TagModule,
     PanelMenuModule,
     SplitterModule,
-    ConfirmPopupModule,
+    FieldsetModule,
+    PanelModule,
+    ConfirmDialogModule,
   ],
   templateUrl: './transactions.component.html',
   providers: [MessageService, ConfirmationService],
@@ -63,23 +67,7 @@ export class TransactionsComponent {
     { label: 'Válidado por', value: 'validatedBy.email' },
   ];
 
-  action_btn_on_trx = [
-    {
-      label: 'Acciones',
-      items: [
-        {
-          label: 'Validar la transacción',
-          icon: 'pi pi-check',
-          command: () => this.onReview(),
-        },
-        {
-          label: 'Rechazar la transacción',
-          icon: 'pi pi-times',
-          command: () => this.onReject(),
-        },
-      ],
-    },
-  ];
+
 
   constructor(
     private transactionsService: TransactionsService,
@@ -87,25 +75,33 @@ export class TransactionsComponent {
     private confirmationService: ConfirmationService
   ) {}
 
-  onReview() {
-    this.showConfirm(
+  onReview(e: Event) {
+    this.showDialog(
+      e,
       '¿Está seguro de que desea validar esta transacción?',
       'Validar',
-      'success'
+      'success',
+      'Validar transacción'
     );
   }
 
-  onReject() {
-    this.showConfirm(
+  onReject(e: Event) {
+    this.showDialog(
+      e,
       '¿Está seguro de que desea rechazar esta transacción?',
       'Rechazar',
-      'danger'
+      'danger',
+      'Rechazar transacción'
     );
   }
 
-  showConfirm(message: string, action: string, severity: string) {
+  showDialog(event: Event, message: string, action: string, severity: string, header: string = 'Confirmar') {
     this.confirmationService.confirm({
-      message: message,
+      target: event.target as EventTarget,
+      message,
+      header,
+      closable: true,
+            closeOnEscape: true,
       icon: severity === 'success' ? 'pi pi-check' : 'pi pi-times',
       acceptButtonProps: {
         label: action,
@@ -116,6 +112,24 @@ export class TransactionsComponent {
         severity: 'secondary',
         outlined: true,
       },
+      accept: () => {
+
+        this.messageService.add({
+          severity: 'success',
+          summary: action,
+          detail: 'Acción realizada con éxito',
+        });
+
+      },
+      reject: () => {
+
+
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Cancelado',
+          detail: 'Acción cancelada',
+        });
+      }
     });
   }
 

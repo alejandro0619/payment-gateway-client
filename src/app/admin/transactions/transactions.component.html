@@ -62,8 +62,8 @@
   <p-dialog header="Detalles de la transacción" [(visible)]="displayDialog" [modal]="true" [style]="{ width: '40vw' }"
     [baseZIndex]="10000" [dismissableMask]="true">
     <ng-container *ngIf="selectedTransaction">
-      <div class="mb-4 p-8 flex items-center justify-center gap-4">
-        <p-card [style]="{ width: '25rem', overflow: 'hidden' }" class="h-full">
+      <div class="mb-4 p-8 flex flex-col items-center justify-center gap-2">
+        <p-card [style]="{ width: '30rem', overflow: 'hidden' }" class="h-full">
           <!-- Cabecera con la imagen -->
           <ng-template #header>
             <img alt="Portada del curso" class="w-full h-[300px] object-cover"
@@ -82,60 +82,72 @@
           <!-- Payment description -->
           <div class="grid gap-3 p-2">
             <!-- Sección Estudiante -->
-            <div class="col-12">
-              <div class="flex items-center gap-2 text-color-secondary">
-                <i class="pi pi-user"></i>
-                <span class="font-semibold">Estudiante:</span>
-                <span class="line-clamp-1">{{ selectedTransaction.user.email }}</span>
-              </div>
-            </div>
-
-            <!-- Sección Validación -->
-            <div class="col-12">
-              <div class="flex items-center gap-2 text-color-secondary">
-                <i class="pi pi-check-circle"></i>
-                <span class="font-semibold">Operador:</span>
-                <span class="line-clamp-1">{{ selectedTransaction.validatedBy?.email || 'N/A' }}</span>
-              </div>
-            </div>
-
-            <!-- Detalles de transacción -->
-            <div class="col-12 grid gap-2">
-              <div class="col-6 flex items-center gap-2">
-                <i class="pi pi-credit-card"></i>
-                <span class="font-medium">Método:</span>
-                <p-tag [value]="selectedTransaction.paymentMethod"
-                  [severity]="getPaymentMethodSeverity(selectedTransaction.paymentMethod)" icon="pi pi-tag"></p-tag>
+            <p-fieldset legend="Información de la transacción">
+              <div class="col-12">
+                <div class="flex items-center gap-2 text-color-secondary">
+                  <i class="pi pi-user"></i>
+                  <span class="font-semibold">Estudiante:</span>
+                  <span class="line-clamp-1">{{ selectedTransaction.user.email }}</span>
+                </div>
               </div>
 
-              <div class="col-6 flex items-center gap-2">
-                <i class="pi pi-info-circle"></i>
-                <span class="font-medium">Estado:</span>
-                <p-tag [value]="getStatusLabel(selectedTransaction.status)"
-                  [severity]="getStatusSeverity(selectedTransaction.status)" icon="pi pi-circle-fill"></p-tag>
+              <!-- Validated by info -->
+              <div class="col-12">
+                <div class="flex items-center gap-2 text-color-secondary">
+                  <i class="pi pi-check-circle"></i>
+                  <span class="font-semibold">Operador:</span>
+                  <span class="line-clamp-1">{{ selectedTransaction.validatedBy?.email || 'N/A' }}</span>
+                </div>
               </div>
-            </div>
 
-            <!-- Fecha y descripción -->
-            <div class="col-12">
-              <div class="flex items-center gap-2 text-color-secondary">
-                <i class="pi pi-calendar"></i>
-                <span class="font-semibold">{{ selectedTransaction.createdAt | date: 'dd/MM/yyyy' }}</span>
+              <!-- Details -->
+              <div class="col-12 grid gap-2">
+                <div class="col-6 flex items-center gap-2">
+                  <i class="pi pi-credit-card"></i>
+                  <span class="font-medium">Método:</span>
+                  <p-tag [value]="selectedTransaction.paymentMethod"
+                    [severity]="getPaymentMethodSeverity(selectedTransaction.paymentMethod)" icon="pi pi-tag"></p-tag>
+                </div>
+
+                <div class="col-6 flex items-center gap-2">
+                  <i class="pi pi-info-circle"></i>
+                  <span class="font-medium">Estado:</span>
+                  <p-tag [value]="getStatusLabel(selectedTransaction.status)"
+                    [severity]="getStatusSeverity(selectedTransaction.status)" icon="pi pi-circle-fill"></p-tag>
+                </div>
               </div>
-            </div>
 
-            <div class="col-12 border-top-1 surface-border pt-3">
-              <p class="text-sm line-clamp-3 m-0">
-                <span class="font-semibold">Descripción:</span>
-                {{ selectedTransaction.description || 'Sin descripción' }}
-              </p>
-            </div>
+              <!-- Dte and description -->
+              <div class="col-12">
+                <div class="flex items-center gap-2 text-color-secondary">
+                  <i class="pi pi-calendar"></i>
+                  <span class="font-semibold">{{ selectedTransaction.createdAt | date: 'dd/MM/yyyy' }}</span>
+                </div>
+              </div>
+            </p-fieldset>
+
+            <p-fieldset legend="Descripción">
+              <div class="col-12 border-top-1 surface-border pt-3">
+                <p class="text-sm line-clamp-3 m-0">
+
+                  {{ selectedTransaction.description || 'Sin descripción' }}
+                </p>
+              </div>
+            </p-fieldset>
           </div>
-          <span class="flex flex-col gap-4">
-            <p-panelmenu *ngIf="checkStatusToRenderActionMenu(selectedTransaction.status)" [model]="action_btn_on_trx"
-              styleClass="w-full md:w-20rem" />
-            <p-confirmPopup></p-confirmPopup>
-          </span>
+          <!-- Footer with buttons -->
+          <p-fieldset legend="Acciones sobre la transacción" *ngIf="selectedTransaction.status == 'rejected' || selectedTransaction.status == 'completed'">
+            <span class="flex gap-4">
+              <p-button *ngIf="selectedTransaction.status == 'rejected'" label="Aceptar" icon="pi pi-check"
+                (click)="onReview($event)" variant="outlined"></p-button>
+              <p-button *ngIf="selectedTransaction.status == 'completed'" label="Cancelar" icon="pi pi-times"
+                (click)="onReject($event)" variant="outlined" severity="danger"></p-button>
+            </span>
+
+
+            <p-toast />
+            <p-confirmDialog />
+          </p-fieldset>
         </p-card>
       </div>
     </ng-container>

@@ -8,11 +8,11 @@ export class RedirectService {
   constructor() {  }
 
   redirect(rol: string): string {
-    if (rol.toLocaleUpperCase() === Roles.ADMIN) {
+    if (rol.toLocaleUpperCase() == Roles.ADMIN) {
       return '/admin/dashboard';
-    } else if (rol.toLocaleUpperCase() === Roles.OPERATOR) {
+    } else if (rol.toLocaleUpperCase() == Roles.OPERATOR) {
       return '/operator/dashboard';
-    } else if (rol.toLocaleUpperCase() === Roles.USER) {
+    } else if (rol.toLocaleUpperCase() == Roles.USER) {
       return '/user/dashboard';
     } else {
       return '/auth/login';

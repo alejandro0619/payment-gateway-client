@@ -22,6 +22,12 @@ export class TransactionsService {
     );
   }
 
+  changeTransactionStatus(id: string, status: string): Observable<any> {
+    return this.http.put<any>(`${this.API_URL}/transaction/${id}`, { status }).pipe(
+      catchError(this.handleError)
+    );
+  }
+  
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Ocurrió un error';
 

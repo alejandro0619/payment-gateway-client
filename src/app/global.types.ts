@@ -57,9 +57,9 @@ export type PaymentScheme =
 
 
   export enum Roles {
-    ADMIN = 'admin',
-    OPERATOR = 'accounting',
-    USER = 'user'
+    ADMIN = 'ADMIN',
+    OPERATOR = 'ACCOUNTING',
+    USER = 'USER'
 }
   
 export const BASE_URL = 'http://localhost:3000';

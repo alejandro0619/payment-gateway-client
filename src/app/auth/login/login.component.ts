@@ -46,7 +46,8 @@ export class LoginComponent {
         next: (response: SignInResponse) => {
           this.loginResponse = response;
           console.log(response.user)
-          this.toastr.success('¡Registro exitoso!', this.redirectService.redirect(response.user.role));
+          this.toastr.success('¡Registro exitoso!', 'Bienvenido a la plataforma.');
+          this.toastr.info('Redirigiendo...', 'Por favor, espera un momento.');
           this.router.navigate([this.redirectService.redirect(response.user.role)]);
         },
         error: (error: any) => {

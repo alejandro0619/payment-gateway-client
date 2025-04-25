@@ -19,10 +19,9 @@ export class AuthInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-
+    console.log('Interceptando la solicitud HTTP:', request);
     const accessToken = localStorage.getItem('accessToken');
 
-    if (this.isProtectedRoute(request.url)) {
 
       const clonedRequest = request.clone({
         setHeaders: {
@@ -40,15 +39,7 @@ export class AuthInterceptor implements HttpInterceptor {
           return throwError(() => error);
         })
       );
-    }
-
-    return next.handle(request);
-  }
-
-  // Verify if the requested route is protected
-  private isProtectedRoute(url: string): boolean {
-    const protectedRoutes = ['/protected', 'localhost:3000/auth/signup-admin']; 
-    return protectedRoutes.some((route) => url.includes(route));
+    
   }
 
 
