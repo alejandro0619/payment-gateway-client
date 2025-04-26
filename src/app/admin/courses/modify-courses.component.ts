@@ -51,7 +51,7 @@ interface PaymentScheme {
   templateUrl: './modify-courses.component.html'
 })
 export class ModifyCoursesComponent {
-  @Output() onSave = new EventEmitter<any>();
+  
   courseForm: FormGroup;
   visible = false;
   loading = false;
@@ -77,13 +77,17 @@ export class ModifyCoursesComponent {
       installments: this.fb.array([]),
     });
   }
-
+ 
+  show() {
+    this.visible = true;
+  }
 
   markAllAsTouched() {
     Object.values(this.courseForm.controls).forEach(control => {
       control.markAsTouched();
     });
   }
+
   closeModal() {
     this.visible = false;
     this.courseForm.reset();
