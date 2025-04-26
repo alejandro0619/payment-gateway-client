@@ -40,26 +40,33 @@ export interface User {
 }
 
 // Tipos específicos
-export type TransactionStatus = 
-  | 'ready_to_be_checked' 
+export type TransactionStatus =
+  | 'ready_to_be_checked'
   | 'completed'
   | 'pending'
   | 'rejected'
   | 'canceled';
 
-export type PaymentMethod = 
-  | 'zelle' 
+export type PaymentMethod =
+  | 'zelle'
   | 'paypal'
 
-export type PaymentScheme = 
+export type PaymentScheme =
   | 'single_payment'
   | 'installments';
 
 
-  export enum Roles {
-    ADMIN = 'ADMIN',
-    OPERATOR = 'ACCOUNTING',
-    USER = 'USER'
+export enum Roles {
+  ADMIN = 'ADMIN',
+  OPERATOR = 'ACCOUNTING',
+  USER = 'USER'
 }
-  
+
+// This should be an error instead of a string CHECK FOR LATER 
+
+export type CreateTRXResponse =  {
+  finalAmount: number;
+  transactionId: any;
+}
+
 export const BASE_URL = 'http://localhost:3000';

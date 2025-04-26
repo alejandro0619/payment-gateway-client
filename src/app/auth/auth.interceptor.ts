@@ -13,65 +13,72 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+  private publicEndpoints = ['/auth/login', '/auth/signup', '/', '/auth/forgot-password'];
+
   constructor(private authService: AuthService, private router: Router) {}
 
   intercept(
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    console.log('Interceptando la solicitud HTTP:', request);
     const accessToken = localStorage.getItem('accessToken');
 
-
+    if (accessToken) {
       const clonedRequest = request.clone({
         setHeaders: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
 
-
       return next.handle(clonedRequest).pipe(
         catchError((error: HttpErrorResponse) => {
-          // If the error is 401, try to refresh the token
           if (error.status === 401) {
             return this.handle401Error(request, next);
           }
           return throwError(() => error);
         })
       );
-    
+    } else {
+
+      if (this.isPublicRequest(request)) {
+        return next.handle(request);
+      } else {
+        this.router.navigate(['/auth/login']);
+        return throwError(() => new Error('Acceso no autorizado'));
+      }
+    }
   }
 
+  private isPublicRequest(request: HttpRequest<unknown>): boolean {
+    const url = request.url.split('?')[0]; // Ignorar query params
+    return this.publicEndpoints.some(endpoint => url.endsWith(endpoint));
+  }
 
   private handle401Error(
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
     const refreshToken = localStorage.getItem('refreshToken');
-  
+
     if (refreshToken) {
       return this.authService.refreshToken(refreshToken).pipe(
         switchMap((response: { accessToken: string }) => {
           localStorage.setItem('accessToken', response.accessToken);
-  
           const clonedRequest = request.clone({
             setHeaders: {
               Authorization: `Bearer ${response.accessToken}`,
             },
           });
-  
           return next.handle(clonedRequest);
         }),
         catchError((error) => {
-
           this.router.navigate(['/auth/login']);
           return throwError(() => error);
         })
       );
     } else {
-
       this.router.navigate(['/auth/login']);
-      return throwError(() => new Error('No autorizado'));
+      return throwError(() => new Error('Sesión expirada'));
     }
   }
 }

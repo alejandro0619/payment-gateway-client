@@ -48,6 +48,7 @@ export class LoginComponent {
           console.log(response.user)
           this.toastr.success('¡Registro exitoso!', 'Bienvenido a la plataforma.');
           this.toastr.info('Redirigiendo...', 'Por favor, espera un momento.');
+          localStorage.setItem('usr_info', response.user.id);
           this.router.navigate([this.redirectService.redirect(response.user.role)]);
         },
         error: (error: any) => {

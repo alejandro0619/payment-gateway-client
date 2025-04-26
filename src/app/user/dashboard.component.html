@@ -25,7 +25,7 @@
         <i class="pi pi-clock"></i>
         <span>Histórico de pagos</span>
       </li>
-     
+
       <li class="relative group">
         <a class="flex items-center space-x-2 cursor-pointer left-4 text-gray-800 hover:text-blue-600">
           <i class="pi pi-users"></i>
@@ -41,34 +41,168 @@
             <span>Cerrar</span>
           </li>
         </ul>
-        
+
       </li>
     </ul>
   </div>
+  <div class="h-screen w-screen flex flex-col bg-neutral-50 overflow-hidden">
 
-  <div class="flex-grow flex flex-col items-center justify-center p-6">
-    <div class="text-center mt-6">
-      <h1 class="text-3xl font-bold text-gray-900">Bienvenido, Fulano</h1>
-      <h2 class="text-xl text-gray-700 mt-2">Cursos disponibles</h2>
-    </div>
+    <div class="flex-1 overflow-y-auto p-4">
+      <h1 class="text-4xl font-bold mb-6 text-neutral-800 ml-2">Mis Cursos ({{courses.length}})</h1>
 
-    <div class="flex items-center justify-center w-full mt-6">
-      <div class="grid grid-cols-3 gap-8 max-w-screen-lg">
-        <div class="bg-white rounded-lg shadow-md flex flex-col items-center p-4 w-60">
-          <label class="text-lg font-semibold text-gray-900">Costura</label>
-          <button class="mt-2 text-blue-500 hover:underline">Ver Detalles</button>
-        </div>
+      <p-progressSpinner *ngIf="loading" class="mx-auto" [style]="{ width: '50px', height: '50px' }">
+      </p-progressSpinner>
 
-        <div class="bg-white rounded-lg shadow-md flex flex-col items-center p-4 w-60">
-          <label class="text-lg font-semibold text-gray-900">Páginas Web</label>
-          <button class="mt-2 text-blue-500 hover:underline">Ver Detalles</button>
-        </div>
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 p-2">
+        <div *ngFor="let course of courses"
+          class="relative group bg-white border border-neutral-100 rounded-xl p-4 hover:shadow-lg transition-shadow duration-300 h-[320px] flex flex-col"
+          (click)="setSelectedCourse(course)">
 
-        <div class="bg-white rounded-lg shadow-md flex flex-col items-center p-4 w-60">
-          <label class="text-lg font-semibold text-gray-900">Manualidades</label>
-          <button class="mt-2 text-blue-500 hover:underline">Ver Detalles</button>
+          <!-- Contenedor de imagen -->
+          <div class="flex-1 relative overflow-hidden rounded-lg mb-3">
+            <img [src]="course.image || '/cover_img_not_set.png'" onerror="this.src='/cover_img_not_set.png'"
+              [alt]="course.name"
+              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+
+            <!-- Payment shceme badge-->
+            <span class="absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-medium bg-white shadow-sm"
+              [ngClass]="{
+                    'text-blue-600': course.paymentScheme === 'single_payment',
+                    'text-green-600': course.paymentScheme === 'installments',
+                    'text-gray-600': !course.paymentScheme
+                  }">
+              {{ course.paymentScheme || 'Sin esquema' }}
+            </span>
+          </div>
+
+          <!-- Content -->
+          <div class="flex flex-col gap-1">
+            <h3 class="font-semibold text-neutral-800 truncate">{{ course.name }}</h3>
+            <p class="text-sm text-neutral-500 line-clamp-2">{{ course.description }}</p>
+            <div class="mt-2 flex items-center justify-between">
+              <span class="text-sm font-medium text-neutral-700">
+                {{ course.price | currency:'USD':'symbol':'1.0-2' }}
+              </span>
+              <span class="text-xs text-neutral-400">
+                {{ course.createdAt | date: 'dd/MM/yy' }}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+
+  <p-drawer #drawerRef [(visible)]="drawerVisible" position="right" [style]="{ width: '45rem' }" onHide="closeDetails()">
+    <ng-template #headless>
+      <div class="flex flex-col h-full">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 pt-4 pb-4 ">
+          <div class="flex items-center gap-3">
+            <span class="font-semibold text-2xl text-primary">{{ selectedCourse?.name }}</span>
+          </div>
+          <button (click)="selectedCourse = null" class="p-2 hover:bg-surface-100 rounded-full">
+            <i class="pi pi-times text-lg"></i>
+          </button>
+        </div>
+
+        <!-- Content -->
+        <div class="overflow-y-auto flex-1 p-4">
+          <!-- Image -->
+          <div class="mb-6 rounded-lg overflow-hidden bg-surface-100">
+            <img [src]="selectedCourse?.image || '/cover_img_not_set.png'" onerror="this.src='/cover_img_not_set.png'"
+              class="w-full h-96 object-cover" alt="Course image" />
+          </div>
+
+          <!-- Descripción -->
+          <div class="mb-6">
+            <h4 class="font-medium text-lg mb-2">Descripción del curso</h4>
+            <p class="text-surface-600">{{ selectedCourse?.description || 'Sin descripción' }}</p>
+          </div>
+
+          <!-- Detalles de pago -->
+          <div class="bg-surface-100 p-4 rounded-lg mb-6">
+            <div class="flex items-center justify-between mb-4">
+              <span class="font-medium">Esquema de pago:</span>
+              <span class="px-3 py-1 rounded-full text-sm" [ngClass]="{
+                      'bg-blue-100 text-blue-800': selectedCourse?.paymentScheme === 'single_payment',
+                      'bg-green-100 text-green-800': selectedCourse?.paymentScheme === 'installments',
+                      'bg-gray-100 text-gray-800': !selectedCourse?.paymentScheme
+                    }">
+                {{ selectedCourse?.paymentScheme || 'No especificado' }}
+              </span>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <span class="font-medium">Precio del curso:</span>
+              <span class="text-primary font-semibold">
+                {{ selectedCourse?.price | currency:'USD':'symbol':'1.0-2' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Botones de pago -->
+          <div class="flex gap-3 justify-around items-center mb-6">
+            <p>
+              <span class="font-medium">Selecciona un método de pago:</span>
+            </p>
+            <!-- Botón PayPal -->
+            <button class="paypal-button flex items-center justify-center gap-2 px-6 py-3 
+            border-2 border-blue-600 bg-transparent hover:bg-blue-50 
+            rounded-xl transition-all duration-300 w-fit cursor-pointer"
+              (click)="createTransaction(selectedCourse!.id, 'paypal')">
+              <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-current">
+                <title>PayPal</title>
+                <path fill="currentColor"
+                  d="M7.016 19.198h-4.2a.562.562 0 0 1-.555-.65L5.093.584A.692.692 0 0 1 5.776 0h7.222c3.417 0 5.904 2.488 5.846 5.5-.006.25-.027.5-.066.747A6.794 6.794 0 0 1 12.071 12H8.743a.69.69 0 0 0-.682.583l-.325 2.056-.013.083-.692 4.39-.015.087zM19.79 6.142c-.01.087-.01.175-.023.261a7.76 7.76 0 0 1-7.695 6.598H9.007l-.283 1.795-.013.083-.692 4.39-.134.843-.014.088H6.86l-.497 3.15a.562.562 0 0 0 .555.65h3.612c.34 0 .63-.249.683-.585l.952-6.031a.692.692 0 0 1 .683-.584h2.126a6.793 6.793 0 0 0 6.707-5.752c.306-1.95-.466-3.744-1.89-4.906z" />
+              </svg>
+              <span class="font-bold">Pagar con PayPal</span>
+            </button>
+
+            <!-- Botón Zelle -->
+            <button class="zelle-button flex items-center justify-center gap-2 px-6 py-3 
+            border-2 border-green-600 bg-transparent hover:bg-blue-50 
+            rounded-xl transition-all duration-300 w-fit cursor-pointer"
+              (click)="createTransaction(selectedCourse!.id, 'zelle')">
+              <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-current">
+                <title>Zelle</title>
+                <path fill="currentColor"
+                  d="M13.559 24h-2.841a.483.483 0 0 1-.483-.483v-2.765H5.638a.667.667 0 0 1-.666-.666v-2.234a.67.67 0 0 1 .142-.412l8.139-10.382h-7.25a.667.667 0 0 1-.667-.667V3.914c0-.367.299-.666.666-.666h4.23V.483c0-.266.217-.483.483-.483h2.841c.266 0 .483.217.483.483v2.765h4.323c.367 0 .666.299.666.666v2.137a.67.67 0 0 1-.141.41l-8.19 10.481h7.665c.367 0 .666.299.666.666v2.477a.667.667 0 0 1-.666.667h-4.32v2.765a.483.483 0 0 1-.483.483Z" />
+              </svg>
+              <span class="font-bold">Pagar con Zelle</span>
+            </button>
+          </div>
+        </div>
+
+        <div  class="flex flex-col items-center justify-between px-6 py-4 bg-surface-100">
+          <span class="w-full flex items-center gap-4">
+            <h4 class="font-medium text-lg mb-2">Monto total a cancelar: </h4>
+            <h4 class="font-medium text-lg mb-2">$ {{ createdTRX!.finalAmount }}</h4>
+          </span>
+          <button class="paypal-button flex items-center justify-center gap-2 px-6 py-3 
+            border-2 border-blue-600 bg-transparent hover:bg-blue-50 
+            rounded-xl transition-all duration-300 w-fit cursor-pointer"
+              (click)="createOrder()">
+              <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-current">
+                <title>PayPal</title>
+                <path fill="currentColor"
+                  d="M7.016 19.198h-4.2a.562.562 0 0 1-.555-.65L5.093.584A.692.692 0 0 1 5.776 0h7.222c3.417 0 5.904 2.488 5.846 5.5-.006.25-.027.5-.066.747A6.794 6.794 0 0 1 12.071 12H8.743a.69.69 0 0 0-.682.583l-.325 2.056-.013.083-.692 4.39-.015.087zM19.79 6.142c-.01.087-.01.175-.023.261a7.76 7.76 0 0 1-7.695 6.598H9.007l-.283 1.795-.013.083-.692 4.39-.134.843-.014.088H6.86l-.497 3.15a.562.562 0 0 0 .555.65h3.612c.34 0 .63-.249.683-.585l.952-6.031a.692.692 0 0 1 .683-.584h2.126a6.793 6.793 0 0 0 6.707-5.752c.306-1.95-.466-3.744-1.89-4.906z" />
+              </svg>
+              <span class="font-bold">Continuar</span>
+            </button>
+          </div>  
+
+
+        <!-- Pie del drawer -->
+        <div class="mt-auto p-4">
+          <div class="text-sm text-surface-500">
+            <p class="mb-1">Fecha de creación: {{ selectedCourse?.createdAt | date:'dd/MM/yyyy' }}</p>
+            <p>ID del curso: {{ selectedCourse?.id }}</p>
+            
+          </div>
+        </div>
+
+      </div>
+    </ng-template>
+  </p-drawer>

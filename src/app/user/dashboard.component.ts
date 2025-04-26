@@ -1,21 +1,139 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { MessageService } from 'primeng/api';
-
-
+import { CardModule } from 'primeng/card';
+import { DashboardService } from './dashboard.service';
+import { Course, CreateTRXResponse } from '../global.types';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { PanelModule } from 'primeng/panel';
+import { TagModule } from 'primeng/tag';
+import { DividerModule } from 'primeng/divider';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, BreadcrumbModule, DrawerModule, ButtonModule, AvatarModule],
+  imports: [
+    CommonModule,
+    BreadcrumbModule,
+    DrawerModule,
+    ButtonModule,
+    AvatarModule,
+    CardModule,
+    ProgressSpinnerModule,
+    PanelModule,
+    TagModule,
+    DividerModule
+  ],
   templateUrl: './dashboard.component.html',
-  providers:[MessageService]
+  providers: [MessageService],
+  standalone: true,
+  styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
+  courses: Course[] = [];
+  loading: boolean = true;
+  width: any;
+  drawerVisible: boolean = false;
+  drawerPosition: 'left' | 'right' = 'left';
+  selectedCourse: Course | null = null;
+  createdTRX: CreateTRXResponse | null = null;
+  paymentMethod: 'paypal' | 'zelle' = 'paypal';
+
+
+  constructor(
+    private dashboardService: DashboardService,
+    private messageService: MessageService
+  ) { }
+
+  ngOnInit(): void {
+    this.loadCourses();
+  }
+
+  closeDetails(): void {
+    this.drawerVisible = false;
+    this.selectedCourse = null;
+    this.createdTRX = null;
   
+  }
+
+  createOrder() {
+    this.dashboardService.createOrder(this.createdTRX!.transactionId).subscribe({
+      next: (response) => {
+        console.log('Orden creada:', response);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Orden creada con éxito'
+        });
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo crear la orden'
+        });
+      }
+    });
+  }
   
+  setSelectedCourse(course: Course): void {
+    this.selectedCourse = course;
+    this.drawerVisible = true;
+  }
+
+  private loadCourses(): void {
+    this.dashboardService.getCourses().subscribe({
+      next: (courses) => {
+        this.courses = courses;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudieron cargar los cursos'
+        });
+        this.loading = false;
+      }
+    });
+  }
+
+  createTransaction(courseId: string, paymentMethod: 'paypal' | 'zelle') {
+    const userId: string = localStorage.getItem("usr_info")!; // Should always exist, since the user is logged in
+
+    this.dashboardService.createTransaction(courseId, userId, paymentMethod).subscribe({
+      next: (response) => {
+        console.log('Transacción creada:', response);
+        this.createdTRX = response;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Transacción creada con éxito'
+        });
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo crear la transacción'
+        });
+      }
+    });
+  }
+
+
+
+  getPaymentSchemeColor(scheme: string): 'success' | 'secondary' | 'info' | 'warn' {
+    switch (scheme) {
+      case 'single_payment':
+        return 'info';
+      case 'installments':
+        return 'success';
+      default:
+        return 'warn';
+    }
+  }
 }

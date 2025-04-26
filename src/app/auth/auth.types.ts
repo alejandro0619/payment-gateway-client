@@ -14,6 +14,7 @@ export interface SignInResponse {
   user: User;
   accessToken: string;
   refreshToken: string;
+  id: string;
 }
 
 export interface CreateUser extends User {
