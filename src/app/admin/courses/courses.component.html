@@ -1,7 +1,3 @@
-
-
-
-
 <div class="flex flex-col items-start p-4 w-full mt-10">
   <!--<p-button (click)="visible = true" icon="pi pi-bars" class="shadow-lg p-0 rounded-md mb-4" /> -->
 
@@ -12,7 +8,7 @@
           <ng-template #caption>
             <div class="flex items-center justify-between">
               <span class="text-xl font-bold">Cursos</span>
-              <p-button label="Refrescar tabla" raised [loading]="loading" (onClick)="ngOnInit()"/>
+              <p-button label="Refrescar tabla" raised [loading]="loading" (onClick)="ngOnInit()" />
             </div>
           </ng-template>
 
@@ -24,6 +20,7 @@
               <th>Tipo de Pago</th>
               <th>Fecha de Creación</th>
               <th>Estado</th>
+              <th>Acciones</th>
             </tr>
           </ng-template>
 
@@ -45,6 +42,14 @@
                 <p-tag [value]="course.deletedAt ? 'Eliminado' : 'Activo'"
                   [severity]="course.deletedAt ? 'danger' : 'success'" />
               </td>
+              <td class="relative">
+                <p-menu #menu [model]="items" [popup]="true" appendTo="body"></p-menu>
+                <p-button 
+                  (click)="menu.toggle($event); selectedCourse = course" 
+                  icon="pi pi-ellipsis-v"
+                  class="p-button-text p-button-sm !px-2 !py-1"
+                ></p-button>
+              </td>
             </tr>
           </ng-template>
 
@@ -55,12 +60,17 @@
       </div>
     </div>
   </div>
+  <p-confirmDialog 
+    [style]="{ width: '450px' }"
+    rejectButtonStyleClass="p-button-text"
+  ></p-confirmDialog>
+  <p-toast></p-toast>
 </div>
+
+<app-modify-courses 
+  #modifyModal
+></app-modify-courses>
 
 <aside class="absolute top-5 left-5">
   <main-menu />
 </aside>
-
-
-
-

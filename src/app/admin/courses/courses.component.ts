@@ -9,10 +9,14 @@ import { ButtonModule } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
 import { CreateCourseComponent } from './create-course.component';
+import { ModifyCoursesComponent } from './modify-courses.component';
 import { CoursesService } from './courses.service';
 import { TagModule } from 'primeng/tag';
 import { MainMenu } from '../../ui/navs/main-menu.component';
-
+import { Menu } from 'primeng/menu';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast'
 
 @Component({
   selector: 'app-courses',
@@ -25,14 +29,21 @@ import { MainMenu } from '../../ui/navs/main-menu.component';
     ButtonModule,
     AvatarModule,
     TagModule,
-    MainMenu
+    MainMenu,
+    Menu,
+    ConfirmDialogModule,
+    ToastModule,
+    ModifyCoursesComponent
     
 ],
   templateUrl: './courses.component.html',
+  providers: [ConfirmationService, MessageService]
 })
 export class CoursesComponent implements OnInit {
   @ViewChild('createCourseModal') createCourseModal!: CreateCourseComponent;
+  @ViewChild(ModifyCoursesComponent) modifyModal!: ModifyCoursesComponent;
 
+  selectedCourse: any;
   courses: any[] = [];
   visible: boolean = false;
   coursesVisible: boolean = false;
@@ -46,16 +57,79 @@ export class CoursesComponent implements OnInit {
   // This state here is to show the loading spinner when the data is being fetched
   loading: boolean = false;
 
+  
   constructor(
     private router: Router,
     private coursesService: CoursesService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService
   ) { }
 
   ngOnInit() {
     this.loadCourses();
+    this.setupMenuItems();
+  }
+
+  setupMenuItems() {
+    this.items = [
+      {
+        label: 'Modificar curso',
+        icon: 'pi pi-pencil',
+        command: () => {
+          this.openModifyModal();
+        }
+      },
+      {
+        label: 'Eliminar curso',
+        icon: 'pi pi-trash',
+        command: (event: { originalEvent: Event }) => {
+          this.onDeleteCourse(event.originalEvent);
+        }
+      }
+    ];
+  }
+  openModifyModal() {
+    if (this.selectedCourse) {
+      this.modifyModal.show(this.selectedCourse);
+    } else {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: 'Seleccione un curso primero'
+      });
+    }
+  }
+
+  onDeleteCourse(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: '¿Está seguro de que desea eliminar este curso?',
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí, eliminar',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-secondary',
+      accept: () => {
+      
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Curso eliminado satisfactoriamente'
+        });
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Cancelado',
+          detail: 'No se eliminó el curso'
+        });
+      }
+    });
   }
 
 
+  
   loadCourses() {
     this.loading = true;
     this.coursesService.getCourses().subscribe({
