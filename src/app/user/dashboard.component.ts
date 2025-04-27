@@ -12,7 +12,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { PanelModule } from 'primeng/panel';
 import { TagModule } from 'primeng/tag';
 import { DividerModule } from 'primeng/divider';
-
+import { paypalBtn } from '../ui/global/paypal-button.component';
+import { ToastModule } from 'primeng/toast';
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -25,7 +26,9 @@ import { DividerModule } from 'primeng/divider';
     ProgressSpinnerModule,
     PanelModule,
     TagModule,
-    DividerModule
+    DividerModule,
+    paypalBtn,
+    ToastModule
   ],
   templateUrl: './dashboard.component.html',
   providers: [MessageService],
