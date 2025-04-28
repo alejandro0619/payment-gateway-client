@@ -39,6 +39,8 @@ export class DashboardComponent implements OnInit {
   courses: Course[] = [];
   loading: boolean = true;
   width: any;
+
+  // This is relevant for the drawer component
   drawerVisible: boolean = false;
   drawerPosition: 'left' | 'right' = 'left';
   selectedCourse: Course | null = null;
@@ -56,9 +58,9 @@ export class DashboardComponent implements OnInit {
   }
 
   closeDetails(): void {
-    this.drawerVisible = false;
     this.selectedCourse = null;
     this.createdTRX = null;
+    this.paymentMethod = 'paypal';
   
   }
 
@@ -83,6 +85,7 @@ export class DashboardComponent implements OnInit {
   }
   
   setSelectedCourse(course: Course): void {
+    this.closeDetails(); // Close any previous details
     this.selectedCourse = course;
     this.drawerVisible = true;
   }
