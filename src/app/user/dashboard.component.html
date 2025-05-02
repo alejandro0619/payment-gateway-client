@@ -165,7 +165,7 @@
             <button class="zelle-button flex items-center justify-center gap-2 px-6 py-3 
             border-2 border-green-600 bg-transparent hover:bg-blue-50 
             rounded-xl transition-all duration-300 w-fit cursor-pointer"
-              (click)="createTransaction(selectedCourse!.id, 'zelle')">
+              (click)="createTransaction(selectedCourse!.id, 'zelle'); showZelleInformation = true">
               <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-current">
                 <title>Zelle</title>
                 <path fill="currentColor"
@@ -208,3 +208,42 @@
       </div>
     </ng-template>
   </p-drawer>
+
+
+
+
+  <p-dialog header="Confirmar Transferencia Zelle" [modal]="true" [(visible)]="showZelleInformation"
+    [style]="{ width: '40rem' }" [contentStyle]="{ 'max-height': '30rem', overflow: 'auto' }">
+    <div class="flex flex-column gap-3" style="height: 100%;">
+      <!-- Información Zelle -->
+      <div class="mb-3">
+        <h4 class="mb-2">Datos para la transferencia:</h4>
+        <p><span class="font-semibold">Correo:</span> {{"payments@empresa.com"}}</p>
+        <p><span class="font-semibold">Monto:</span> $1,250.00 USD</p>
+      </div>
+
+      <!-- Fecha de transferencia -->
+      <div class="field">
+        <label for="transferDate">Fecha de transferencia</label>
+        <p-calendar inputId="transferDate" [maxDate]="maxDate" dateFormat="dd/mm/yy" [showIcon]="true"></p-calendar>
+      </div>
+
+      <!-- Captura de comprobante -->
+      <div class="field">
+        <label for="capture">Subir captura de transferencia</label>
+        <p-fileUpload inputId="capture" mode="basic" chooseLabel="Seleccionar archivo"
+          accept="image/*, .pdf"></p-fileUpload>
+      </div>
+
+      <!-- Confirmación -->
+      <div class="field">
+        <label for="confirmation">Código/Mensaje de confirmación</label>
+        <input id="confirmation" pInputText type="text" placeholder="Ej: Código de 8 dígitos de Zelle" />
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button label="Cancelar" icon="pi pi-times" (click)="showZelleInformation = false" styleClass="p-button-text" />
+      <p-button label="Confirmar" icon="pi pi-check" (click)="confirmTransfer()" />
+    </ng-template>
+  </p-dialog>

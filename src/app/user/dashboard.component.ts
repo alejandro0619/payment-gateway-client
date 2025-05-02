@@ -15,6 +15,10 @@ import { DividerModule } from 'primeng/divider';
 import { paypalBtn } from '../ui/global/paypal-button.component';
 import { ToastModule } from 'primeng/toast';
 import { MessageModule } from 'primeng/message';
+import { DialogModule } from 'primeng/dialog';
+import { CalendarModule } from 'primeng/calendar';
+import { FileUploadModule } from 'primeng/fileupload';
+import { InputTextModule } from 'primeng/inputtext';
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -30,7 +34,11 @@ import { MessageModule } from 'primeng/message';
     DividerModule,
     paypalBtn,
     ToastModule,
-    MessageModule
+    MessageModule,
+    DialogModule,
+    CalendarModule,
+    FileUploadModule,
+    InputTextModule
   ],
   templateUrl: './dashboard.component.html',
   providers: [MessageService],
@@ -41,6 +49,9 @@ export class DashboardComponent implements OnInit {
   courses: Course[] = [];
   loading: boolean = true;
   width: any;
+  showZelleInformation: boolean = false;
+  transferDate: Date | null = null; // Fecha de transferencia
+  maxDate: Date = new Date(); // Fecha máxima = hoy
 
   // This is relevant for the drawer component
   drawerVisible: boolean = false;
@@ -132,7 +143,9 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-
+  confirmTransfer() {
+    // Lógica para manejar la confirmación
+  }
 
   getPaymentSchemeColor(scheme: string): 'success' | 'secondary' | 'info' | 'warn' {
     switch (scheme) {
