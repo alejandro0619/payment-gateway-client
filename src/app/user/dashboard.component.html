@@ -185,10 +185,11 @@
 
         </div>
         <p-toast [baseZIndex]="10000"></p-toast>
-        
+
         <span class="flex flex-col items-center justify-center gap-4 px-6 py-4">
           <app-paypal-button *ngIf="createdTRX" [item]="{
             name: selectedCourse!.name,
+            trx: createdTRX!.transactionId,
             description: selectedCourse!.description,
             price: createdTRX!.finalAmount,
             category: 'DIGITAL_GOODS',
@@ -197,11 +198,11 @@
         </span>
         <!-- Pie del drawer -->
         <div class="mt-auto p-4 ">
-          <div class="text-sm text-surface-500">
-            <p class="mb-1">Fecha de creación:</p>
-            <p>ID del curso:</p>
+          <p-message>
+            <p class="mb-1">Fecha de creación: {{selectedCourse?.createdAt}}</p>
+            <p>ID del curso: {{selectedCourse?.id}}</p>
+          </p-message>
 
-          </div>
         </div>
 
       </div>

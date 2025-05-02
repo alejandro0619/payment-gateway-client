@@ -42,6 +42,16 @@ export class DashboardService {
     );
   }
 
+  autorizePayment(trxId: string, status: string) {
+    return this.http.patch(`${this.API_URL}/transaction`, {
+      id: trxId,
+      status,
+    })
+      .pipe(
+        catchError(this.handleError)
+    );
+  }
+
   handleError(error: HttpErrorResponse) {
     let errorMessage = 'Ocurrió un error';
 

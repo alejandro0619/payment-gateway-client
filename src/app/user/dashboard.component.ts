@@ -14,6 +14,7 @@ import { TagModule } from 'primeng/tag';
 import { DividerModule } from 'primeng/divider';
 import { paypalBtn } from '../ui/global/paypal-button.component';
 import { ToastModule } from 'primeng/toast';
+import { MessageModule } from 'primeng/message';
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -28,7 +29,8 @@ import { ToastModule } from 'primeng/toast';
     TagModule,
     DividerModule,
     paypalBtn,
-    ToastModule
+    ToastModule,
+    MessageModule
   ],
   templateUrl: './dashboard.component.html',
   providers: [MessageService],

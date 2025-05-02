@@ -2,11 +2,12 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 import { IPayPalConfig, ICreateOrderRequest, NgxPayPalModule } from 'ngx-paypal';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-
+import { DashboardService } from '../../user/dashboard.service';
 
 
 interface PaypalItemPayload {
   name: string;
+  trx: string;
   description: string;
   price: number;
   currency: string;
@@ -17,11 +18,11 @@ interface PaypalItemPayload {
   templateUrl: './paypal-button.component.html',
   selector: 'app-paypal-button',
   imports: [NgxPayPalModule, ToastModule],
-  providers: [MessageService],
+  providers: [MessageService, DashboardService],
 })
 export class paypalBtn implements OnInit, OnChanges {
 
-  constructor(private messageService: MessageService) { }
+  constructor(private messageService: MessageService, private dashboardService: DashboardService) { }
 
   public payPalConfig?: IPayPalConfig;
   @Input() item: PaypalItemPayload | null = null;
@@ -100,6 +101,25 @@ export class paypalBtn implements OnInit, OnChanges {
       },
       onClientAuthorization: (data) => {
         console.log('onClientAuthorization - you should probably inform your server about completed transaction at this point', data);
+        this.dashboardService.autorizePayment(this.item!.trx, 'completed').subscribe({
+          next: (response) => {
+            console.log('Transacción autorizada:', response);
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Transacción autorizada con éxito'
+            });
+          },
+          error: (error) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'No se pudo autorizar la transacción'
+            });
+          }
+        });
+
+
       },
       onCancel: (data, actions) => {
         this.messageService.add({
