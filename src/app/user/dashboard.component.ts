@@ -19,6 +19,7 @@ import { DialogModule } from 'primeng/dialog';
 import { CalendarModule } from 'primeng/calendar';
 import { FileUploadModule } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
+import { UserNavigationComponent } from '../ui/navs/user-navigation.component';
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -38,7 +39,8 @@ import { InputTextModule } from 'primeng/inputtext';
     DialogModule,
     CalendarModule,
     FileUploadModule,
-    InputTextModule
+    InputTextModule,
+    UserNavigationComponent
   ],
   templateUrl: './dashboard.component.html',
   providers: [MessageService],
