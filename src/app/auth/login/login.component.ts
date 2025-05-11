@@ -55,6 +55,7 @@ export class LoginComponent {
         error: (error: any) => {
           this.errorMessage = 'Error al iniciar sesión. Verifica tus credenciales.';
           this.toastr.error('Error en el registro', 'Por favor, verifica los datos.');
+          this.isLoading = false;
         },
 
         complete: () => {

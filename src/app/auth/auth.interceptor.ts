@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  private publicEndpoints = ['/auth/login', '/auth/signup', '/', '/auth/forgot-password'];
+  private publicEndpoints = ['/auth/login', '/auth/signup', '/', '/auth/forgot-password', '/auth/signin'];
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -22,6 +22,7 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
     const accessToken = localStorage.getItem('accessToken');
+    console.log('Interceptando la petición:', request);
 
     if (accessToken) {
       const clonedRequest = request.clone({
@@ -40,7 +41,7 @@ export class AuthInterceptor implements HttpInterceptor {
       );
     } else {
 
-      if (this.isPublicRequest(request)) {
+      if (this.isPublicRequest(request)) { 
         return next.handle(request);
       } else {
         this.router.navigate(['/auth/login']);
@@ -50,8 +51,11 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   private isPublicRequest(request: HttpRequest<unknown>): boolean {
-    const url = request.url.split('?')[0]; // Ignorar query params
-    return this.publicEndpoints.some(endpoint => url.endsWith(endpoint));
+    const url = new URL(request.url);
+    return this.publicEndpoints.some(endpoint => 
+      url.pathname.endsWith(endpoint) || 
+      request.url.endsWith(endpoint)
+    );
   }
 
   private handle401Error(
