@@ -7,11 +7,11 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Roles } from '../../global.types';
-import { concatMap, switchMap } from 'rxjs/operators';
+import {  ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-signup-operator',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ButtonModule],
   templateUrl: './signup-operator.component.html'
 })
 export class SignupOperatorComponent {
@@ -74,6 +74,8 @@ export class SignupOperatorComponent {
         error: (error: any) => {
           console.error('Error en el registro:', error);
           this.toastr.error('Error en el registro', 'Por favor, verifica los datos.');
+          this.errorMessage = error.error.message || 'Error en el registro';
+          this.isLoading = false;
         },
         complete: () => {
           this.isLoading = false;

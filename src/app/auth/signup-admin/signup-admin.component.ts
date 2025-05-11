@@ -7,10 +7,11 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Roles } from '../../global.types';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-signup-admin',
-  imports: [ ReactiveFormsModule,CommonModule],
+  imports: [ ReactiveFormsModule,CommonModule, ButtonModule],
   providers: [AuthService],
   templateUrl: './signup-admin.component.html',
   
