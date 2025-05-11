@@ -10,7 +10,7 @@ import { Ripple } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
 import { CreateCourseComponent } from '../../../app/admin/courses/create-course.component';
 import { CoursesService } from '../../../app/admin/courses/courses.service';
-
+import { AuthService } from '../../../app/auth/services/auth.service';
 
 @Component({
   selector: 'main-menu',
@@ -42,7 +42,8 @@ export class MainMenu implements OnInit {
 
   constructor(
     private router: Router,
-    private coursesService : CoursesService
+    private coursesService: CoursesService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -80,6 +81,17 @@ export class MainMenu implements OnInit {
     });
   }
 
+  logout() {
+    this.authService.logout().subscribe({
+      next: () => {
+        console.log('Logout successful');
+      },
+      error: (error) => {
+        console.error('Logout error:', error);
+      }
+    });
+
+  }
   openCreateCourseModal() {
     this.createCourseModal.openModal();
   }

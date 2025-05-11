@@ -108,8 +108,24 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    this.router.navigate(['/signin']);
+    console.log('Logging out...');
+    return this.http.post(`${this.API_URL}/auth/logout`, {}).pipe(
+      map((response) => {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('usr_info');
+        this.router.navigate(['/auth/login']);
+        return response;
+      }
+      ),
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          return throwError(() => new Error('Credenciales inválidas'));
+        } else {
+          return throwError(() => new Error('Ocurrió un error inesperado'));
+        }
+      }
+      )
+    );
   }
 }
