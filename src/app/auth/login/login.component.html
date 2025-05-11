@@ -11,7 +11,7 @@
             id="id"
             type="text"
             formControlName="id"
-            placeholder="V12345678"
+            placeholder="12345678"
             class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-black focus:ring-black focus:ring-1"
             required
           />
@@ -37,13 +37,16 @@
           </p>
         </div>
 
-        <button
-          type="submit"
-          class="w-full rounded-md bg-black px-4 py-2 font-bold text-white hover:bg-gray-700 cursor-pointer"
-          [disabled]="form().invalid || isLoading"
-        >
-          Iniciar sesión
-        </button>
+        <div class="w-full flex justify-center">
+          <p-button
+            type="submit"
+            [disabled]="form().invalid || isLoading"
+            [loading]="isLoading"
+            styleClass="px-4 py-2"
+          >
+            Iniciar sesión
+          </p-button>
+        </div>
 
         <p class="mt-4 text-center text-sm text-gray-600">
           ¿No tienes cuenta?

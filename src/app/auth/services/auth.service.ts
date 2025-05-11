@@ -47,7 +47,8 @@ export class AuthService {
       catchError((error: HttpErrorResponse) => {
         console.error('Error en la petición de signup:', error); 
         if (error.status === 401) {
-          return throwError(() => new Error('Credenciales inválidas'));
+          // This error is also triggered when the role the user is trying to register is not allowed on this endpoint, bu since the user should only register as USER through this endpoint, we can assume that the error is due to invalid credentials
+          return throwError(() => new Error('El correo o la identificación ya están en uso'));
         } else {
           return throwError(() => new Error('Ocurrió un error inesperado'));
         }

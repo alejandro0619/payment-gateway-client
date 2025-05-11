@@ -17,8 +17,13 @@ import { FirstRunGuard } from '../core/guards/first-run.guard';
 export const routes: Routes = [
   {
     path: '',
-    canActivateChild: [FirstRunGuard], // Aplica FirstRunGuard a todas las rutas hijas
+    canActivateChild: [FirstRunGuard], //  Apply FirstRunGuard to all child routes to prevent the access to auth/signup-admin if the application is not in first run.
     children: [
+      {
+        path: '',
+        redirectTo: '/auth/login', 
+        pathMatch: 'full',
+      },
       // Auth routes
       {
         path: 'auth/login',

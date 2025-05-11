@@ -102,12 +102,16 @@
             </p>
           </div>
         </div>
-
-        <button type="submit"
-          class="w-full rounded-md bg-black px-4 py-2 font-bold text-white hover:bg-gray-900 cursor-pointer"
+        <div class="w-full flex justify-center">
+          <p-button
+            type="submit"
+            [disabled]="form.invalid || isLoading"
+            [loading]="isLoading"
+            styleClass="px-4 py-2"
           >
-          Registrarse
-        </button>
+            Registrarse
+          </p-button>
+        </div>
 
         <p class="mt-4 text-center text-sm text-gray-600">
           ¿Ya tienes una cuenta?

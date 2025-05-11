@@ -6,9 +6,10 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { Roles } from '../../global.types';
+import { ButtonModule } from 'primeng/button';
 @Component({
   selector: 'app-signup',
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, ButtonModule],
   providers: [AuthService],
   templateUrl: './signup.component.html',
 })
@@ -42,6 +43,7 @@ export class SignupComponent {
   submit() {
     if (this.form.valid) {
       const { name, lastName, email, identificationNumber } = this.form.value;
+      this.isLoading = true;
       
       this.authService.signup({
         name: name as string,
@@ -59,8 +61,8 @@ export class SignupComponent {
           this.router.navigate(['/auth/login']);
         },
         error: (error: any) => {
-          console.error('Error en el registro:', error);
-          this.toastr.error('Error en el registro', 'Por favor, verifica los datos.');
+          console.error('Error en el registro:', "El correo o la identificación ya están en uso");
+          this.toastr.error('El correo o la identificación ya están en uso', 'Error en el registro' );
         },
         complete: () => {
           this.isLoading = false;

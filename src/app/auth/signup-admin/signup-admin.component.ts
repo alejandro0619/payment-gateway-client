@@ -45,6 +45,7 @@ private toastr = inject(ToastrService);
   submit() {
     if (this.form.valid) {
       const { name, lastName, email, identificationNumber } = this.form.value;
+      this.isLoading = true;
       
       this.authService.signupAdmin({
         name: name as string,

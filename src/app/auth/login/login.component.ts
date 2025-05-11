@@ -1,16 +1,17 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule, JsonPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { AuthService } from '../services/auth.service';
 import { SignInResponse } from '../auth.types';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { RedirectService } from '../services/redirect.service';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ButtonModule],
   providers: [AuthService, RedirectService],
   templateUrl: './login.component.html',
 })
@@ -22,7 +23,7 @@ export class LoginComponent {
   private router: Router = inject(Router);
   loginResponse: SignInResponse | null = null;
   errorMessage: string | null = null;
-  isLoading = false;
+  isLoading = false;  
 
   form = signal(
     new FormGroup({
