@@ -17,6 +17,7 @@ import { Menu } from 'primeng/menu';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import { Course } from '../../global.types';
 
 @Component({
   selector: 'app-courses',
@@ -42,8 +43,8 @@ export class CoursesComponent implements OnInit {
   @ViewChild('createCourseModal') createCourseModal!: CreateCourseComponent;
   @ViewChild(ModifyCoursesComponent) modifyModal!: ModifyCoursesComponent;
 
-  selectedCourse: any;
-  courses: any[] = [];
+  selectedCourse: Course | null = null;
+  courses: Course[] = [];
   visible: boolean = false;
   coursesVisible: boolean = false;
   transactionsVisible = false;
@@ -61,7 +62,7 @@ export class CoursesComponent implements OnInit {
     private coursesService: CoursesService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadCourses();
@@ -97,7 +98,7 @@ export class CoursesComponent implements OnInit {
       });
     }
   }
-  
+
 
   onDeleteCourse(event: Event) {
     this.confirmationService.confirm({
@@ -110,11 +111,25 @@ export class CoursesComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-danger',
       rejectButtonStyleClass: 'p-button-secondary',
       accept: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Curso eliminado satisfactoriamente',
+        this.coursesService.deleteCourse(this.selectedCourse!.id).subscribe({
+          next: () => {
+            this.loadCourses();
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: `El curso ${this.selectedCourse!.name} fue eliminado satisfactoriamente`,
+            });
+          },
+          error: (error) => {
+            console.error('Error deleting course:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: `No se pudo eliminar el curso ${this.selectedCourse!.name}`,
+            });
+          },
         });
+        this.selectedCourse = null;
       },
       reject: () => {
         this.messageService.add({
@@ -133,7 +148,7 @@ export class CoursesComponent implements OnInit {
         this.courses = courses.map((course) => ({
           ...course,
           price: parseFloat(course.price).toFixed(2),
-          createdAt: new Date(course.createdAt),
+          createdAt: course.createdAt, // keep as string to match Course type
         }));
         this.loading = false;
       },

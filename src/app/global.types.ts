@@ -14,11 +14,12 @@ export interface Transaction {
   validatedBy: User | null;
 }
 
+
 export interface Course {
   id: string;
-  createdAt: string;
-  updatedAt: string | null;
-  deletedAt: string | null;
+  createdAt: Date | string;
+  updatedAt: Date | string | null
+  deletedAt: Date | string | null
   price: string;
   name: string;
   description: string;

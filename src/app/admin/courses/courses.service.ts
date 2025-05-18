@@ -36,13 +36,13 @@ export class CoursesService {
   }
 
     updateCourse(id: string, updateData: UpdateCourse): Observable<Course> {
-      return this.http.patch<Course>(`${this.API_URL}/${id}`, updateData).pipe(
+      return this.http.patch<Course>(`${this.API_URL}/course/${id}`, updateData).pipe(
         catchError(this.handleError)
       );
     }
   
     deleteCourse(id: string): Observable<DeleteResponse> {
-      return this.http.delete<DeleteResponse>(`${this.API_URL}/${id}`).pipe(
+      return this.http.delete<DeleteResponse>(`${this.API_URL}/course/${id}`).pipe(
         catchError(this.handleError)
       );
     }
