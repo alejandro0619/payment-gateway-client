@@ -93,13 +93,8 @@
                     <span class="font-medium text-sm">Registrar Empleado</span>
                   </a>
                 </li>
-                <li>
-                  <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
-                    <i class="pi pi-user-minus text-sm mr-1"></i>
-                    <span class="font-medium text-sm">Eliminar Empleado</span>
-                  </a>
-                </li>
-                <li>
+
+                <li (click) = "goToEmployees()">
                   <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
                     <i class="pi pi-list text-sm mr-1"></i>
                     <span class="font-medium text-sm">Lista de Empleados</span>

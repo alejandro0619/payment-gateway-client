@@ -27,13 +27,13 @@ import { TransactionsTableComponent } from '../ui/tables/transaction-dashboard.c
     AvatarModule,
     PaymentMethodChartComponent,
     DashboardIncomeChartComponent,
-    NotificationComponent,
     SectionNavigatorComponent,
     MainMenu,
     InsightCard,
     TransactionsTableComponent,
     
-],
+  ],
+  
   templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent implements OnInit {

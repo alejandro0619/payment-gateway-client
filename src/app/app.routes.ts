@@ -13,6 +13,7 @@ import { DashboardComponent as AdminDashboard } from './admin/dashboard.componen
 import { TransactionsComponent } from './admin/transactions/transactions.component';
 import { AuthGuard } from './auth/auth.guard';
 import { FirstRunGuard } from '../core/guards/first-run.guard';
+import { OperatorsComponent } from './admin/operators/operators.component';
 
 export const routes: Routes = [
   {
@@ -62,6 +63,10 @@ export const routes: Routes = [
         path: 'admin/courses',
         component: CoursesComponent,
         // canActivate: [AuthGuard],
+      },
+      {
+        path: 'admin/employees',
+        component: OperatorsComponent,
       },
       {
         path: 'admin/transactions',

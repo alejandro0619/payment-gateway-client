@@ -1,0 +1,18 @@
+.inputgroup {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.p-password-panel {
+  padding: 1rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.p-password-meter {
+  margin-top: 0.5rem;
+}
+
+.pi-exclamation-circle {
+  font-size: 0.875rem;
+}

@@ -65,6 +65,10 @@ export class MainMenu implements OnInit {
     console.log("Navigating to Transactions...");
     this.router.navigate(['admin/transactions']); 
   }
+  goToEmployees(){
+    console.log("Navigating to Employees...");
+    this.router.navigate(['admin/employees']); 
+  }
   loadCourses() {
     this.coursesService.getCourses().subscribe({
       next: (courses) => {
