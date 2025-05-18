@@ -126,7 +126,7 @@ export class DashboardComponent implements OnInit {
     return this.selectedCourse.course?.[prop];
   }
   
-  private loadCourses(): void {
+  loadCourses(): void {
     // Get userId from localStorage
     const userId: string = localStorage.getItem("usr_info")!; // Should always exist, since the user is logged in
     this.dashboardService.getUserCoursesFeed(userId).subscribe({
