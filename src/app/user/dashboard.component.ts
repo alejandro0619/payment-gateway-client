@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { DrawerModule } from 'primeng/drawer';
@@ -7,7 +7,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { MessageService } from 'primeng/api';
 import { CardModule } from 'primeng/card';
 import { DashboardService } from './dashboard.service';
-import { Course, CreateTRXResponse } from '../global.types';
+import { Course, CreateTRXResponse, UserCoursesFeed } from '../global.types';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { PanelModule } from 'primeng/panel';
 import { TagModule } from 'primeng/tag';
@@ -48,17 +48,19 @@ import { UserNavigationComponent } from '../ui/navs/user-navigation.component';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-  courses: Course[] = [];
+  courses: UserCoursesFeed | null = null;
   loading: boolean = true;
   width: any;
   showZelleInformation: boolean = false;
   transferDate: Date | null = null; // Fecha de transferencia
   maxDate: Date = new Date(); // Fecha máxima = hoy
+  objectKeys = Object.keys;
+  selectedCourse: any = null;
+  selectedCourseStatus: string = '';
 
   // This is relevant for the drawer component
   drawerVisible: boolean = false;
   drawerPosition: 'left' | 'right' = 'left';
-  selectedCourse: Course | null = null;
   createdTRX: CreateTRXResponse | null = null;
   paymentMethod: 'paypal' | 'zelle' = 'paypal';
 
@@ -76,9 +78,18 @@ export class DashboardComponent implements OnInit {
     this.selectedCourse = null;
     this.createdTRX = null;
     this.paymentMethod = 'paypal';
-  
-  }
 
+  }
+  getStatusTitle(status: string): string {
+    const titles = {
+      'acquired': 'Cursos Adquiridos',
+      'not_acquired': 'Cursos no Adquiridos',
+      'cancelled': 'Cursos Cancelados',
+      'expired': 'Cursos Expirados',
+      'not_bought': 'Cursos Disponibles'
+    };
+    return titles[status as keyof typeof titles] || status;
+  }
   createOrder() {
     this.dashboardService.createOrder(this.createdTRX!.transactionId).subscribe({
       next: (response) => {
@@ -98,18 +109,27 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
-  
-  setSelectedCourse(course: Course): void {
+
+  setSelectedCourse(course: Course, status: string): void {
     this.closeDetails(); // Close any previous details
     this.selectedCourse = course;
+    this.selectedCourseStatus = status;
     this.drawerVisible = true;
   }
-
+  getCourseProperty(prop: string) {
+    if (this.selectedCourseStatus === 'not_bought') {
+      return this.selectedCourse[prop];
+    }
+    return this.selectedCourse.course?.[prop];
+  }
   private loadCourses(): void {
-    this.dashboardService.getCourses().subscribe({
+    // Get userId from localStorage
+    const userId: string = localStorage.getItem("usr_info")!; // Should always exist, since the user is logged in
+    this.dashboardService.getUserCoursesFeed(userId).subscribe({
       next: (courses) => {
         this.courses = courses;
         this.loading = false;
+        console.log('Cursos cargados:', this.courses);
       },
       error: (error) => {
         this.messageService.add({

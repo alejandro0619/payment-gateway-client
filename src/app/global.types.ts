@@ -25,6 +25,7 @@ export interface Course {
   description: string;
   image: string | null;
   paymentScheme: PaymentScheme;
+  course: any | undefined; // this is only a workaround for the response retrieved from the backend when used in the course list in user view
 }
 
 export interface User {
@@ -70,4 +71,5 @@ export type CreateTRXResponse =  {
   transactionId: any;
 }
 
+export interface UserCoursesFeed { [status: string]: Course[]; }
 export const BASE_URL = 'http://localhost:3000';

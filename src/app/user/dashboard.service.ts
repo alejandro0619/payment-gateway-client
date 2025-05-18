@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, forkJoin, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from '../../envs/env.dev';
-import { Course, CreateTRXResponse } from '../global.types';
+import { Course, CreateTRXResponse, UserCoursesFeed } from '../global.types';
 
 
 
@@ -41,6 +41,31 @@ export class DashboardService {
       catchError(this.handleError)
     );
   }
+
+
+getUserCoursesFeed(userId: string): Observable<UserCoursesFeed> {
+  const statuses = ['acquired', 'not_acquired', 'cancelled', 'expired', 'not_bought'];
+
+
+  const requests = statuses.map(status => 
+    this.http.post<Course[]>(`${this.API_URL}/user-course/get-user-courses-by-status`, {
+      userId,
+      status 
+    }).pipe(
+      tap(courses => console.log(`Cursos con estado ${status}:`, courses)),
+      catchError(this.handleError),
+      map(courses => ({ [status]: courses }))
+    )
+  );
+
+
+  // Combinar todas las solicitudes y mapear a un objeto único
+  return forkJoin(requests).pipe(
+    // Reducir el array de objetos a un solo objeto
+    map(results => results.reduce((acc, curr) => ({ ...acc, ...curr }), {}))
+  );
+}
+
 
   autorizePayment(trxId: string, status: string) {
     return this.http.patch(`${this.API_URL}/transaction`, {
