@@ -52,11 +52,13 @@ export class DashboardComponent implements OnInit {
   loading: boolean = true;
   width: any;
   showZelleInformation: boolean = false;
-  transferDate: Date | null = null; // Fecha de transferencia
-  maxDate: Date = new Date(); // Fecha máxima = hoy
+  transferDate: Date | null = null; // Transfer date
+  maxDate: Date = new Date(); // Max date for the calendar
   objectKeys = Object.keys;
   selectedCourse: Course | null = null;
   selectedCourseStatus: string = '';
+  balance: number = 0; //   User balance
+
 
   // This is relevant for the drawer component
   drawerVisible: boolean = false;
@@ -72,6 +74,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCourses();
+    this.getBalance();
   }
 
   closeDetails(): void {
@@ -146,6 +149,19 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  getBalance(): void {
+    const userId: string = localStorage.getItem("usr_info")!; // Should always exist, since the user is logged in
+    this.dashboardService.getUserBalance(userId).subscribe({
+      next: (balance) => this.balance = balance.balance,
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo obtener el saldo del usuario, recargue la página'
+        });
+      }
+    });
+  }
   createTransaction(courseId: string, paymentMethod: 'paypal' | 'zelle') {
     const userId: string = localStorage.getItem("usr_info")!; // Should always exist, since the user is logged in
 

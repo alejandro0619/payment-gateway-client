@@ -27,7 +27,11 @@ export interface Course {
   paymentScheme: PaymentScheme;
   course: any | undefined; // this is only a workaround for the response retrieved from the backend when used in the course list in user view
 }
-
+export interface UserBalance {
+  id: string,
+  email: string,
+  balance: string
+}
 export interface User {
   id: string;
   createdAt: string;

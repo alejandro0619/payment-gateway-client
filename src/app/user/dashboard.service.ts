@@ -1,8 +1,8 @@
-import { inject, Injectable } from '@angular/core';
+import {  Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, forkJoin, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from '../../envs/env.dev';
-import { Course, CreateTRXResponse, UserCoursesFeed } from '../global.types';
+import { Course, CreateTRXResponse, UserBalance, UserCoursesFeed } from '../global.types';
 
 
 
@@ -15,7 +15,11 @@ export class DashboardService {
   constructor(private http: HttpClient) { }
 
 
-
+  getUserBalance(userId: string): Observable<any> {
+    return this.http.get<UserBalance>(`${this.API_URL}/user/balance/${userId}/`).pipe(
+      catchError(this.handleError)
+    );
+  }
   createTransaction(courseId: string, userId: string, paymentMethod: 'paypal' | 'zelle'
   ): Observable<any> {
     return this.http.post<CreateTRXResponse>(`${this.API_URL}/transaction`, {

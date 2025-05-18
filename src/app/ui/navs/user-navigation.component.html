@@ -4,6 +4,10 @@
 
   <!-- Menú usando Menubar de PrimeNG -->
   <p-menubar [model]="items" [styleClass]="'border-none bg-transparent shadow-none'">
-    
+    <ng-template pTemplate="end">
+      <div class="ml-4 font-medium text-green-700">
+        Saldo a favor: {{ balance }} USD
+      </div>
+    </ng-template>
   </p-menubar>
 </div>
