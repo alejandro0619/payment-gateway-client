@@ -1,1 +1,56 @@
-<p>dashboard works!</p>
+<!-- Navigation bar en la parte superior -->
+<operator-navigation class="fixed top-0 left-0 w-full z-50"></operator-navigation>
+
+<!-- Contenedor del dashboard -->
+<div class="pt-24 px-8">
+    <div class="mb-6 flex flex-wrap items-center gap-4">
+        <p-dropdown [options]="filterOptions" optionLabel="label" [(ngModel)]="selectedFilter"
+            placeholder="Seleccionar filtro" class="w-64" optionValue="value" (onChange)="filterTable()"></p-dropdown>
+        <input pInputText type="text" placeholder="Buscar"
+            class="p-inputtext-sm border-2 rounded-md border-gray-300" [(ngModel)]="searchText"
+            (input)="filterTable()" />
+        <button pButton icon="pi pi-search" label="Buscar" (click)="filterTable()"></button>
+    </div>
+
+    <p-table [value]="filteredTransactions.length ? filteredTransactions : transactions" selectionMode="single"
+        dataKey="id" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="5"
+        [rowsPerPageOptions]="[5, 10, 15]" [responsiveLayout]="'scroll'">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>ID</th>
+                <th>Curso</th>
+                <th>Monto</th>
+                <th>Método</th>
+                <th>Estado</th>
+                <th>Estudiante</th>
+                <th>Validado por</th>
+                <th>Acciones</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-transaction>
+            <tr [pSelectableRow]="transaction">
+                <td>{{ transaction.id }}</td>
+                <td>{{ transaction.course?.name }}</td>
+                <td>{{ transaction.amount | currency: 'USD' }}</td>
+                <td>
+                    <p-tag [value]="transaction.paymentMethod"></p-tag>
+                </td>
+                <td>
+                    <p-tag [value]="transaction.status"></p-tag>
+                </td>
+                <td>{{ transaction.user?.email }}</td>
+                <td>{{ transaction.validatedBy?.email || 'N/A' }}</td>
+                <td class="relative">
+                    <p-menu #menu [model]="getMenuItems(transaction)" [popup]="true" appendTo="body"></p-menu>
+                    <button pButton (click)="menu.toggle($event)" icon="pi pi-ellipsis-v"
+                        class="p-button-text p-button-sm !px-2 !py-1"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <p-confirmDialog [style]="{ width: '450px' }" header="Confirmación"
+        icon="pi pi-exclamation-triangle"></p-confirmDialog>
+    <p-toast></p-toast>
+</div>

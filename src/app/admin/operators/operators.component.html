@@ -3,7 +3,13 @@
 </aside>
 
 <div class="mt-20 ml-20 mr-20 rounded-2xl">
-
+  <div class="mb-6 flex flex-wrap items-center gap-4">
+        <p-dropdown  optionLabel="label"
+            placeholder="Seleccionar filtro" class="w-64" optionValue="value"></p-dropdown>
+        <input pInputText type="text" placeholder="Buscar"
+            class="p-inputtext-sm border-2 rounded-md border-gray-300 w-96" />
+        <button pButton icon="pi pi-search" label="Buscar"></button>
+    </div>
   <p-table [value]="operators" [loading]="loading" [paginator]="true" [rows]="rowsPerPage" [totalRecords]="totalRecords"
     [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-gridlines" class="mt-4">
 

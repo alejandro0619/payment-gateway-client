@@ -9,12 +9,8 @@
         placeholder="Seleccionar filtro" class="mr-4" optionValue="value"></p-dropdown>
       <input pInputText type="text" [(ngModel)]="searchText" (input)="filterTable()" placeholder="Buscar"
         class="p-inputtext-sm border-2 rounded-md border-gray-300 " />
-      <button class="bg-gray-400 text-white py-1 px-4 rounded hover:bg-gray-300 transition ml-4"
-        (click)="filterTable()">
-        Buscar
-      </button>
-      <button class="pi pi-file-import bg-gray-200 px-4 py-2 rounded-md text-xl text-gray-700 hover:bg-gray-300 ml-2">
-      </button>
+      <button class="ml-2" pButton icon="pi pi-search" label="Buscar" (click)="filterTable()"></button>
+      <button class="ml-2" pButton icon="pi pi-file-import" ></button>
 
     </div>
 
