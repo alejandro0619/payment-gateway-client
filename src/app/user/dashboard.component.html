@@ -28,7 +28,7 @@
                     'text-green-600': course.paymentScheme === 'installments',
                     'text-gray-600': !course.paymentScheme
                   }">
-              {{ course.paymentScheme || 'Sin esquema' }}
+              {{ course.paymentScheme == 'single_payment' ? 'Pago único' : course.paymentScheme === 'installments' ? 'Pago por cuotas' : 'No especificado' }}
             </span>
           </div>
 
