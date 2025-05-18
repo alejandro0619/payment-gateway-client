@@ -1,13 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MainMenu } from "../../ui/navs/main-menu.component";
+import { MainMenu } from '../../ui/navs/main-menu.component';
 
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 
 import { PaginatorModule } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
-import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  Validators,
+} from '@angular/forms';
 
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -51,11 +56,11 @@ import { ReactiveFormsModule } from '@angular/forms';
     PasswordModule,
     InputNumberModule,
     ReactiveFormsModule,
-    DialogModule],
+    DialogModule,
+  ],
   providers: [MessageService],
 })
 export class OperatorsComponent implements OnInit {
-
   operators: User[] = [];
   selectedOperator: any;
   displayDialog: boolean = false;
@@ -65,19 +70,33 @@ export class OperatorsComponent implements OnInit {
   rowsPerPage: number = this.rowsPerPageOptions[0];
   currentPage: number = 0;
 
-  editForm: FormGroup
+  editForm: FormGroup;
+  selectedFilter: string = 'user.identificationNumber';
+  searchText: string = '';
+  filteredOperators: User[] = [];
 
-  constructor(private operatorService: OperatorsService, private fb: FormBuilder, private messageService: MessageService) {
+  filterOptions = [
+    { label: 'Identificación', value: 'identificationNumber' },
+    { label: 'Nombre', value: 'firstName' },
+    { label: 'Apellido', value: 'lastName' },
+    { label: 'Email', value: 'email' },
+    { label: 'Estado', value: 'status' },
+  ];
+
+  constructor(
+    private operatorService: OperatorsService,
+    private fb: FormBuilder,
+    private messageService: MessageService
+  ) {
     this.editForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.maxLength(50)]],
       lastName: ['', [Validators.required, Validators.maxLength(50)]],
       identificationNumber: [
         null,
-        [Validators.required, Validators.pattern(/^[0-9]*$/)]
+        [Validators.required, Validators.pattern(/^[0-9]*$/)],
       ],
-      password: ['', [Validators.minLength(8)]]
+      password: ['', [Validators.minLength(8)]],
     });
-
   }
 
   ngOnInit() {
@@ -96,8 +115,7 @@ export class OperatorsComponent implements OnInit {
         console.error('Error fetching operators:', error);
         this.loading = false;
       }
-    )
-
+    );
   }
 
   showAuditLog(user: User) {
@@ -110,7 +128,7 @@ export class OperatorsComponent implements OnInit {
       firstName: user.firstName,
       lastName: user.lastName,
       identificationNumber: parseInt(user.identificationNumber, 10),
-      password: ''
+      password: '',
     });
     this.displayDialog = true;
   }
@@ -118,7 +136,10 @@ export class OperatorsComponent implements OnInit {
   updateOperator() {
     if (this.editForm.invalid || !this.selectedOperator) return;
 
-    const formData = {...this.prepareUpdateData(), id: this.selectedOperator.id};
+    const formData = {
+      ...this.prepareUpdateData(),
+      id: this.selectedOperator.id,
+    };
 
     this.operatorService.updateOperator(formData).subscribe({
       next: (updatedUser) => {
@@ -126,7 +147,7 @@ export class OperatorsComponent implements OnInit {
         this.displayDialog = false;
         this.showSuccess('Operador actualizado exitosamente');
       },
-      error: (error) => this.handleError('Error actualizando operador', error)
+      error: (error) => this.handleError('Error actualizando operador', error),
     });
   }
 
@@ -136,14 +157,12 @@ export class OperatorsComponent implements OnInit {
     // Limpiar datos no modificados
     if (!data.password) delete data.password;
     data.identificationNumber = data.identificationNumber.toString();
-    data.role = "accounting" as Roles.OPERATOR;
-;
-
+    data.role = 'accounting' as Roles.OPERATOR;
     return data;
   }
 
   private updateLocalData(updatedUser: User) {
-    const index = this.operators.findIndex(u => u.id === updatedUser.id);
+    const index = this.operators.findIndex((u) => u.id === updatedUser.id);
     if (index > -1) {
       this.operators[index] = updatedUser;
       this.operators = [...this.operators]; // Forzar detección de cambios
@@ -154,7 +173,7 @@ export class OperatorsComponent implements OnInit {
     this.messageService.add({
       severity: 'success',
       summary: 'Éxito',
-      detail: message
+      detail: message,
     });
   }
 
@@ -163,7 +182,7 @@ export class OperatorsComponent implements OnInit {
     this.messageService.add({
       severity: 'error',
       summary: summary,
-      detail: error.message || 'Error desconocido'
+      detail: error.message || 'Error desconocido',
     });
   }
 
@@ -172,4 +191,32 @@ export class OperatorsComponent implements OnInit {
     return this.editForm.controls;
   }
 
+  filterTable() {
+    const search = this.searchText.toLowerCase().trim();
+    const fieldPath = this.selectedFilter;
+
+    if (!search) {
+      this.filteredOperators = [...this.operators];
+      return;
+    }
+
+    this.filteredOperators = this.operators.filter((operator) => {
+      const fieldValue = this.getFieldValue(operator, fieldPath);
+
+      if (fieldValue === null || fieldValue === undefined) {
+        return false;
+      }
+
+      return fieldValue.toString().toLowerCase().includes(search);
+    });
+  }
+
+  private getFieldValue(obj: any, path: string): any {
+    return path.split('.').reduce((acc, part) => {
+      if (acc === null || acc === undefined || typeof acc !== 'object') {
+        return undefined;
+      }
+      return acc[part];
+    }, obj);
+  }
 }

@@ -4,14 +4,15 @@
 
 <div class="mt-20 ml-20 mr-20 rounded-2xl">
   <div class="mb-6 flex flex-wrap items-center gap-4">
-        <p-dropdown  optionLabel="label"
-            placeholder="Seleccionar filtro" class="w-64" optionValue="value"></p-dropdown>
-        <input pInputText type="text" placeholder="Buscar"
-            class="p-inputtext-sm border-2 rounded-md border-gray-300 w-96" />
-        <button pButton icon="pi pi-search" label="Buscar"></button>
-    </div>
-  <p-table [value]="operators" [loading]="loading" [paginator]="true" [rows]="rowsPerPage" [totalRecords]="totalRecords"
-    [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-gridlines" class="mt-4">
+    <p-dropdown [options]="filterOptions" [(ngModel)]="selectedFilter" optionLabel="label"
+      placeholder="Seleccionar filtro" class="w-64" optionValue="value" (onChange)="filterTable()"></p-dropdown>
+    <input pInputText type="text" [(ngModel)]="searchText" (input)="filterTable()" placeholder="Buscar"
+      class="p-inputtext-sm border-2 rounded-md border-gray-300 w-96" />
+    <button pButton icon="pi pi-search" label="Buscar" (click)="filterTable()"></button>
+  </div>
+  <p-table [value]="filteredOperators.length ? filteredOperators : operators" [loading]="loading" [paginator]="true"
+    [rows]="rowsPerPage" [totalRecords]="totalRecords" [rowsPerPageOptions]="rowsPerPageOptions"
+    styleClass="p-datatable-gridlines" class="mt-4">
 
     <ng-template pTemplate="header">
       <tr>
@@ -29,7 +30,7 @@
         <td class="font-medium">{{ user.identificationNumber }}</td>
         <td>{{ user.firstName }} {{ user.lastName }}</td>
         <td>{{ user.email }}</td>
-        
+
         <td>
           <p-tag [value]="user.deletedAt ? 'Inactivo' : 'Activo'" [severity]="user.deletedAt ? 'danger' : 'success'"
             styleClass="capitalize" />
@@ -55,67 +56,52 @@
     </ng-template>
   </p-table>
 
-<p-dialog header="Editar Operador" [(visible)]="displayDialog" [style]="{width: '500px'}" [modal]="true">
-  <form [formGroup]="editForm" (ngSubmit)="updateOperator()" class="p-fluid grid gap-3">
+  <p-dialog header="Editar Operador" [(visible)]="displayDialog" [style]="{width: '500px'}" [modal]="true">
+    <form [formGroup]="editForm" (ngSubmit)="updateOperator()" class="p-fluid grid gap-3">
 
-    <div class="field flex flex-col gap-2">
-      <label for="firstName">Nombre</label>
-      <input id="firstName" pInputText formControlName="firstName" />
-      <small *ngIf="editForm.get('firstName')?.invalid" class="p-error">
-        Nombre es requerido
-      </small>
-    </div>
+      <div class="field flex flex-col gap-2">
+        <label for="firstName">Nombre</label>
+        <input id="firstName" pInputText formControlName="firstName" />
+        <small *ngIf="editForm.get('firstName')?.invalid" class="p-error">
+          Nombre es requerido
+        </small>
+      </div>
 
-    <div class="field flex flex-col gap-2">
-      <label for="lastName">Apellido</label>
-      <input id="lastName" pInputText formControlName="lastName" />
-      <small *ngIf="editForm.get('lastName')?.invalid" class="p-error">
-        Apellido es requerido
-      </small>
-    </div>
+      <div class="field flex flex-col gap-2">
+        <label for="lastName">Apellido</label>
+        <input id="lastName" pInputText formControlName="lastName" />
+        <small *ngIf="editForm.get('lastName')?.invalid" class="p-error">
+          Apellido es requerido
+        </small>
+      </div>
 
-    <div class="field flex flex-col gap-2">
-      <label for="identificationNumber">Identificación</label>
-      <p-inputNumber 
-        id="identificationNumber" 
-        formControlName="identificationNumber"
-        [useGrouping]="false"
-        mode="decimal"
-        placeholder="Ingrese solo números"></p-inputNumber>
-      <small *ngIf="editForm.get('identificationNumber')?.errors?.['required']" class="p-error">
-        Identificación es requerida
-      </small>
-      <small *ngIf="editForm.get('identificationNumber')?.errors?.['pattern']" class="p-error">
-        Solo se permiten números
-      </small>
-    </div>
+      <div class="field flex flex-col gap-2">
+        <label for="identificationNumber">Identificación</label>
+        <p-inputNumber id="identificationNumber" formControlName="identificationNumber" [useGrouping]="false"
+          mode="decimal" placeholder="Ingrese solo números"></p-inputNumber>
+        <small *ngIf="editForm.get('identificationNumber')?.errors?.['required']" class="p-error">
+          Identificación es requerida
+        </small>
+        <small *ngIf="editForm.get('identificationNumber')?.errors?.['pattern']" class="p-error">
+          Solo se permiten números
+        </small>
+      </div>
 
-    <div class="field flex flex-col gap-2">
-      <label for="password">Contraseña</label>
-      <p-password 
-        id="password" 
-        formControlName="password"
-        [feedback]="false" 
-        placeholder="Dejar vacío para no cambiar"
-        [toggleMask]="true"></p-password>
-    </div>
-  </form>
+      <div class="field flex flex-col gap-2">
+        <label for="password">Contraseña</label>
+        <p-password id="password" formControlName="password" [feedback]="false"
+          placeholder="Dejar vacío para no cambiar" [toggleMask]="true"></p-password>
+      </div>
+    </form>
 
 
-  <ng-template pTemplate="footer">
-    <div class="flex justify-content-end gap-2">
-      <p-button 
-        label="Cancelar" 
-        icon="pi pi-times" 
-        (click)="displayDialog = false"
-        styleClass="p-button-text p-button-danger"></p-button>
-      
-      <p-button 
-        label="Guardar" 
-        icon="pi pi-check" 
-        (click)="updateOperator()"
-        [disabled]="editForm.invalid"
-        styleClass="p-button-success"></p-button>
-    </div>
-  </ng-template>
-</p-dialog>
+    <ng-template pTemplate="footer">
+      <div class="flex justify-content-end gap-2">
+        <p-button label="Cancelar" icon="pi pi-times" (click)="displayDialog = false"
+          styleClass="p-button-text p-button-danger"></p-button>
+
+        <p-button label="Guardar" icon="pi pi-check" (click)="updateOperator()" [disabled]="editForm.invalid"
+          styleClass="p-button-success"></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
