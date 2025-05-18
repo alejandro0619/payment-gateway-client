@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, Pipe, PipeTransform } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { DrawerModule } from 'primeng/drawer';
@@ -55,7 +55,7 @@ export class DashboardComponent implements OnInit {
   transferDate: Date | null = null; // Fecha de transferencia
   maxDate: Date = new Date(); // Fecha máxima = hoy
   objectKeys = Object.keys;
-  selectedCourse: any = null;
+  selectedCourse: Course | null = null;
   selectedCourseStatus: string = '';
 
   // This is relevant for the drawer component
@@ -82,11 +82,11 @@ export class DashboardComponent implements OnInit {
   }
   getStatusTitle(status: string): string {
     const titles = {
-      'acquired': 'Cursos Adquiridos',
-      'not_acquired': 'Cursos no Adquiridos',
-      'cancelled': 'Cursos Cancelados',
-      'expired': 'Cursos Expirados',
-      'not_bought': 'Cursos Disponibles'
+      'acquired': 'Adquirido',
+      'not_acquired': 'No Adquirido',
+      'cancelled': 'Cancelado',
+      'expired': 'Expirado',
+      'not_bought': 'Disponible'
     };
     return titles[status as keyof typeof titles] || status;
   }
@@ -116,12 +116,16 @@ export class DashboardComponent implements OnInit {
     this.selectedCourseStatus = status;
     this.drawerVisible = true;
   }
-  getCourseProperty(prop: string) {
+  getCourseProperty<T extends keyof Course>(prop: T) {
+    if (!this.selectedCourse) {
+      return null;
+    }
     if (this.selectedCourseStatus === 'not_bought') {
       return this.selectedCourse[prop];
     }
     return this.selectedCourse.course?.[prop];
   }
+  
   private loadCourses(): void {
     // Get userId from localStorage
     const userId: string = localStorage.getItem("usr_info")!; // Should always exist, since the user is logged in

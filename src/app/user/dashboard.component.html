@@ -11,7 +11,7 @@
 
       <div class="space-y-8 p-4" *ngIf="courses && !loading">
         <!-- Sección por cada estado -->
-        <div *ngFor="let status of objectKeys(courses!)" class="space-y-4">
+        <div *ngFor="let status of objectKeys(courses)" class="space-y-4">
           <ng-container *ngIf="courses![status].length > 0">
             <h2 class="text-xl font-bold text-neutral-700 capitalize">
               {{ getStatusTitle(status) }}
@@ -24,19 +24,24 @@
 
                 <!-- Contenedor de imagen -->
                 <div class="flex-1 relative overflow-hidden rounded-lg mb-3">
-                  <img [src]="(status === 'not_bought' ? course.image : course.course?.image) || '/cover_img_not_set.png'"
+                  <img [src]="(status === 'not_bought' ? course.image : course.course.image) || '/cover_img_not_set.png'"
                        onerror="this.src='/cover_img_not_set.png'"
-                       [alt]="status === 'not_bought' ? course.name : course.course?.name"
+                       [alt]="status === 'not_bought' ? course.name : course.course.name"
                        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
 
                   <!-- Badge de esquema de pago -->
                   <span class="absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-medium bg-white shadow-sm"
                         [ngClass]="{
-                          'text-blue-600': (status === 'not_bought' ? course.paymentScheme : course.course?.paymentScheme) === 'single_payment',
-                          'text-green-600': (status === 'not_bought' ? course.paymentScheme : course.course?.paymentScheme) === 'installments'
+                          'text-blue-600': (status === 'not_bought' ? course.paymentScheme : course.course.paymentScheme) === 'single_payment',
+                          'text-green-600': (status === 'not_bought' ? course.paymentScheme : course.course.paymentScheme) === 'installments'
                         }">
-                    {{ (status === 'not_bought' ? course.paymentScheme : course.course?.paymentScheme) === 'single_payment' ? 'Pago único' : 'Pago por cuotas' }}
+                    {{ (status === 'not_bought' ? course.paymentScheme : course.course.paymentScheme) === 'single_payment' ? 'Pago único' : 'Pago por cuotas' }}
                   </span>
+                <div class="absolute top-2 left-2">
+                  <span class="px-2 py-1 rounded-full text-xs font-medium bg-white shadow-sm text-purple-600">
+                    {{ getStatusTitle(status) }}
+                  </span>
+                </div>
                 </div>
 
                 <!-- Contenido -->
@@ -49,20 +54,15 @@
                   </p>
                   <div class="mt-2 flex items-center justify-between">
                     <span class="text-sm font-medium text-neutral-700">
-                      {{ (status === 'not_bought' ? course.price : course.course?.price) | currency:'USD':'symbol':'1.0-2' }}
+                      {{ (status === 'not_bought' ? course.price : course.course.price) | currency:'USD':'symbol':'1.0-2' }}
                     </span>
                     <span class="text-xs text-neutral-400">
-                      {{ (status === 'not_bought' ? course.createdAt : course.course?.createdAt) | date: 'dd/MM/yy' }}
+                      {{ (status === 'not_bought' ? course.createdAt : course.course.createdAt) | date: 'dd/MM/yy' }}
                     </span>
                   </div>
                 </div>
 
-                <!-- Badge de estado -->
-                <div class="absolute top-2 left-2">
-                  <span class="px-2 py-1 rounded-full text-xs font-medium bg-white shadow-sm text-purple-600">
-                    {{ getStatusTitle(status) }}
-                  </span>
-                </div>
+
               </div>
             </div>
           </ng-container>
@@ -71,15 +71,17 @@
   </div>
 </div>
 
-<p-drawer #drawerRef [(visible)]="drawerVisible" position="right" [style]="{ width: '45rem' }" onHide="closeDetails()">
+<p-drawer #drawerRef [(visible)]="drawerVisible" position="right" [style]="{ width: '45rem' }" (onHide)="closeDetails()">
   <ng-template #headless>
     <div class="flex flex-col h-full">
       <!-- Header -->
       <div class="flex items-center justify-between px-6 pt-4 pb-4 ">
         <div class="flex items-center gap-3">
-          <span class="font-semibold text-2xl text-primary">{{ selectedCourse?.name }}</span>
+          <span class="font-semibold text-2xl text-primary">
+            {{ selectedCourseStatus === 'not_bought' ? selectedCourse?.name : selectedCourse?.course?.name }}
+          </span>
         </div>
-        <button (click)="selectedCourse = null" class="p-2 hover:bg-surface-100 rounded-full">
+        <button (click)="selectedCourse = null; selectedCourseStatus = ''" class="p-2 hover:bg-surface-100 rounded-full">
           <i class="pi pi-times text-lg"></i>
         </button>
       </div>
@@ -88,33 +90,38 @@
       <div class="overflow-y-auto flex-1 p-4">
         <!-- Image -->
         <div class="mb-6 rounded-lg overflow-hidden bg-surface-100">
-          <img [src]="selectedCourse?.image || '/cover_img_not_set.png'" onerror="this.src='/cover_img_not_set.png'"
-            class="w-full h-96 object-cover" alt="Course image" />
+          <img [src]="(selectedCourseStatus === 'not_bought' ? selectedCourse?.image : selectedCourse?.course?.image) || '/cover_img_not_set.png'" 
+               onerror="this.src='/cover_img_not_set.png'"
+               class="w-full h-96 object-cover" 
+               alt="Course image" />
         </div>
 
         <!-- Descripción -->
         <div class="mb-6">
           <h4 class="font-medium text-lg mb-2">Descripción del curso</h4>
-          <p class="text-surface-600">{{ selectedCourse?.description || 'Sin descripción' }}</p>
+          <p class="text-surface-600">
+            {{ (selectedCourseStatus === 'not_bought' ? selectedCourse?.description : selectedCourse?.course?.description) || 'Sin descripción' }}
+          </p>
         </div>
 
         <!-- Detalles de pago -->
         <div class="bg-surface-100 p-4 rounded-lg mb-6">
           <div class="flex items-center justify-between mb-4">
             <span class="font-medium">Esquema de pago:</span>
-            <span class="px-3 py-1 rounded-full text-sm" [ngClass]="{
-                      'bg-blue-100 text-blue-800': selectedCourse?.paymentScheme === 'single_payment',
-                      'bg-green-100 text-green-800': selectedCourse?.paymentScheme === 'installments',
-                      'bg-gray-100 text-gray-800': !selectedCourse?.paymentScheme
-                    }">
-              {{ selectedCourse?.paymentScheme || 'No especificado' }}
+            <span class="px-3 py-1 rounded-full text-sm" 
+                  [ngClass]="{
+                    'bg-blue-100 text-blue-800': (selectedCourseStatus === 'not_bought' ? selectedCourse?.paymentScheme : selectedCourse?.course?.paymentScheme) === 'single_payment',
+                    'bg-green-100 text-green-800': (selectedCourseStatus === 'not_bought' ? selectedCourse?.paymentScheme : selectedCourse?.course?.paymentScheme) === 'installments',
+                    'bg-gray-100 text-gray-800': !(selectedCourseStatus === 'not_bought' ? selectedCourse?.paymentScheme : selectedCourse?.course?.paymentScheme)
+                  }">
+              {{ (selectedCourseStatus === 'not_bought' ? selectedCourse?.paymentScheme : selectedCourse?.course?.paymentScheme) || 'No especificado' }}
             </span>
           </div>
 
           <div class="flex items-center justify-between">
             <span class="font-medium">Precio del curso:</span>
             <span class="text-primary font-semibold">
-              {{ selectedCourse?.price | currency:'USD':'symbol':'1.0-2' }}
+              {{ (selectedCourseStatus === 'not_bought' ? selectedCourse?.price : selectedCourse?.course?.price) | currency:'USD':'symbol':'1.0-2' }}
             </span>
           </div>
         </div>
@@ -128,7 +135,7 @@
           <button class="paypal-button flex items-center justify-center gap-2 px-6 py-3 
             border-2 border-blue-600 bg-transparent hover:bg-blue-50 
             rounded-xl transition-all duration-300 w-fit cursor-pointer"
-            (click)="createTransaction(selectedCourse!.id, 'paypal')">
+            (click)="createTransaction(selectedCourseStatus === 'not_bought' ? selectedCourse?.id : selectedCourse?.course?.id, 'paypal')">
             <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-current">
               <title>PayPal</title>
               <path fill="currentColor"
@@ -141,7 +148,7 @@
           <button class="zelle-button flex items-center justify-center gap-2 px-6 py-3 
             border-2 border-green-600 bg-transparent hover:bg-blue-50 
             rounded-xl transition-all duration-300 w-fit cursor-pointer"
-            (click)="createTransaction(selectedCourse!.id, 'zelle'); showZelleInformation = true">
+            (click)="createTransaction(selectedCourseStatus === 'not_bought' ? selectedCourse?.id : selectedCourse?.course?.id, 'zelle'); showZelleInformation = true">
             <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-current">
               <title>Zelle</title>
               <path fill="currentColor"
@@ -157,35 +164,34 @@
           <h4 class="font-medium text-lg mb-2">Monto total a cancelar: </h4>
           <h4 class="font-medium text-lg mb-2">$ {{ createdTRX!.finalAmount }}</h4>
         </span>
-
       </div>
       <p-toast [baseZIndex]="10000"></p-toast>
 
       <span class="flex flex-col items-center justify-center gap-4 px-6 py-4">
         <app-paypal-button *ngIf="createdTRX" [item]="{
-            name: selectedCourse!.name,
+            name: (selectedCourseStatus === 'not_bought' ? selectedCourse!.name : selectedCourse!.course!.name),
             trx: createdTRX!.transactionId,
-            description: selectedCourse!.description,
+            description: (selectedCourseStatus === 'not_bought' ? selectedCourse!.description : selectedCourse!.course!.description),
             price: createdTRX!.finalAmount,
             category: 'DIGITAL_GOODS',
             currency: 'USD',
           }" />
       </span>
+
       <!-- Pie del drawer -->
       <div class="mt-auto p-4 ">
         <p-message>
-          <p class="mb-1">Fecha de creación: {{selectedCourse?.createdAt}}</p>
-          <p>ID del curso: {{selectedCourse?.id}}</p>
+          <p class="mb-1">
+            Fecha de creación: {{ (selectedCourseStatus === 'not_bought' ? selectedCourse?.createdAt : selectedCourse?.course?.createdAt) | date: 'dd/MM/yy' }}
+          </p>
+          <p>
+            ID del curso: {{ selectedCourseStatus === 'not_bought' ? selectedCourse?.id : selectedCourse?.course?.id }}
+          </p>
         </p-message>
-
       </div>
-
     </div>
   </ng-template>
 </p-drawer>
-
-
-
 
 <p-dialog header="Confirmar Transferencia Zelle" [modal]="true" [(visible)]="showZelleInformation"
   [style]="{ width: '40rem' }" [contentStyle]="{ 'max-height': '30rem', overflow: 'auto' }">
