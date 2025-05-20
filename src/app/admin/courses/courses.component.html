@@ -29,7 +29,7 @@
               <td>{{ course.name }}</td>
               <td>
                 <img
-                  [src]="course.image ? course.image : 'https://primefaces.org/cdn/primeng/images/demo/product/null.jpg'"
+                  [src]="course.image ? course.image : '/cover_img_not_set.png'"
                   [alt]="course.name" class="w-24 rounded" />
               </td>
               <td>{{ course.price | currency:'USD':'symbol':'1.2-2' }}</td>

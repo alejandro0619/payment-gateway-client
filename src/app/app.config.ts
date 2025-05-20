@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
 import { routes } from './app.routes';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
@@ -17,8 +17,8 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(withInterceptorsFromDi()),
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
-    provideHttpClient(), 
+    provideRouter(routes, withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' })),
+    provideHttpClient(),
     provideToastr({
       preventDuplicates: true,
       resetTimeoutOnDuplicate: true,
@@ -32,10 +32,10 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor, 
+      useClass: AuthInterceptor,
       multi: true,
     },
-    
+
     providePrimeNG({
       theme: {
         preset: Aura,

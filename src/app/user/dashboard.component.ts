@@ -185,8 +185,25 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  // This method should only be called when the user's balance is > than the course price, otherwise, paypament flow should be handled by paypal itself or zelle.
   confirmTransfer() {
-    // Lógica para manejar la confirmación
+    this.dashboardService.autorizePayment(this.createdTRX!.transactionId, "completed").subscribe({
+      next: (response) => {
+        console.log('Transferencia confirmada:', response);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Transferencia confirmada con éxito'
+        });
+      }
+      , error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo confirmar la transferencia'
+        });
+      }
+    });
   }
 
   getPaymentSchemeColor(scheme: string): 'success' | 'secondary' | 'info' | 'warn' {

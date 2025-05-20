@@ -16,20 +16,7 @@ export class UserNavigationComponent {
   @Input() balance: number = 0; // User balance
 
   items: MenuItem[] = [
-    {
-      label: 'Cursos',
-      icon: 'pi pi-graduation-cap',
-      items: [
-        {
-          label: 'Adquiridos',
-          icon: 'pi pi-file'
-        },
-        {
-          label: 'No Adquiridos',
-          icon: 'pi pi-file-excel'
-        }
-      ]
-    },
+
 
     {
       label: 'Perfil',

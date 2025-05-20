@@ -7,7 +7,7 @@
       <div class="w-full flex items-center justify-between p-4 mb-4">
         <h1 class="text-4xl font-bold mb-6 text-neutral-800 ml-2">Mis Cursos</h1>
         <p-button (click)="loadCourses()" class="p-button-outlined">
-          Recargar cursos 
+          Recargar cursos
           <i class="pi pi-refresh"></i>
         </p-button>
       </div>
@@ -17,7 +17,7 @@
 
       <div class="space-y-8 p-4" *ngIf="courses && !loading">
         <!-- Sección por cada estado -->
-        <div *ngFor="let status of objectKeys(courses)" class="space-y-4">
+        <div *ngFor="let status of objectKeys(courses)" class="space-y-4" id="{{ status }}">
           <ng-container *ngIf="courses![status].length > 0">
             <h2 class="text-xl font-bold text-neutral-700 capitalize">
               {{ getStatusTitle(status) }}
@@ -134,8 +134,27 @@
             </div>
           </div>
 
+          <div *ngIf="this.balance >= +this.selectedCourse!.price">
+            <ng-container>
+              <div class="mb-6 text-center">
+                <button
+                  class="w-full px-6 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition cursor-pointer"
+                  [disabled]="!!createdTRX"
+                  (click)="createTransaction(selectedCourseStatus === 'not_bought' ? selectedCourse?.id : selectedCourse?.course?.id, 'paypal'); confirmTransfer()">
+
+
+                  {{ createdTRX ? 'Aceptar' : 'Adquirir' }}
+                </button>
+
+                <p class="mt-2 text-surface-600 text-sm">
+                  El curso está totalmente cubierto por tu saldo interno.
+                </p>
+              </div>
+            </ng-container>
+
+          </div>
           <!-- Botones de pago -->
-          <div class="flex gap-3 justify-around items-center mb-6">
+          <div *ngIf="this.balance < +this.selectedCourse!.price" class="flex gap-3 justify-around items-center mb-6">
             <p>
               <span class="font-medium">Selecciona un método de pago:</span>
             </p>
@@ -173,11 +192,9 @@
             <h4 class="font-medium text-lg mb-2">Monto total a cancelar: </h4>
             <h4 class="font-medium text-lg mb-2">$ {{ createdTRX!.finalAmount }}</h4>
           </span>
-        </div>
-        <p-toast [baseZIndex]="10000"></p-toast>
 
-        <span class="flex flex-col items-center justify-center gap-4 px-6 py-4">
-          <app-paypal-button *ngIf="createdTRX" [item]="{
+          <span class="flex flex-col items-center justify-center gap-4 px-6 py-4">
+            <app-paypal-button *ngIf="createdTRX" [item]="{
             name: (selectedCourseStatus === 'not_bought' ? selectedCourse!.name : selectedCourse!.course!.name),
             trx: createdTRX!.transactionId,
             description: (selectedCourseStatus === 'not_bought' ? selectedCourse!.description : selectedCourse!.course!.description),
@@ -185,7 +202,12 @@
             category: 'DIGITAL_GOODS',
             currency: 'USD',
           }" />
-        </span>
+          </span>
+        </div>
+
+        <p-toast [baseZIndex]="10000"></p-toast>
+
+
 
         <!-- Pie del drawer -->
         <div class="mt-auto p-4 ">

@@ -72,13 +72,6 @@ export class CoursesComponent implements OnInit {
   setupMenuItems() {
     this.items = [
       {
-        label: 'Modificar curso',
-        icon: 'pi pi-pencil',
-        command: () => {
-          this.openModifyModal();
-        },
-      },
-      {
         label: 'Eliminar curso',
         icon: 'pi pi-trash',
         command: (event: { originalEvent: Event }) => {

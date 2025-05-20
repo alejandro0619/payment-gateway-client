@@ -124,8 +124,21 @@ export class CreateCourseComponent {
     return this.courseForm.get('installments') as FormArray;
   }
   shouldDisableNextButton(): boolean {
-    return this.totalPercentage !== 100 || this.installmentsArray.invalid || this.courseForm.invalid || !this.isInstallmentsValid;
+  const scheme = this.courseForm.get('paymentScheme')?.value;
+
+  if (scheme === 'single_payment') {
+
+    return this.courseForm.invalid;
   }
+
+  return (
+    this.courseForm.invalid ||
+    this.totalPercentage !== 100 ||
+    !this.areDatesSequential() ||
+    this.installmentsArray.invalid
+  );
+}
+
   generateInstallmentsTable(): void {
     const num = this.courseForm.get('installmentsAmount')?.value || 1;
     this.installmentsArray.clear();
