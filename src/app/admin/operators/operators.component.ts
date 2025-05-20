@@ -146,6 +146,7 @@ export class OperatorsComponent implements OnInit {
         this.updateLocalData(updatedUser);
         this.displayDialog = false;
         this.showSuccess('Operador actualizado exitosamente');
+        this.getOperators()
       },
       error: (error) => this.handleError('Error actualizando operador', error),
     });
