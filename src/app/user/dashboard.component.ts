@@ -162,7 +162,7 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
-  // Thus flag should only be called when the user has enough balance to pay for the course
+  // This flag should only be called when the user has enough balance to pay for the course
   // Otherwise, the payment flow should be handled by paypal itself or zelle.
   // We use the flag internally to determine if we should execute confirmTransfer automatically when the transaction is created.
   createTransaction(courseId: string, paymentMethod: 'paypal' | 'zelle', flag: boolean = false): void {
@@ -192,7 +192,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // This method should only be called when the user's balance is > than the course price, otherwise, paypament flow should be handled by paypal itself or zelle.
+  // This method should only be called when the user's balance is > than the course price, otherwise, payment flow should be handled by paypal itself or zelle.
   confirmTransfer(trx: string) {
     this.dashboardService.autorizePayment(trx, "completed").subscribe({
       next: (response) => {

@@ -107,6 +107,7 @@ export class CoursesComponent implements OnInit {
         this.coursesService.deleteCourse(this.selectedCourse!.id).subscribe({
           next: () => {
             this.loadCourses();
+            console.log('Course deleted successfully');
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',

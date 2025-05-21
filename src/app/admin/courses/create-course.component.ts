@@ -76,7 +76,6 @@ export class CreateCourseComponent {
   visible: boolean = false;
   uploadedFiles: File | null = null;
   loading: boolean = false;
-
   /*
     First the user selects the payment scheme option, if it is "single_payment" the total is the one specified in the course's price.
     Otherwise, when the user selects "installment" as payment scheme, the user must select the number of installments and the percentage of each installment.
@@ -303,7 +302,7 @@ export class CreateCourseComponent {
 
       this.courseForm.reset();
       this.visible = false;
-
+      this.loading = false;
     } catch (error) {
       this.messageService.add({
         severity: 'error',
@@ -311,6 +310,7 @@ export class CreateCourseComponent {
         detail: 'Error en el proceso'
       });
       console.error('Error:', error);
+      this.loading = false;
     } finally {
       this.loading = false;
     }

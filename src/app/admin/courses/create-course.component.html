@@ -108,7 +108,7 @@
                         {{ (courseForm.value.price * (control.value.percentage / 100)) | currency }}
                       </td>
                       <td>
-                        <p-button pButton icon="pi pi-trash" class="p-button-danger p-button-sm"
+                        <p-button pButton icon="pi pi-trash" severity="danger"
                           (click)="removeInstallment(rowIndex)">
                         </p-button>
                       </td>
@@ -131,7 +131,7 @@
 
             <div class="flex justify-end gap-3 mt-5">
               <p-button label="Cancelar" severity="secondary" (click)="closeModal()" [disabled]="loading"></p-button>
-              <p-button label="Siguiente" (click)="activateCallback(2)" [loading]="loading"
+              <p-button label="Siguiente" (click)="activateCallback(2)"
                 [disabled]="shouldDisableNextButton()" />
             </div>
           </form>
@@ -159,7 +159,7 @@
               <!-- Footer con botón -->
               <ng-template #footer>
                 <div class="flex gap-4 mt-1">
-                  <p-button label="Publicar" class="w-full" styleClass="w-full" (click)="onSubmit()"
+                  <p-button label="Publicar" class="w-full" styleClass="w-full" (click)="onSubmit()" [loading]="loading"
                     [disabled]="courseForm.invalid" />
                 </div>
               </ng-template>
