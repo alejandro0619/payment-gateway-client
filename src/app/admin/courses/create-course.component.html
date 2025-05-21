@@ -143,17 +143,17 @@
         <ng-template #content let-activateCallback="activateCallback" let-deactivateCallback="deactivateCallback">
           <div class="mb-4 p-8 flex items-center justify-center">
             <p-card [style]="{ width: '25rem', overflow: 'hidden' }">
-              <!-- Cabecera con la imagen -->
+
               <ng-template #header>
                 <img alt="Portada del curso" class="w-full h-[200px] object-cover"
                   [src]="courseForm.value.image || '/cover_img_not_set.png'" />
               </ng-template>
 
-              <!-- Título y subtítulo -->
+
               <ng-template #title>{{ courseForm.value.name || 'Nombre del curso' }}</ng-template>
               <ng-template #subtitle>{{ courseForm.value.price | currency: 'USD' }}</ng-template>
 
-              <!-- Descripción -->
+ 
               <p class="line-clamp-3">{{ courseForm.value.description || 'Descripción del curso' }}</p>
 
               <!-- Footer con botón -->
@@ -165,7 +165,7 @@
               </ng-template>
             </p-card>
           </div>
-          <p-button label="Volver" severity="secondary" (Click)="activateCallback(1)"></p-button>
+          <!-- <p-button label="Volver" severity="secondary" (Click)="activateCallback(1)"></p-button> -->
         </ng-template>
       </p-step-panel>
     </p-step-panels>

@@ -162,7 +162,10 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
-  createTransaction(courseId: string, paymentMethod: 'paypal' | 'zelle') {
+  // Thus flag should only be called when the user has enough balance to pay for the course
+  // Otherwise, the payment flow should be handled by paypal itself or zelle.
+  // We use the flag internally to determine if we should execute confirmTransfer automatically when the transaction is created.
+  createTransaction(courseId: string, paymentMethod: 'paypal' | 'zelle', flag: boolean = false): void {
     const userId: string = localStorage.getItem("usr_info")!; // Should always exist, since the user is logged in
 
     this.dashboardService.createTransaction(courseId, userId, paymentMethod).subscribe({
@@ -174,6 +177,10 @@ export class DashboardComponent implements OnInit {
           summary: 'Éxito',
           detail: 'Transacción creada con éxito'
         });
+
+        if (flag) {
+          this.confirmTransfer(response.transactionId);
+        }
       },
       error: (error) => {
         this.messageService.add({
@@ -186,8 +193,8 @@ export class DashboardComponent implements OnInit {
   }
 
   // This method should only be called when the user's balance is > than the course price, otherwise, paypament flow should be handled by paypal itself or zelle.
-  confirmTransfer() {
-    this.dashboardService.autorizePayment(this.createdTRX!.transactionId, "completed").subscribe({
+  confirmTransfer(trx: string) {
+    this.dashboardService.autorizePayment(trx, "completed").subscribe({
       next: (response) => {
         console.log('Transferencia confirmada:', response);
         this.messageService.add({
@@ -195,6 +202,8 @@ export class DashboardComponent implements OnInit {
           summary: 'Éxito',
           detail: 'Transferencia confirmada con éxito'
         });
+        this.getBalance(); // Update the balance after confirming the transfer
+        this.loadCourses(); // Reload the courses to reflect the changes
       }
       , error: (error) => {
         this.messageService.add({

@@ -140,7 +140,7 @@
                 <button
                   class="w-full px-6 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition cursor-pointer"
                   [disabled]="!!createdTRX"
-                  (click)="createTransaction(selectedCourseStatus === 'not_bought' ? selectedCourse?.id : selectedCourse?.course?.id, 'paypal'); confirmTransfer()">
+                  (click)="createTransaction(selectedCourseStatus === 'not_bought' ? selectedCourse?.id : selectedCourse?.course?.id, 'paypal', true);">
 
 
                   {{ createdTRX ? 'Aceptar' : 'Adquirir' }}
@@ -258,6 +258,6 @@
 
     <ng-template pTemplate="footer">
       <p-button label="Cancelar" icon="pi pi-times" (click)="showZelleInformation = false" styleClass="p-button-text" />
-      <p-button label="Confirmar" icon="pi pi-check" (click)="confirmTransfer()" />
+      <p-button label="Confirmar" icon="pi pi-check"  />
     </ng-template>
   </p-dialog>
