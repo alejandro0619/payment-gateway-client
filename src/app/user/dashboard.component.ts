@@ -58,13 +58,13 @@ export class DashboardComponent implements OnInit {
   selectedCourse: Course | null = null;
   selectedCourseStatus: string = '';
   balance: number = 0; //   User balance
-
+  isLoadingCourseDetails: boolean = false; // Loading course details
 
   // This is relevant for the drawer component
   drawerVisible: boolean = false;
   drawerPosition: 'left' | 'right' = 'left';
   createdTRX: CreateTRXResponse | null = null;
-  paymentMethod: 'paypal' | 'zelle' = 'paypal';
+  paymentMethod: 'paypal' | 'zelle' | null = null;
 
 
   constructor(
@@ -93,6 +93,27 @@ export class DashboardComponent implements OnInit {
     };
     return titles[status as keyof typeof titles] || status;
   }
+
+  isCourseInNotBoughtOrExpired(courseId: string): boolean {
+    if (!this.courses) return false;
+
+    // Safe check in 'not_bought'
+    const inNotBought = Array.isArray(this.courses['not_bought']) &&
+      this.courses['not_bought'].some((course: any) => course?.id === courseId);
+    console.log('inNotBought', inNotBought);
+    // Safe check in 'expired'
+    const inExpired = Array.isArray(this.courses['expired']) &&
+      this.courses['expired'].some((item: any) => {
+   
+        if (item?.id === courseId) return true; 
+        if (item?.course?.id === courseId) return true;
+        return false;
+      });
+    console.log('inExpired', inExpired);
+    return inNotBought || inExpired;
+  }
+
+
   createOrder() {
     this.dashboardService.createOrder(this.createdTRX!.transactionId).subscribe({
       next: (response) => {
@@ -118,24 +139,33 @@ export class DashboardComponent implements OnInit {
     this.selectedCourse = course;
     this.selectedCourseStatus = status;
     this.drawerVisible = true;
-    this.dashboardService.createTransaction(course.id, localStorage.getItem('usr_info')!).subscribe({
-      next: (response) => {
-        console.log('Transacción creada:', response);
-        this.createdTRX = response;
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Transacción creada con éxito'
-        });
-      },
-      error: (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudo crear la transacción'
-        });
-      }
-    });
+    this.isLoadingCourseDetails = true
+    // Check if the current course is available for purchase
+    if (this.isCourseInNotBoughtOrExpired(course.id)) {
+      this.dashboardService.createTransaction(course.id, localStorage.getItem('usr_info')!).subscribe({
+        next: (response) => {
+          console.log('Transacción creada:', response);
+          this.createdTRX = response;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Transacción creada con éxito'
+          });
+          this.isLoadingCourseDetails = false;
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo crear la transacción'
+          });
+        }
+      });
+    } else {
+      this.isLoadingCourseDetails = false;
+    }
+
+
   }
   getCourseProperty<T extends keyof Course>(prop: T) {
     if (!this.selectedCourse) {
@@ -146,7 +176,7 @@ export class DashboardComponent implements OnInit {
     }
     return this.selectedCourse.course?.[prop];
   }
-  
+
   loadCourses(): void {
     // Get userId from localStorage
     const userId: string = localStorage.getItem("usr_info")!; // Should always exist, since the user is logged in
