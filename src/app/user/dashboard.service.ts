@@ -20,7 +20,7 @@ export class DashboardService {
       catchError(this.handleError)
     );
   }
-  createTransaction(courseId: string, userId: string, paymentMethod: 'paypal' | 'zelle'
+  createTransaction(courseId: string, userId: string, paymentMethod: 'paypal' | 'zelle' | null = null
   ): Observable<any> {
     return this.http.post<CreateTRXResponse>(`${this.API_URL}/transaction`, {
       courseId,
@@ -96,5 +96,4 @@ getUserCoursesFeed(userId: string): Observable<UserCoursesFeed> {
     console.error('Error en la solicitud:', errorMessage);
     return throwError(() => new Error(errorMessage));
   }
-
 }

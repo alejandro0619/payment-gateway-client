@@ -118,6 +118,24 @@ export class DashboardComponent implements OnInit {
     this.selectedCourse = course;
     this.selectedCourseStatus = status;
     this.drawerVisible = true;
+    this.dashboardService.createTransaction(course.id, localStorage.getItem('usr_info')!).subscribe({
+      next: (response) => {
+        console.log('Transacción creada:', response);
+        this.createdTRX = response;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Transacción creada con éxito'
+        });
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo crear la transacción'
+        });
+      }
+    });
   }
   getCourseProperty<T extends keyof Course>(prop: T) {
     if (!this.selectedCourse) {
