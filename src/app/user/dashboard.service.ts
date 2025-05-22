@@ -87,6 +87,16 @@ getUserCoursesFeed(userId: string): Observable<UserCoursesFeed> {
         catchError(this.handleError)
       );
   }
+  sendConfirmation(trx: string, confirmation: string) {
+    return this.http.patch(`${this.API_URL}/transaction/reference`, {
+      id: trx,
+      reference: confirmation
+    })
+      .pipe(
+        catchError(this.handleError)
+      );  
+  }
+  
   handleError(error: HttpErrorResponse) {
     let errorMessage = 'Ocurrió un error';
 

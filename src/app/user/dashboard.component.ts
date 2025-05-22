@@ -20,6 +20,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { FileUploadModule } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
 import { UserNavigationComponent } from '../ui/navs/user-navigation.component';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -40,7 +41,8 @@ import { UserNavigationComponent } from '../ui/navs/user-navigation.component';
     CalendarModule,
     FileUploadModule,
     InputTextModule,
-    UserNavigationComponent
+    UserNavigationComponent,
+    FormsModule
   ],
   templateUrl: './dashboard.component.html',
   providers: [MessageService],
@@ -67,6 +69,9 @@ export class DashboardComponent implements OnInit {
   paymentMethod: 'paypal' | 'zelle' | null = null;
   showPaymentFlow: 'paypal' | 'zelle' | null = null;
   companyEmail: string | null = null;
+  isSendingZelleConfirmation: boolean = false;
+
+  confirmationCodeZelle: string = ''; // Confirmation code for Zelle
   constructor(
     private dashboardService: DashboardService,
     private messageService: MessageService
@@ -96,7 +101,7 @@ export class DashboardComponent implements OnInit {
     this.showPaymentFlow = null;
     this.drawerVisible = false;
     this.isLoadingCourseDetails = false;
-    
+
 
   }
   getStatusTitle(status: string): string {
@@ -119,8 +124,8 @@ export class DashboardComponent implements OnInit {
     // Safe check in 'expired'
     const inExpired = Array.isArray(this.courses['expired']) &&
       this.courses['expired'].some((item: any) => {
-   
-        if (item?.id === courseId) return true; 
+
+        if (item?.id === courseId) return true;
         if (item?.course?.id === courseId) return true;
         return false;
       });
@@ -240,7 +245,7 @@ export class DashboardComponent implements OnInit {
           detail: 'Transacción creada con éxito'
         });
 
-        
+
       },
       error: (error) => {
         this.messageService.add({
@@ -274,6 +279,38 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
+sendZelleConfirmation() {
+  if (!this.createdTRX?.transactionId || !this.confirmationCodeZelle.trim()) return;
+
+  this.isSendingZelleConfirmation = true;
+
+  this.dashboardService.sendConfirmation(
+    this.createdTRX.transactionId,
+    this.confirmationCodeZelle.trim()
+  ).subscribe({
+    next: (response) => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: 'Confirmación de Zelle enviada con éxito'
+      });
+      this.getBalance();
+      this.loadCourses();
+      this.showPaymentFlow = null;
+      this.confirmationCodeZelle = '';
+    },
+    error: () => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo enviar la confirmación de Zelle'
+      });
+    },
+    complete: () => {
+      this.isSendingZelleConfirmation = false;
+    }
+  });
+}
 
   getPaymentSchemeColor(scheme: string): 'success' | 'secondary' | 'info' | 'warn' {
     switch (scheme) {

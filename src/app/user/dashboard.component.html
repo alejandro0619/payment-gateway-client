@@ -229,48 +229,65 @@
       </div>
     </ng-template>
   </p-drawer>
-  <p-dialog header="Confirmar Transferencia Zelle" [modal]="true" [visible]="showPaymentFlow === 'zelle'"
-    [style]="{ width: '40rem' }" [contentStyle]="{ 'max-height': '30rem', overflow: 'auto', padding: '1.5rem' }"
-    [dismissableMask]="true">
-    <div class="flex flex-col gap-6 text-gray-800">
 
-      <!-- Información Zelle -->
-      <div>
-        <h4 class="text-lg font-semibold mb-2">Datos para la transferencia:</h4>
-        <div class="space-y-1">
-          <p><span class="font-medium text-gray-700">Correo:</span> <span
-              class="text-indigo-600">{{companyEmail}}</span></p>
-          <p><span class="font-medium text-gray-700">Monto:</span> <span class="text-green-600 font-bold">{{createdTRX?.finalAmount}}
-              USD</span></p>
-        </div>
-      </div>
 
-      <!-- Fecha de transferencia -->
-      <div class="flex flex-col gap-1">
-        <label for="transferDate" class="text-sm font-medium">Fecha de transferencia</label>
-        <p-calendar inputId="transferDate" [maxDate]="maxDate" dateFormat="dd/mm/yy" [showIcon]="true"
-          styleClass="w-full" />
-      </div>
-
-      <!-- Captura de comprobante -->
-      <div class="flex flex-col gap-1">
-        <label for="capture" class="text-sm font-medium">Subir captura de transferencia</label>
-        <p-fileUpload inputId="capture" mode="basic" chooseLabel="Seleccionar archivo" accept="image/*, .pdf"
-          styleClass="w-full" />
-      </div>
-
-      <!-- Código de confirmación -->
-      <div class="flex flex-col gap-1">
-        <label for="confirmation" class="text-sm font-medium">Código o mensaje de confirmación</label>
-        <input id="confirmation" pInputText type="text" placeholder="Ej: Código de 8 dígitos de Zelle" class="w-full" />
+  <p-dialog
+  header="Confirmar Transferencia Zelle"
+  [modal]="true"
+  [visible]="showPaymentFlow === 'zelle'"
+  [style]="{ width: '40rem' }"
+  [contentStyle]="{ 'max-height': '30rem', overflow: 'auto', padding: '1.5rem' }"
+  [dismissableMask]="true"
+>
+  <div class="flex flex-col gap-6 text-gray-800">
+    <!-- Información Zelle -->
+    <div>
+      <h4 class="text-lg font-semibold mb-2">Datos para la transferencia:</h4>
+      <div class="space-y-1">
+        <p>
+          <span class="font-medium text-gray-700">Correo: </span>
+          <span class="text-indigo-600">{{ companyEmail }}</span>
+        </p>
+        <p>
+          <span class="font-medium text-gray-700">Monto: </span>
+          <span class="text-green-600 font-bold">{{ createdTRX?.finalAmount }} USD</span>
+        </p>
       </div>
     </div>
 
-    <ng-template pTemplate="footer">
-      <div class="flex justify-end gap-2 mt-4">
-        <p-button label="Cancelar" icon="pi pi-times" (click)="showPaymentFlow = null"
-          styleClass="p-button-outlined p-button-secondary" />
-        <p-button label="Confirmar" icon="pi pi-check" styleClass="p-button-success" />
-      </div>
-    </ng-template>
-  </p-dialog>
+    <!-- Código de confirmación -->
+    <div class="flex flex-col gap-1">
+      <label for="confirmation" class="text-sm font-medium">Código o mensaje de confirmación</label>
+      <input
+        id="confirmation"
+        pInputText
+        type="text"
+        placeholder="Ej: Código de 8 dígitos de Zelle"
+        class="w-full"
+        [(ngModel)]="confirmationCodeZelle"
+      />
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-2 mt-4">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        (click)="showPaymentFlow = null"
+        styleClass="p-button-outlined p-button-secondary"
+        [disabled]="isSendingZelleConfirmation"
+      />
+      <p-button
+        label="Confirmar"
+        icon="pi pi-check"
+        styleClass="p-button-success"
+        (click)="sendZelleConfirmation()"
+        [loading]="isSendingZelleConfirmation"
+        [disabled]="!confirmationCodeZelle || confirmationCodeZelle.trim().length === 0 || isSendingZelleConfirmation"
+      />
+    </div>
+  </ng-template>
+</p-dialog>
+
+
