@@ -65,8 +65,8 @@ export class DashboardComponent implements OnInit {
   drawerPosition: 'left' | 'right' = 'left';
   createdTRX: CreateTRXResponse | null = null;
   paymentMethod: 'paypal' | 'zelle' | null = null;
-
-
+  showPaymentFlow: 'paypal' | 'zelle' | null = null;
+  companyEmail: string | null = null;
   constructor(
     private dashboardService: DashboardService,
     private messageService: MessageService
@@ -75,12 +75,28 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.loadCourses();
     this.getBalance();
+    this.dashboardService.getCompanyEmail().subscribe({
+      next: (email) => {
+        this.companyEmail = email;
+      }
+      , error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo obtener el email de la empresa'
+        });
+      }
+    });
   }
 
   closeDetails(): void {
     this.selectedCourse = null;
     this.createdTRX = null;
-    this.paymentMethod = 'paypal';
+    this.paymentMethod = null;
+    this.showPaymentFlow = null;
+    this.drawerVisible = false;
+    this.isLoadingCourseDetails = false;
+    
 
   }
   getStatusTitle(status: string): string {
@@ -100,7 +116,6 @@ export class DashboardComponent implements OnInit {
     // Safe check in 'not_bought'
     const inNotBought = Array.isArray(this.courses['not_bought']) &&
       this.courses['not_bought'].some((course: any) => course?.id === courseId);
-    console.log('inNotBought', inNotBought);
     // Safe check in 'expired'
     const inExpired = Array.isArray(this.courses['expired']) &&
       this.courses['expired'].some((item: any) => {
@@ -109,7 +124,6 @@ export class DashboardComponent implements OnInit {
         if (item?.course?.id === courseId) return true;
         return false;
       });
-    console.log('inExpired', inExpired);
     return inNotBought || inExpired;
   }
 
@@ -226,9 +240,7 @@ export class DashboardComponent implements OnInit {
           detail: 'Transacción creada con éxito'
         });
 
-        if (flag) {
-          this.confirmTransfer(response.transactionId);
-        }
+        
       },
       error: (error) => {
         this.messageService.add({

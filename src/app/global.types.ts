@@ -32,6 +32,21 @@ export interface UserBalance {
   email: string,
   balance: string
 }
+export interface Company {
+  id: string;
+  name: string;
+  address?: string | null;
+  telephone_number?: string | null;
+  email?: string | null;
+  description?: string | null;
+  created_at: string;
+  image?: string | null;
+  payment_preference?: 'paypal' | 'zelle' | 'both' | null;
+  updated_at: string;
+}
+
+export type CompanyForm = Omit<Partial<Company>, 'id' | 'created_at' | 'updated_at'>;
+
 export interface User {
   id: string;
   createdAt: string;
@@ -70,7 +85,7 @@ export enum Roles {
 
 // This should be an error instead of a string CHECK FOR LATER 
 
-export type CreateTRXResponse =  {
+export type CreateTRXResponse = {
   finalAmount: number;
   transactionId: any;
 }

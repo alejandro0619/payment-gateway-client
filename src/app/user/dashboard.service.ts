@@ -2,8 +2,7 @@ import {  Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, forkJoin, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from '../../envs/env.dev';
-import { Course, CreateTRXResponse, UserBalance, UserCoursesFeed } from '../global.types';
-
+import { Company, Course, CreateTRXResponse, UserBalance, UserCoursesFeed } from '../global.types';
 
 
 @Injectable({
@@ -81,6 +80,13 @@ getUserCoursesFeed(userId: string): Observable<UserCoursesFeed> {
     );
   }
 
+  getCompanyEmail() {
+    return this.http.get<Company[]>(`${this.API_URL}/company`)
+      .pipe(
+        map((resp: Company[]) => resp[0]?.email || null),
+        catchError(this.handleError)
+      );
+  }
   handleError(error: HttpErrorResponse) {
     let errorMessage = 'Ocurrió un error';
 
