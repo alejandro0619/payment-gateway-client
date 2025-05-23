@@ -41,13 +41,12 @@
 
             <div class="flex items-center gap-4 mb-4">
               <label for="courseImage" class="font-semibold w-32">Imagen del curso</label>
-              <p-fileUpload name="courseImage" url="https://www.primefaces.org/cdn/api/upload.php"
-                (onUpload)="onUpload($event)" accept="image/*" class="flex-auto" [maxFileSize]="1000000"
-                [style]="{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }">
-                <ng-template #empty>
-                  <div>Arrastre hasta aquí una imagen para subirla como portada del curso.</div>
-                </ng-template>
-              </p-fileUpload>
+              <p-fileUpload name="image" [customUpload]="true" (onSelect)="onSelectImage($event)" accept="image/*"
+                [auto]="false" [showUploadButton]="false" [showCancelButton]="false" mode="basic"
+                chooseLabel="Seleccionar imagen">
+                </p-fileUpload>
+
+
             </div>
 
             <div class="flex items-center gap-4 mb-4">
@@ -108,8 +107,7 @@
                         {{ (courseForm.value.price * (control.value.percentage / 100)) | currency }}
                       </td>
                       <td>
-                        <p-button pButton icon="pi pi-trash" severity="danger"
-                          (click)="removeInstallment(rowIndex)">
+                        <p-button pButton icon="pi pi-trash" severity="danger" (click)="removeInstallment(rowIndex)">
                         </p-button>
                       </td>
                     </tr>
@@ -131,8 +129,7 @@
 
             <div class="flex justify-end gap-3 mt-5">
               <p-button label="Cancelar" severity="secondary" (click)="closeModal()" [disabled]="loading"></p-button>
-              <p-button label="Siguiente" (click)="activateCallback(2)"
-                [disabled]="shouldDisableNextButton()" />
+              <p-button label="Siguiente" (click)="activateCallback(2)" [disabled]="shouldDisableNextButton()" />
             </div>
           </form>
         </ng-template>

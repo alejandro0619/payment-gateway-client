@@ -123,20 +123,20 @@ export class CreateCourseComponent {
     return this.courseForm.get('installments') as FormArray;
   }
   shouldDisableNextButton(): boolean {
-  const scheme = this.courseForm.get('paymentScheme')?.value;
+    const scheme = this.courseForm.get('paymentScheme')?.value;
 
-  if (scheme === 'single_payment') {
+    if (scheme === 'single_payment') {
 
-    return this.courseForm.invalid;
+      return this.courseForm.invalid;
+    }
+
+    return (
+      this.courseForm.invalid ||
+      this.totalPercentage !== 100 ||
+      !this.areDatesSequential() ||
+      this.installmentsArray.invalid
+    );
   }
-
-  return (
-    this.courseForm.invalid ||
-    this.totalPercentage !== 100 ||
-    !this.areDatesSequential() ||
-    this.installmentsArray.invalid
-  );
-}
 
   generateInstallmentsTable(): void {
     const num = this.courseForm.get('installmentsAmount')?.value || 1;
@@ -159,6 +159,21 @@ export class CreateCourseComponent {
 
     this.updateTotalPercentage();
   }
+  onSelectImage(event: { originalEvent: Event; files: File[] }): void {
+    const file = event.files[0];
+    if (!file) return;
+    console.log("Imagen seleccionada:", file);
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.courseForm.patchValue({ image: reader.result }); // Solo para preview
+    };
+    reader.readAsDataURL(file);
+
+    this.uploadedFiles = file; // Guarda el archivo para subirlo después
+  }
+
+
 
   private dateAfterPreviousValidator(index: number): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -275,9 +290,10 @@ export class CreateCourseComponent {
     this.loading = true;
     try {
       // 1. Subir imagen primero si existe
-      const imageUrl = this.courseForm.value.image
+      const imageUrl = this.uploadedFiles
         ? await this.uploadImage().toPromise()
         : null;
+
 
       // 2. Crear objeto del curso con la URL de la imagen
       const courseData = {
@@ -317,17 +333,25 @@ export class CreateCourseComponent {
   }
 
   private uploadImage() {
+    if (!this.uploadedFiles) {
+      throw new Error('No se ha seleccionado ninguna imagen para subir.');
+    }
+
     const formData = new FormData();
+    formData.append('file', this.uploadedFiles, this.uploadedFiles.name); // usa el nombre real del archivo
 
-    formData.append('file', this.uploadedFiles!, this.courseForm.value.name);
-
-    return this.http.put<{ url: string }>('http://localhost:3000/course/upload', formData).pipe(
+    return this.http.put<{ url: string }>(
+      'http://localhost:3000/course/upload',
+      formData
+    ).pipe(
       map(response => response.url),
       catchError(error => {
+        console.error('Error en uploadImage', error);
         throw new Error('Error al subir la imagen');
       })
     );
   }
+
 
   markAllAsTouched() {
     Object.values(this.courseForm.controls).forEach(control => {
