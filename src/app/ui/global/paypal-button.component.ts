@@ -26,7 +26,7 @@ export class paypalBtn implements OnInit, OnChanges {
 
   public payPalConfig?: IPayPalConfig;
   @Input() item: PaypalItemPayload | null = null;
-
+  @Input() reloadCourses: () => void = () => { };
   ngOnInit(): void {
     if (!this.item) return;
     this.initConfig();
@@ -104,6 +104,7 @@ export class paypalBtn implements OnInit, OnChanges {
         this.dashboardService.autorizePayment(this.item!.trx, 'completed').subscribe({
           next: (response) => {
             console.log('Transacción autorizada:', response);
+            this.reloadCourses();
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',

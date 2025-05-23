@@ -1,4 +1,4 @@
-import {  Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, forkJoin, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from '../../envs/env.dev';
@@ -31,6 +31,7 @@ export class DashboardService {
 
   }
 
+  
   createOrder(transactionId: string) {
     return this.http.post(`${this.API_URL}/transaction/order`, {
       transactionId,
@@ -46,28 +47,28 @@ export class DashboardService {
   }
 
 
-getUserCoursesFeed(userId: string): Observable<UserCoursesFeed> {
-  const statuses = ['acquired', 'not_acquired', 'cancelled', 'expired', 'not_bought'];
+  getUserCoursesFeed(userId: string): Observable<UserCoursesFeed> {
+    const statuses = ['acquired', 'not_acquired', 'cancelled', 'expired', 'not_bought'];
 
 
-  const requests = statuses.map(status => 
-    this.http.post<Course[]>(`${this.API_URL}/user-course/get-user-courses-by-status`, {
-      userId,
-      status 
-    }).pipe(
-      tap(courses => console.log(`Cursos con estado ${status}:`, courses)),
-      catchError(this.handleError),
-      map(courses => ({ [status]: courses }))
-    )
-  );
+    const requests = statuses.map(status =>
+      this.http.post<Course[]>(`${this.API_URL}/user-course/get-user-courses-by-status`, {
+        userId,
+        status
+      }).pipe(
+        tap(courses => console.log(`Cursos con estado ${status}:`, courses)),
+        catchError(this.handleError),
+        map(courses => ({ [status]: courses }))
+      )
+    );
 
 
-  // Combinar todas las solicitudes y mapear a un objeto único
-  return forkJoin(requests).pipe(
-    // Reducir el array de objetos a un solo objeto
-    map(results => results.reduce((acc, curr) => ({ ...acc, ...curr }), {}))
-  );
-}
+    // Combinar todas las solicitudes y mapear a un objeto único
+    return forkJoin(requests).pipe(
+      // Reducir el array de objetos a un solo objeto
+      map(results => results.reduce((acc, curr) => ({ ...acc, ...curr }), {}))
+    );
+  }
 
 
   autorizePayment(trxId: string, status: string) {
@@ -77,7 +78,7 @@ getUserCoursesFeed(userId: string): Observable<UserCoursesFeed> {
     })
       .pipe(
         catchError(this.handleError)
-    );
+      );
   }
 
   getCompanyEmail() {
@@ -94,9 +95,20 @@ getUserCoursesFeed(userId: string): Observable<UserCoursesFeed> {
     })
       .pipe(
         catchError(this.handleError)
-      );  
+      );
   }
-  
+
+
+  setPaymentMethod(trxId: string, paymentMethod: 'paypal' | 'zelle' | null = null) {
+    return this.http.patch(`${this.API_URL}/transaction/`, {
+      id: trxId,
+      paymentMethod: paymentMethod
+    })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   handleError(error: HttpErrorResponse) {
     let errorMessage = 'Ocurrió un error';
 

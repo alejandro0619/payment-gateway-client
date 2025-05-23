@@ -163,7 +163,7 @@
               <!-- Botón PayPal -->
               <button class="paypal-button flex items-center justify-center gap-2 px-6 py-3 
             border-2 border-blue-600 bg-transparent hover:bg-blue-50 
-            rounded-xl transition-all duration-300 w-fit cursor-pointer" (click)="this.showPaymentFlow = 'paypal'">
+            rounded-xl transition-all duration-300 w-fit cursor-pointer" (click)="setPaymentMethod('paypal')">
                 <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-current">
                   <title>PayPal</title>
                   <path fill="currentColor"
@@ -175,8 +175,7 @@
               <!-- Botón Zelle -->
               <button class="zelle-button flex items-center justify-center gap-2 px-6 py-3 
             border-2 border-green-600 bg-transparent hover:bg-blue-50 
-            rounded-xl transition-all duration-300 w-fit cursor-pointer" (click)="this.showPaymentFlow 
-                = 'zelle'">
+            rounded-xl transition-all duration-300 w-fit cursor-pointer" (click)="setPaymentMethod('zelle')">
                 <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-current">
                   <title>Zelle</title>
                   <path fill="currentColor"
@@ -205,7 +204,7 @@
             price: createdTRX!.finalAmount,
             category: 'DIGITAL_GOODS',
             currency: 'USD',
-          }" />
+          }" [reloadCourses]="closeDetails" />
           </span>
         </div>
 

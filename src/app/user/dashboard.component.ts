@@ -101,7 +101,7 @@ export class DashboardComponent implements OnInit {
     this.showPaymentFlow = null;
     this.drawerVisible = false;
     this.isLoadingCourseDetails = false;
-
+    this.loadCourses()
 
   }
   getStatusTitle(status: string): string {
@@ -279,39 +279,51 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
-sendZelleConfirmation() {
-  if (!this.createdTRX?.transactionId || !this.confirmationCodeZelle.trim()) return;
+  sendZelleConfirmation() {
+    if (!this.createdTRX?.transactionId || !this.confirmationCodeZelle.trim()) return;
 
-  this.isSendingZelleConfirmation = true;
+    this.isSendingZelleConfirmation = true;
 
-  this.dashboardService.sendConfirmation(
-    this.createdTRX.transactionId,
-    this.confirmationCodeZelle.trim()
-  ).subscribe({
-    next: (response) => {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Éxito',
-        detail: 'Confirmación de Zelle enviada con éxito'
-      });
-      this.getBalance();
-      this.loadCourses();
-      this.showPaymentFlow = null;
-      this.confirmationCodeZelle = '';
-    },
-    error: () => {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'No se pudo enviar la confirmación de Zelle'
-      });
-    },
-    complete: () => {
-      this.isSendingZelleConfirmation = false;
-    }
-  });
-}
+    this.dashboardService.sendConfirmation(
+      this.createdTRX.transactionId,
+      this.confirmationCodeZelle.trim()
+    ).subscribe({
+      next: (response) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Confirmación de Zelle enviada con éxito'
+        });
+        this.getBalance();
+        this.loadCourses();
+        this.showPaymentFlow = null;
+        this.confirmationCodeZelle = '';
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo enviar la confirmación de Zelle'
+        });
+      },
+      complete: () => {
+        this.isSendingZelleConfirmation = false;
+      }
+    });
+  }
 
+  setPaymentMethod(method: 'paypal' | 'zelle') {
+    this.paymentMethod = method;
+    this.showPaymentFlow = method;
+    this.dashboardService.setPaymentMethod(this.createdTRX!.transactionId, method).subscribe({
+      next: (response) => {
+        console.log('Método de pago establecido:', response);
+      }
+      , error: (error) => {
+      }
+    });
+
+  }
   getPaymentSchemeColor(scheme: string): 'success' | 'secondary' | 'info' | 'warn' {
     switch (scheme) {
       case 'single_payment':
