@@ -102,9 +102,7 @@ export class DashboardService {
   setPaymentMethod(trxId: string, paymentMethod: 'paypal' | 'zelle') {
     let status: string | undefined = undefined;
     
-    if (paymentMethod === 'zelle') {
-      status = 'ready_to_be_checked'
-    } else {
+    if (paymentMethod === 'paypal') {
       status = 'in_process';
     }
     return this.http.patch(`${this.API_URL}/transaction/`, {
