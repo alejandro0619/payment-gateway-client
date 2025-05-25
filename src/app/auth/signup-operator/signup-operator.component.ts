@@ -63,7 +63,7 @@ export class SignupOperatorComponent {
             next: (operatorResponse) => {
               console.log('Operador registrado:', operatorResponse);
               this.toastr.success('¡Registro exitoso!', 'Bienvenido');
-              this.router.navigate(['/auth/login']);
+              this.router.navigate(['/admin/dashboard']);
             },
             error: (operatorError) => {
               console.error('Error en el registro del operador:', operatorError);

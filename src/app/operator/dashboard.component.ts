@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -13,6 +13,7 @@ import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MenuModule } from 'primeng/menu';
 import { OperatorNavigationComponent } from '../ui/navs/operator-navigation.component';
+import { DashboardService } from './dashboard.service';
 
 interface Transaction {
   id: string;
@@ -46,7 +47,7 @@ interface Transaction {
   templateUrl: './dashboard.component.html',
   providers: [MessageService, ConfirmationService],
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   filterOptions = [
     { label: 'ID de la transacción', value: 'id' },
     { label: 'Nombre del curso', value: 'course.name' },
@@ -61,45 +62,12 @@ export class DashboardComponent {
   searchText: string = '';
   filteredTransactions: Transaction[] = [];
 
-  transactions: Transaction[] = [
-    {
-      id: 'TXN001',
-      course: { name: 'Curso de Angular Avanzado' },
-      amount: 120.0,
-      paymentMethod: 'Tarjeta de crédito',
-      status: 'Pendiente',
-      user: { email: 'estudiante1@correo.com' },
-      validatedBy: null,
-      date: '2024-05-01',
-      description: 'Pago realizado para el curso de Angular Avanzado.',
-    },
-    {
-      id: 'TXN002',
-      course: { name: 'Introducción a TypeScript' },
-      amount: 80.5,
-      paymentMethod: 'PayPal',
-      status: 'Aceptada',
-      user: { email: 'estudiante2@correo.com' },
-      validatedBy: null,
-      date: '2024-05-02',
-      description: 'Esperando confirmación del pago realizado vía PayPal.',
-    },
-    {
-      id: 'TXN003',
-      course: { name: 'Desarrollo Web con NestJS' },
-      amount: 150.75,
-      paymentMethod: 'Transferencia bancaria',
-      status: 'Pendiente',
-      user: { email: 'estudiante3@correo.com' },
-      validatedBy: null,
-      date: '2024-05-03',
-      description: 'Comprobante bancario enviado para revisión.',
-    },
-  ];
+  transactions: Transaction[] = [];
 
   constructor(
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private dashboardService: DashboardService, // Asegúrate de importar el servicio correctamente
   ) {
     this.filteredTransactions = [...this.transactions]; // Inicializa con todas las transacciones
   }
@@ -119,7 +87,46 @@ export class DashboardComponent {
     ];
   }
 
+  ngOnInit() {
+    this.dashboardService.findTransactions().subscribe(
+      (data): void => {
+        this.transactions = data.map(tx => ({
+          id: tx.id,
+          course: { name: tx.course && tx.course.name ? tx.course.name : '' },
+          amount: parseFloat(tx.amount),
+          paymentMethod: tx.paymentMethod,
+          status: this.getStatusLabel(tx.status),
+          user: { email: tx.user.email },
+          validatedBy: tx.validatedBy ? { email: tx.validatedBy.email } : null,
+          date: new Date(tx.createdAt).toLocaleDateString('es-ES'),
+          description: tx.description
+        }));
+        console.log('Transacciones obtenidas:', this.transactions);
+        this.filteredTransactions = [...this.transactions];
+      },
+      (error) => {
+        console.error('Error al obtener transacciones:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudieron cargar las transacciones',
+        });
+      }
+    );
+  }
+  private getStatusLabel(status: string): string {
+    const statusMap: Record<string, string> = {
+      'ready_to_be_checked': 'Pendiente',
+      'approved': 'Aprobada',
+      'rejected': 'Rechazada',
+    };
+
+    return statusMap[status] ?? status;
+  }
+
+
   confirmAcceptTransaction(transaction: Transaction) {
+    console.log("dadda")
     this.confirmationService.confirm({
       message: `¿Está seguro de aceptar la transacción ${transaction.id}?`,
       header: 'Confirmar Aceptación',
@@ -129,14 +136,27 @@ export class DashboardComponent {
       acceptButtonStyleClass: 'p-button-success',
       rejectButtonStyleClass: 'p-button-secondary',
       accept: () => {
-        transaction.status = 'Aprobado';
-        transaction.validatedBy = { email: 'operador@plataforma.com' };
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Transacción aceptada correctamente',
+        this.dashboardService.setTransactionStatus(transaction.id, 'completed').subscribe({
+          next: (updatedTransaction) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Transacción aceptada correctamente',
+            });
+            this.filterTable();
+            console.log('Transacción aceptada:', updatedTransaction);
+          }
+          ,
+          error: (error) => {
+
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'No se pudo aceptar la transacción',
+            });
+          }
         });
-        this.filterTable(); // Actualiza el filtrado
+
       },
     });
   }
@@ -188,7 +208,7 @@ export class DashboardComponent {
   // It uses the reduce method to traverse the object based on the path
   // If at any point the accumulator is null or undefined, it returns undefined
   // It is used in the filterTable method to filter transactions based on the selected field and search text
-  
+
   private getFieldValue(obj: any, path: string): any {
     return path.split('.').reduce((acc, part) => {
       if (acc === null || acc === undefined || typeof acc !== 'object') {

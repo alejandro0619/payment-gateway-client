@@ -1,5 +1,4 @@
 
-
 export interface Transaction {
   id: string;
   createdAt: string;
@@ -89,6 +88,7 @@ export type CreateTRXResponse = {
   finalAmount: number;
   transactionId: any;
 }
+
 
 export interface UserCoursesFeed { [status: string]: Course[]; }
 export const BASE_URL = 'http://localhost:3000';

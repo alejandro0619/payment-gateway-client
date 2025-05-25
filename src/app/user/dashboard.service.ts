@@ -31,7 +31,7 @@ export class DashboardService {
 
   }
 
-  
+
   createOrder(transactionId: string) {
     return this.http.post(`${this.API_URL}/transaction/order`, {
       transactionId,
@@ -99,10 +99,18 @@ export class DashboardService {
   }
 
 
-  setPaymentMethod(trxId: string, paymentMethod: 'paypal' | 'zelle' | null = null) {
+  setPaymentMethod(trxId: string, paymentMethod: 'paypal' | 'zelle') {
+    let status: string | undefined = undefined;
+    
+    if (paymentMethod === 'zelle') {
+      status = 'ready_to_be_checked'
+    } else {
+      status = 'in_process';
+    }
     return this.http.patch(`${this.API_URL}/transaction/`, {
       id: trxId,
-      paymentMethod: paymentMethod
+      paymentMethod: paymentMethod,
+      status: status
     })
       .pipe(
         catchError(this.handleError)

@@ -81,26 +81,18 @@ export class paypalBtn implements OnInit, OnChanges {
         fundingicons: false
       },
       onApprove: (data, actions) => {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Transacción aprobada',
-          detail: 'Procesando pago...',
-          life: 3000
-        });
-
-        console.log('onApprove - transaction was approved, but not authorized', data, actions);
         actions.order.get().then((details: any) => {
           this.messageService.add({
             severity: 'success',
             summary: 'Pago completado',
-            detail: `Transacción ID: ${details.id}`,
+            detail: `Esperando autorización`,
             life: 5000
           });
-          console.log('onApprove - you can get full order details inside onApprove: ', details);
+          
         });
       },
       onClientAuthorization: (data) => {
-        console.log('onClientAuthorization - you should probably inform your server about completed transaction at this point', data);
+
         this.dashboardService.autorizePayment(this.item!.trx, 'completed').subscribe({
           next: (response) => {
             console.log('Transacción autorizada:', response);
