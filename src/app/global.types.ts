@@ -11,6 +11,7 @@ export interface Transaction {
   course: Course;
   user: User;
   validatedBy: User | null;
+  reference?: string | null;
 }
 
 

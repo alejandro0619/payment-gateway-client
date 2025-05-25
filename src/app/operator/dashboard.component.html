@@ -23,7 +23,7 @@
                 <th>Método</th>
                 <th>Estado</th>
                 <th>Estudiante</th>
-                <th>Validado por</th>
+                <th>Referencia</th>
                 <th>Acciones</th>
             </tr>
         </ng-template>
@@ -40,7 +40,7 @@
                     <p-tag [value]="transaction.status"></p-tag>
                 </td>
                 <td>{{ transaction.user?.email }}</td>
-                <td>{{ transaction.validatedBy?.email || 'N/A' }}</td>
+                <td>{{ transaction.reference || 'N/A' }}</td>
                 <td class="relative">
                     <p-menu #menu [model]="getMenuItems(transaction)" [popup]="true" appendTo="body"></p-menu>
                     <button pButton (click)="menu.toggle($event)" icon="pi pi-ellipsis-v"

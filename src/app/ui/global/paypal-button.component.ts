@@ -1,9 +1,9 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { IPayPalConfig, ICreateOrderRequest, NgxPayPalModule } from 'ngx-paypal';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { DashboardService } from '../../user/dashboard.service';
-
+import { ToastrService } from 'ngx-toastr';
 
 interface PaypalItemPayload {
   name: string;
@@ -21,12 +21,14 @@ interface PaypalItemPayload {
   providers: [MessageService, DashboardService],
 })
 export class paypalBtn implements OnInit, OnChanges {
-
+  private toastr = inject(ToastrService);
   constructor(private messageService: MessageService, private dashboardService: DashboardService) { }
 
   public payPalConfig?: IPayPalConfig;
   @Input() item: PaypalItemPayload | null = null;
   @Input() reloadCourses: () => void = () => { };
+  @Input() getBalance: () => void = () => { };
+
   ngOnInit(): void {
     if (!this.item) return;
     this.initConfig();
@@ -81,6 +83,8 @@ export class paypalBtn implements OnInit, OnChanges {
         fundingicons: false
       },
       onApprove: (data, actions) => {
+
+        console.log('onApprove - transaction was approved, but not authorized', data, actions);
         actions.order.get().then((details: any) => {
           this.messageService.add({
             severity: 'success',
@@ -88,20 +92,22 @@ export class paypalBtn implements OnInit, OnChanges {
             detail: `Esperando autorización`,
             life: 5000
           });
-          
+          console.log('onApprove - you can get full order details inside onApprove: ', details);
         });
       },
       onClientAuthorization: (data) => {
-
+        console.log('onClientAuthorization - you should probably inform your server about completed transaction at this point', data);
         this.dashboardService.autorizePayment(this.item!.trx, 'completed').subscribe({
           next: (response) => {
             console.log('Transacción autorizada:', response);
-            this.reloadCourses();
+
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
               detail: 'Transacción autorizada con éxito'
             });
+            this.reloadCourses();
+            this.getBalance();
           },
           error: (error) => {
             this.messageService.add({

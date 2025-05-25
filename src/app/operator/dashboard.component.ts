@@ -22,9 +22,10 @@ interface Transaction {
   paymentMethod: string;
   status: string;
   user: { email: string };
-  validatedBy: { email: string } | null;
+  validatedBy?: { email: string } | null;
   date: string;
   description: string;
+  reference?: string
 }
 
 @Component({
@@ -84,10 +85,10 @@ export class DashboardComponent implements OnInit {
       },
     ];
   }
-
-  ngOnInit() {
+  loadTransactions() {
     this.dashboardService.findTransactions().subscribe(
       (data): void => {
+        console.log('Transacciones obtenidas:', data);
         this.transactions = data.map(tx => ({
           id: tx.id,
           course: { name: tx.course && tx.course.name ? tx.course.name : '' },
@@ -95,11 +96,11 @@ export class DashboardComponent implements OnInit {
           paymentMethod: tx.paymentMethod,
           status: this.getStatusLabel(tx.status),
           user: { email: tx.user.email },
-          validatedBy: tx.validatedBy ? { email: tx.validatedBy.email } : null,
           date: new Date(tx.createdAt).toLocaleDateString('es-ES'),
-          description: tx.description
+          description: tx.description,
+          reference: tx.reference || 'N/A',
         }));
-        console.log('Transacciones obtenidas:', this.transactions);
+        //console.log('Transacciones obtenidas:', this.transactions);
         this.filteredTransactions = [...this.transactions];
       },
       (error) => {
@@ -111,6 +112,9 @@ export class DashboardComponent implements OnInit {
         });
       }
     );
+  }
+  ngOnInit() {
+    this.loadTransactions();
   }
   private getStatusLabel(status: string): string {
     const statusMap: Record<string, string> = {
@@ -141,6 +145,7 @@ export class DashboardComponent implements OnInit {
               summary: 'Éxito',
               detail: 'Transacción aceptada correctamente',
             });
+            this.loadTransactions(); // Reload transactions to reflect changes
             this.filterTable();
             console.log('Transacción aceptada:', updatedTransaction);
           }
@@ -176,6 +181,7 @@ export class DashboardComponent implements OnInit {
               summary: 'Éxito',
               detail: 'Transacción aceptada correctamente',
             });
+            this.loadTransactions(); // Reload transactions to reflect changes
             this.filterTable();
             console.log('Transacción aceptada:', updatedTransaction);
           }

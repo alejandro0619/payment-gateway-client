@@ -203,6 +203,7 @@ export class DashboardComponent implements OnInit {
       next: (courses) => {
         this.courses = courses;
         this.loading = false;
+        
         console.log('Cursos cargados:', this.courses);
       },
       error: (error) => {
@@ -245,7 +246,7 @@ export class DashboardComponent implements OnInit {
           detail: 'Transacción creada con éxito'
         });
 
-
+        console.log('trx::::::::::::::::::::::::::::::::::::::>', response);
       },
       error: (error) => {
         this.messageService.add({
@@ -303,8 +304,8 @@ export class DashboardComponent implements OnInit {
       error: () => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudo enviar la confirmación de Zelle'
+          summary: 'Error al enviar la confirmación',
+          detail: 'La transacción expiró, por favor, recargue la página y vuelva a intentarlo'
         });
       },
       complete: () => {
