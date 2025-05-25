@@ -30,6 +30,8 @@ import { Roles, User } from '../../global.types';
 import { OperatorsService } from './operators.service';
 import { MessageService } from 'primeng/api';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+import { inject } from '@angular/core';
 @Component({
   selector: 'table-operators',
   templateUrl: './operators.component.html',
@@ -61,6 +63,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   providers: [MessageService],
 })
 export class OperatorsComponent implements OnInit {
+  private toastr = inject(ToastrService);
   operators: User[] = [];
   selectedOperator: any;
   displayDialog: boolean = false;
@@ -146,7 +149,10 @@ export class OperatorsComponent implements OnInit {
         this.updateLocalData(updatedUser);
         this.displayDialog = false;
         this.showSuccess('Operador actualizado exitosamente');
+        this.toastr.success(
+          'Operador actualizado exitosamente',);
         this.getOperators()
+        this.updateLocalData(updatedUser);
       },
       error: (error) => this.handleError('Error actualizando operador', error),
     });

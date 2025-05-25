@@ -3,44 +3,76 @@ import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuModule } from 'primeng/menu';
 import { AuthService } from '../../auth/services/auth.service';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { PasswordModule } from 'primeng/password';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { DialogModule } from 'primeng/dialog';
 @Component({
   selector: 'user-navigation',
-  imports: [MenubarModule, MenuModule],
+  imports: [
+    MenubarModule,
+    MenuModule,
+    CommonModule,
+    MenubarModule,
+    ButtonModule,
+    InputTextModule,
+    PasswordModule,
+    InputNumberModule,
+    DialogModule,
+    ReactiveFormsModule,
+  ],
   standalone: true,
   templateUrl: './user-navigation.component.html',
   styleUrls: ['./user-navigation.component.css'],
 })
 export class UserNavigationComponent {
-  constructor(private authService: AuthService) { }
+  displayDialog: boolean = false;
+  configForm: FormGroup; // FormGroup;
+  constructor(private authService: AuthService, private fb: FormBuilder) {
+    this.configForm = this.fb.group({
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      identificationNumber: [null, Validators.required],
+      password: [''],
+    });
+  }
 
   @Input() balance: number = 0; // User balance
 
   items: MenuItem[] = [
-
-
     {
       label: 'Perfil',
       icon: 'pi pi-user',
       items: [
         {
           label: 'Configuración',
-          icon: 'pi pi-cog'
+          icon: 'pi pi-cog',
+          command: () => this.mostrarModal(),
         },
         {
           label: 'Cerrar sesión',
           icon: 'pi pi-sign-out',
-          command: () => this.logout()
+          command: () => this.logout(),
         },
-      ]
+      ],
     },
     {
       label: 'Histórico de pagos',
-      icon: 'pi pi-clock'
+      icon: 'pi pi-clock',
     },
   ];
 
-
-
+  mostrarModal() {
+    this.displayDialog = true;
+  }
 
   logout() {
     this.authService.logout().subscribe({
@@ -49,8 +81,7 @@ export class UserNavigationComponent {
       },
       error: (error) => {
         console.error('Logout error:', error);
-      }
+      },
     });
-
   }
 }

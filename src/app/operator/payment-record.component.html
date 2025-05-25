@@ -1,0 +1,39 @@
+<operator-navigation></operator-navigation>
+
+<div class="mt-5 ml-2 mr-20 rounded-2xl">
+    <div class="mb-4 flex items-center">
+      <p-dropdown  optionLabel="label"
+        placeholder="Seleccionar filtro" class="mr-4" optionValue="value"></p-dropdown>
+      <input pInputText type="text" placeholder="Buscar"
+        class="p-inputtext-sm border-2 rounded-md border-gray-300 " />
+      <button class="ml-2" pButton icon="pi pi-search" label="Buscar" ></button>
+    </div>
+    <p-table [value]="transactions" selectionMode="single"
+        dataKey="id" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="5"
+        [rowsPerPageOptions]="[5, 10, 15]" [responsiveLayout]="'scroll'">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>ID</th>
+                <th>Curso</th>
+                <th>Monto</th>
+                <th>Método</th>
+                <th>Estado</th>
+                <th>Estudiante</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-transaction>
+            <tr [pSelectableRow]="transaction">
+                <td>{{ transaction.id }}</td>
+                <td>{{ transaction.course?.name }}</td>
+                <td>{{ transaction.amount | currency: 'USD' }}</td>
+                <td>
+                    <p-tag [value]="transaction.paymentMethod" ></p-tag>
+                </td>
+                <td>
+                    <p-tag [value]="transaction.status"></p-tag>
+                </td>
+                <td>{{ transaction.user?.email }}</td>
+            </tr>
+        </ng-template>
+    </p-table>

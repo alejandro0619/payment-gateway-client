@@ -11,6 +11,11 @@ import { AvatarModule } from 'primeng/avatar';
 import { CreateCourseComponent } from '../../../app/admin/courses/create-course.component';
 import { CoursesService } from '../../../app/admin/courses/courses.service';
 import { AuthService } from '../../../app/auth/services/auth.service';
+import { InputTextModule } from 'primeng/inputtext';
+import { PasswordModule } from 'primeng/password';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { DialogModule } from 'primeng/dialog';
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'main-menu',
@@ -24,11 +29,19 @@ import { AuthService } from '../../../app/auth/services/auth.service';
     Ripple,
     AvatarModule,
     CreateCourseComponent,
+    InputTextModule, 
+    PasswordModule, 
+    InputNumberModule, 
+    DialogModule,
+    ReactiveFormsModule,
+  
   ],
   templateUrl: './main-menu.component.html',
 })
 export class MainMenu implements OnInit {
   @ViewChild('createCourseModal') createCourseModal!: CreateCourseComponent;
+  displayDialog: boolean = false;
+  configForm: FormGroup;
 
   courses: any[] = [];
   visible: boolean = false;
@@ -43,9 +56,18 @@ export class MainMenu implements OnInit {
   constructor(
     private router: Router,
     private coursesService: CoursesService,
-    private authService: AuthService
-  ) {}
+    private authService: AuthService,
+    private fb: FormBuilder
+  ) {
+    this.configForm = this.fb.group({
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      identificationNumber: [null, Validators.required],
+      password: ['']
+    });
+  }
 
+  
   ngOnInit() {
     this.loadCourses();
   }
@@ -83,6 +105,9 @@ export class MainMenu implements OnInit {
         console.error('Error loading courses:', error);
       }
     });
+  }
+   mostrarModal() {
+    this.displayDialog = true;
   }
 
   logout() {

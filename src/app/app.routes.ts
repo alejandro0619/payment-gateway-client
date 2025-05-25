@@ -14,7 +14,7 @@ import { TransactionsComponent } from './admin/transactions/transactions.compone
 import { AuthGuard } from './auth/auth.guard';
 import { FirstRunGuard } from '../core/guards/first-run.guard';
 import { OperatorsComponent } from './admin/operators/operators.component';
-
+import { PaymentRecordComponent } from './operator/payment-record.component';
 export const routes: Routes = [
   {
     path: '',
@@ -55,6 +55,11 @@ export const routes: Routes = [
         // canActivate: [AuthGuard],
       },
       {
+        path: 'operator/payment-record',
+        component: PaymentRecordComponent,
+        // canActivate: [AuthGuard],
+      },
+      {
         path: 'admin/dashboard',
         component: AdminDashboard,
         //canActivate: [AuthGuard],
@@ -78,6 +83,7 @@ export const routes: Routes = [
         component: SignupOperatorComponent,
         //canActivate: [AuthGuard],
       },
+
     ],
   },
   

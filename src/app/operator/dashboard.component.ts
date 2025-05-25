@@ -52,8 +52,6 @@ export class DashboardComponent implements OnInit {
     { label: 'ID de la transacción', value: 'id' },
     { label: 'Nombre del curso', value: 'course.name' },
     { label: 'Monto cancelado', value: 'amount' },
-    { label: 'Método de pago', value: 'paymentMethod' },
-    { label: 'Estado de la transacción', value: 'status' },
     { label: 'Estudiante', value: 'user.email' },
     { label: 'Validado por', value: 'validatedBy.email' },
   ];
