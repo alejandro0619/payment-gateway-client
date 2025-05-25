@@ -115,22 +115,24 @@ export class DashboardComponent implements OnInit {
     return titles[status as keyof typeof titles] || status;
   }
 
-  isCourseInNotBoughtOrExpired(courseId: string): boolean {
-    if (!this.courses) return false;
+  isCourseInNotBoughtOrExpired(courseId: string): { flag: boolean, kind: 'not_bought' | 'expired' | null } {
+    if (!this.courses) return { flag: false, kind: null };
 
-    // Safe check in 'not_bought'
+    // Verificar si está en 'not_bought'
     const inNotBought = Array.isArray(this.courses['not_bought']) &&
       this.courses['not_bought'].some((course: any) => course?.id === courseId);
-    // Safe check in 'expired'
-    const inExpired = Array.isArray(this.courses['expired']) &&
-      this.courses['expired'].some((item: any) => {
+    if (inNotBought) return { flag: true, kind: 'not_bought' };
 
-        if (item?.id === courseId) return true;
-        if (item?.course?.id === courseId) return true;
-        return false;
-      });
-    return inNotBought || inExpired;
+    // Verificar si está en 'expired'
+    const inExpired = Array.isArray(this.courses['expired']) &&
+      this.courses['expired'].some((item: any) =>
+        item?.id === courseId || item?.course?.id === courseId
+      );
+    if (inExpired) return { flag: true, kind: 'expired' };
+
+    return { flag: false, kind: null };
   }
+
 
 
   createOrder() {
@@ -160,8 +162,25 @@ export class DashboardComponent implements OnInit {
     this.drawerVisible = true;
     this.isLoadingCourseDetails = true
     // Check if the current course is available for purchase
-    if (this.isCourseInNotBoughtOrExpired(course.id)) {
-      this.dashboardService.createTransaction(course.id, localStorage.getItem('usr_info')!).subscribe({
+    const result = this.isCourseInNotBoughtOrExpired(course.id);
+
+    if (result.flag) {
+
+
+      const courseIdToSend =
+        result.kind === 'not_bought' ? course.id : course.course?.id;
+
+      if (!courseIdToSend) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'ID del curso no disponible para crear la transacción',
+        });
+        this.isLoadingCourseDetails = false;
+        return;
+      }
+
+      this.dashboardService.createTransaction(courseIdToSend, localStorage.getItem('usr_info')!).subscribe({
         next: (response) => {
           console.log('Transacción creada:', response);
           this.createdTRX = response;
@@ -178,11 +197,13 @@ export class DashboardComponent implements OnInit {
             summary: 'Error',
             detail: 'No se pudo crear la transacción'
           });
+          this.isLoadingCourseDetails = false;
         }
       });
     } else {
       this.isLoadingCourseDetails = false;
     }
+
 
 
   }
@@ -203,7 +224,7 @@ export class DashboardComponent implements OnInit {
       next: (courses) => {
         this.courses = courses;
         this.loading = false;
-        
+
         console.log('Cursos cargados:', this.courses);
       },
       error: (error) => {
@@ -317,7 +338,7 @@ export class DashboardComponent implements OnInit {
   setPaymentMethod(method: 'paypal' | 'zelle') {
     this.paymentMethod = method;
     this.showPaymentFlow = method;
-    
+
     this.dashboardService.setPaymentMethod(this.createdTRX!.transactionId, method).subscribe({
       next: (response) => {
         console.log('Método de pago establecido:', response);
