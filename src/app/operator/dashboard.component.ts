@@ -169,14 +169,26 @@ export class DashboardComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-danger',
       rejectButtonStyleClass: 'p-button-secondary',
       accept: () => {
-        transaction.status = 'Rechazado';
-        transaction.validatedBy = { email: 'operador@plataforma.com' };
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Transacción rechazada correctamente',
+        this.dashboardService.setTransactionStatus(transaction.id, 'rejected').subscribe({
+          next: (updatedTransaction) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Transacción aceptada correctamente',
+            });
+            this.filterTable();
+            console.log('Transacción aceptada:', updatedTransaction);
+          }
+          ,
+          error: (error) => {
+
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'No se pudo aceptar la transacción',
+            });
+          }
         });
-        this.filterTable(); // Actualiza el filtrado
       },
     });
   }
