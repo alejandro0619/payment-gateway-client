@@ -30,11 +30,11 @@ export const appConfig: ApplicationConfig = {
     AuthGuard,
     FirstRunGuard,
     provideAnimations(),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true,
-    },
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: AuthInterceptor,
+    //   multi: true,
+    // },
 
     providePrimeNG({
       theme: {

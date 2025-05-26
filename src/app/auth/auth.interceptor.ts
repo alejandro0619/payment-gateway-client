@@ -9,20 +9,25 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { AuthService } from './services/auth.service';
-import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  private publicEndpoints = ['/auth/login', '/auth/signup', '/', '/auth/forgot-password', '/auth/signin'];
+  private publicEndpoints = [
+    '/auth/login',
+    '/auth/signup',
+    '/',
+    '/auth/forgot-password',
+    '/auth/signin',
+    '/auth/first-signup',
+    '/auth/check-first-run',
+    '/auth/signup-admin',
+    '/auth/signup-operator'
+  ];
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService) {}
 
-  intercept(
-    request: HttpRequest<unknown>,
-    next: HttpHandler
-  ): Observable<HttpEvent<unknown>> {
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const accessToken = localStorage.getItem('accessToken');
-    console.log('Interceptando la petición:', request);
 
     if (accessToken) {
       const clonedRequest = request.clone({
@@ -40,28 +45,28 @@ export class AuthInterceptor implements HttpInterceptor {
         })
       );
     } else {
-
-      if (this.isPublicRequest(request)) { 
+      if (this.isPublicRequest(request)) {
         return next.handle(request);
       } else {
-        this.router.navigate(['/auth/login']);
+        this.authService.redirectToLogin('Acceso no autorizado');
         return throwError(() => new Error('Acceso no autorizado'));
       }
     }
   }
 
   private isPublicRequest(request: HttpRequest<unknown>): boolean {
-    const url = new URL(request.url);
-    return this.publicEndpoints.some(endpoint => 
-      url.pathname.endsWith(endpoint) || 
-      request.url.endsWith(endpoint)
-    );
+    try {
+      const url = new URL(request.url);
+      return this.publicEndpoints.some(endpoint =>
+        url.pathname.endsWith(endpoint) || request.url.endsWith(endpoint)
+      );
+    } catch {
+
+      return this.publicEndpoints.some(endpoint => request.url.endsWith(endpoint));
+    }
   }
 
-  private handle401Error(
-    request: HttpRequest<unknown>,
-    next: HttpHandler
-  ): Observable<HttpEvent<unknown>> {
+  private handle401Error(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const refreshToken = localStorage.getItem('refreshToken');
 
     if (refreshToken) {
@@ -76,12 +81,12 @@ export class AuthInterceptor implements HttpInterceptor {
           return next.handle(clonedRequest);
         }),
         catchError((error) => {
-          this.router.navigate(['/auth/login']);
+          this.authService.redirectToLogin('Token inválido');
           return throwError(() => error);
         })
       );
     } else {
-      this.router.navigate(['/auth/login']);
+      this.authService.redirectToLogin('Sesión expirada');
       return throwError(() => new Error('Sesión expirada'));
     }
   }

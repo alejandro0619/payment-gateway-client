@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -13,10 +13,12 @@ import { ButtonModule } from 'primeng/button';
   selector: 'app-signup-admin',
   imports: [ ReactiveFormsModule,CommonModule, ButtonModule],
   providers: [AuthService],
+  standalone: true,
   templateUrl: './signup-admin.component.html',
   
 })
 export class SignupAdminComponent {
+  @Input() fragment: string = 'signup-admin'; // This fragment is used to scroll to the form when the user clicks on the link in the login page
 private toastr = inject(ToastrService); 
   private router: Router = inject(Router);
   private authService = inject(AuthService);
@@ -57,7 +59,7 @@ private toastr = inject(ToastrService);
         password: this.form.get('password')?.value as string,
         role: Roles.ADMIN
 
-      }).subscribe({
+      }, this.fragment).subscribe({
         next: (response: any) => {
           console.log('Registro exitoso:', response);
           this.toastr.success('¡Registro exitoso!', 'Bienvenido');

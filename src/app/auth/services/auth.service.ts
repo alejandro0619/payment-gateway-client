@@ -15,8 +15,10 @@ export class AuthService {
   private router = inject(Router);
   constructor(private http: HttpClient) { }
 
-
-
+  redirectToLogin(reason?: string) {
+    // puedes guardar un mensaje en el servicio o mostrar un toast
+    this.router.navigate(['/auth/login']);
+  }
   signIn(identification: string, password: string): Observable<SignInResponse> {
     return this.http
       .post<SignInResponse>(`${this.API_URL}/auth/signin`, { identification, password })
@@ -59,13 +61,10 @@ export class AuthService {
   }
 
 
-  signupAdmin(user: Partial<CreateUser>) {  
+  signupAdmin(user: Partial<CreateUser>, fragment = 'signup-admin') {  
     // TODO: ADD THE INTERCEPTOR TO THIS REQUEST, FN, IT IS HARDCODED 
-    return this.http.post(`${this.API_URL}/auth/signup-admin`, user, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-      },
-    }).pipe(
+    return this.http.post(`${this.API_URL}/auth/${fragment}`, user
+    ).pipe(
       map((response) => {
         return response
       }),
@@ -84,10 +83,6 @@ export class AuthService {
   signupOperator(id: string) {
     return this.http.patch(`${this.API_URL}/auth/signup-operator`, {
       id
-    }, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-      },
     }).pipe(
       map((response) => response),
       catchError((error: HttpErrorResponse) => {

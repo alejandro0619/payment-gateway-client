@@ -15,88 +15,89 @@ import { AuthGuard } from './auth/auth.guard';
 import { FirstRunGuard } from '../core/guards/first-run.guard';
 import { OperatorsComponent } from './admin/operators/operators.component';
 import { PaymentRecordComponent } from './operator/payment-record.component';
+import { StepOneComponent } from './onboarding/step_one/step_one.component';
 export const routes: Routes = [
   {
+    path: 'onboarding/step-one',
+    component: StepOneComponent,
+  },
+  {
     path: '',
-    canActivateChild: [FirstRunGuard], //  Apply FirstRunGuard to all child routes to prevent the access to auth/signup-admin if the application is not in first run.
     children: [
       {
         path: '',
-        redirectTo: '/auth/login', 
+        redirectTo: '/auth/login',
         pathMatch: 'full',
       },
-      // Auth routes
       {
         path: 'auth/login',
         component: LoginComponent,
+        canActivate: [FirstRunGuard],
       },
       {
         path: 'auth/signup',
         component: SignupComponent,
-      },
-      {
-        path: 'auth/onboarding',
-        component: OnboardingComponent,
-        // canActivate: [AuthGuard],
+        canActivate: [FirstRunGuard],
       },
       {
         path: 'auth/signup-admin',
         component: SignupAdminComponent,
-        // canActivate: [AuthGuard],
-      },
-      {
-        path: 'user/dashboard',
-        component: UserDashboard,
-        // canActivate: [AuthGuard],
-      },
-      {
-        path: 'operator/dashboard',
-        component: OperatorDashboard,
-        // canActivate: [AuthGuard],
-      },
-      {
-        path: 'operator/payment-record',
-        component: PaymentRecordComponent,
-        // canActivate: [AuthGuard],
-      },
-      {
-        path: 'admin/dashboard',
-        component: AdminDashboard,
-        //canActivate: [AuthGuard],
-      },
-      {
-        path: 'admin/courses',
-        component: CoursesComponent,
-        // canActivate: [AuthGuard],
-      },
-      {
-        path: 'admin/employees',
-        component: OperatorsComponent,
-      },
-      {
-        path: 'admin/transactions',
-        component: TransactionsComponent,
-        // canActivate: [AuthGuard],
+        canActivate: [FirstRunGuard],
       },
       {
         path: 'auth/signup-operator',
         component: SignupOperatorComponent,
-        //canActivate: [AuthGuard],
+        canActivate: [FirstRunGuard],
       },
-
+      {
+        path: 'auth/onboarding',
+        component: OnboardingComponent,
+        canActivate: [FirstRunGuard],
+      },
+      {
+        path: 'user/dashboard',
+        component: UserDashboard,
+        canActivate: [FirstRunGuard],
+      },
+      {
+        path: 'operator/dashboard',
+        component: OperatorDashboard,
+        canActivate: [FirstRunGuard],
+      },
+      {
+        path: 'operator/payment-record',
+        component: PaymentRecordComponent,
+        canActivate: [FirstRunGuard],
+      },
+      {
+        path: 'admin/dashboard',
+        component: AdminDashboard,
+        canActivate: [FirstRunGuard],
+      },
+      {
+        path: 'admin/courses',
+        component: CoursesComponent,
+        canActivate: [FirstRunGuard],
+      },
+      {
+        path: 'admin/employees',
+        component: OperatorsComponent,
+        canActivate: [FirstRunGuard],
+      },
+      {
+        path: 'admin/transactions',
+        component: TransactionsComponent,
+        canActivate: [FirstRunGuard],
+      },
     ],
   },
-  
-      // Excluye la ruta /protected del FirstRunGuard
-      {
-        path: 'protected',
-        component: ProtectedComponent,
-        canActivate: [AuthGuard],
-      },
-
-      // Default redirect
-      {
-        path: '**',
-        redirectTo: '/auth/login',
-      },
+  {
+    path: 'protected',
+    component: ProtectedComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: '**',
+    redirectTo: '/auth/login',
+  },
 ];
