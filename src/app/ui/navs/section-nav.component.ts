@@ -1,7 +1,7 @@
-// component.ts
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TreeSelect } from 'primeng/treeselect';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-section-navigator',
@@ -10,46 +10,40 @@ import { TreeSelect } from 'primeng/treeselect';
     imports: [FormsModule, TreeSelect]
 })
 export class SectionNavigatorComponent {
+    selectedNode: any;
+
+    constructor(private router: Router) {}
+
     navigationNodes = [
         {
             key: '1',
             label: 'Transacciones',
-            data: 'transacciones',
+            data: 'admin/transactions',
             icon: 'pi pi-wallet'
         },
         {
             key: '2',
             label: 'Estudiantes',
-            data: 'estudiantes',
+            data: 'admin/students',
             icon: 'pi pi-users'
         },
         {
             key: '3',
             label: 'Cursos',
-            data: 'cursos',
+            data: 'admin/courses',
             icon: 'pi pi-book'
         },
         {
             key: '4',
-            label: 'Ganancias',
-            data: 'ganancias',
+            label: 'Empleados',
+            data: 'admin/employees',
             icon: 'pi pi-chart-line'
         }
     ];
 
-    selectedNode: any;
-
-    navigateToSection() {
-        if (this.selectedNode && this.selectedNode.data) {
-            try {
-                const section = document.getElementById(this.selectedNode.data);
-                if (section) {
-                    section.scrollIntoView({ behavior: 'smooth' });
-                    this.selectedNode = null; // Reset selection
-                }
-            } catch (e) {
-                console.error('Error navigating to section:', e);
-            }
+    navigateToSection(node: any) {
+        if (node?.data) {
+            this.router.navigate([`/${node.data}`]);
         }
     }
 }

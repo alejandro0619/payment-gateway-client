@@ -1,4 +1,3 @@
-<!-- template -->
 <div class="p-4">
   <p-treeselect 
       class="md:w-80 w-full mb-4"
@@ -10,7 +9,6 @@
       [filterInputAutoFocus]="true"
       selectionMode="single"
       [showClear]="true"
-      (ngModelChange)="navigateToSection()"
+      (ngModelChange)="navigateToSection($event)"
   />
-
 </div>
