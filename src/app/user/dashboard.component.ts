@@ -267,7 +267,7 @@ export class DashboardComponent implements OnInit {
           detail: 'Transacción creada con éxito'
         });
 
-        console.log('trx::::::::::::::::::::::::::::::::::::::>', response);
+
       },
       error: (error) => {
         this.messageService.add({

@@ -16,6 +16,7 @@ import { PasswordModule } from 'primeng/password';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Company } from '../../global.types';
 
 @Component({
   selector: 'main-menu',
@@ -38,6 +39,7 @@ import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angula
   ],
   templateUrl: './main-menu.component.html',
 })
+  // CHECK FOR USEFFECT HOOK ANGULAR'S VERSION
 export class MainMenu implements OnInit {
   @ViewChild('createCourseModal') createCourseModal!: CreateCourseComponent;
   displayDialog: boolean = false;
@@ -49,7 +51,7 @@ export class MainMenu implements OnInit {
   transactionsVisible = false;
   employeesVisible = false;
   showCourses: boolean = false;
-
+  company: Company | null = null;
   items: MenuItem[] = [];
   home: MenuItem = { icon: 'pi pi-home', routerLink: '/' };
 
@@ -59,6 +61,8 @@ export class MainMenu implements OnInit {
     private authService: AuthService,
     private fb: FormBuilder
   ) {
+    const companyStr = localStorage.getItem('company');
+    this.company = companyStr ? JSON.parse(companyStr) : null; // ??
     this.configForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
