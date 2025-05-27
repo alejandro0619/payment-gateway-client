@@ -24,7 +24,8 @@ export class DashboardService {
     transactionId: string,
     status: 'completed' | 'rejected'
   ): Observable<Transaction> {
-    return this.http.patch<Transaction>(`${this.API_URL}/transaction`, { id: transactionId, status }).pipe(
+    const usr = localStorage.getItem('usr_info') || '{}';
+    return this.http.patch<Transaction>(`${this.API_URL}/transaction`, { id: transactionId, status, validatedBy: usr }).pipe(
       catchError(this.handleError)
     );
   }
