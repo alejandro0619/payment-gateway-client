@@ -11,12 +11,15 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TagModule } from 'primeng/tag';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MenuModule } from 'primeng/menu';
+import { DashboardService } from './dashboard.service';
+import { Transaction } from '../global.types';
+
 
 @Component({
   selector: 'app-payment-record',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     OperatorNavigationComponent,
     FormsModule,
     TableModule,
@@ -27,126 +30,57 @@ import { MenuModule } from 'primeng/menu';
     InputTextModule,
     TagModule,
     ConfirmDialogModule,
-    MenuModule
+    MenuModule,
+    TagModule
   ],
   templateUrl: './payment-record.component.html',
 })
 export class PaymentRecordComponent implements OnInit {
-  constructor() {}
-  
+  constructor(private dashboardService: DashboardService) { }
+
   ngOnInit() {
-    
+    this.dashboardService.getTransactionsHistory().subscribe({
+      next: (data) => {
+        this.transactions = data;
+      },
+      error: (error) => {
+        console.error('Error fetching transactions:', error);
+      }
+    });
   }
-  transactions: any[] = [
-    {
-      id: 'TRX-001',
-      amount: 150,
-      paymentMethod: 'Zelle',
-      status: 'completed',
-      createdAt: '2023-05-15T10:30:00Z',
-      course: {
-        id: 'CRS-101',
-        name: 'CCNA Networking Fundamentals',
-        price: 150
-      },
-      user: {
-        id: 'USR-001',
-        email: 'student1@example.com',
-        name: 'John Doe'
-      },
-      validatedBy: {
-        id: 'OP-001',
-        email: 'operator1@academy.com',
-        name: 'Operator One'
-      }
-    },
-    {
-      id: 'TRX-002',
-      amount: 200,
-      paymentMethod: 'PayPal',
-      status: 'completed',
-      createdAt: '2023-05-16T11:45:00Z',
-      course: {
-        id: 'CRS-102',
-        name: 'Python Programming Advanced',
-        price: 200
-      },
-      user: {
-        id: 'USR-002',
-        email: 'student2@example.com',
-        name: 'Jane Smith'
-      },
-      validatedBy: {
-        id: 'OP-001',
-        email: 'operator1@academy.com',
-        name: 'Operator One'
-      }
-    },
-    {
-      id: 'TRX-003',
-      amount: 180,
-      paymentMethod: 'Credit Card',
-      status: 'pending',
-      createdAt: '2023-05-17T09:15:00Z',
-      course: {
-        id: 'CRS-103',
-        name: 'AWS Cloud Practitioner',
-        price: 180
-      },
-      user: {
-        id: 'USR-003',
-        email: 'student3@example.com',
-        name: 'Robert Johnson'
-      },
-      validatedBy: {
-        id: 'OP-002',
-        email: 'operator2@academy.com',
-        name: 'Operator Two'
-      }
-    },
-    {
-      id: 'TRX-004',
-      amount: 120,
-      paymentMethod: 'Bank Transfer',
-      status: 'failed',
-      createdAt: '2023-05-18T14:20:00Z',
-      course: {
-        id: 'CRS-104',
-        name: 'JavaScript Fundamentals',
-        price: 120
-      },
-      user: {
-        id: 'USR-004',
-        email: 'student4@example.com',
-        name: 'Maria Garcia'
-      },
-      validatedBy: {
-        id: 'OP-002',
-        email: 'operator2@academy.com',
-        name: 'Operator Two'
-      }
-    },
-    {
-      id: 'TRX-005',
-      amount: 250,
-      paymentMethod: 'Zelle',
-      status: 'completed',
-      createdAt: '2023-05-19T16:10:00Z',
-      course: {
-        id: 'CRS-105',
-        name: 'Data Science with Python',
-        price: 250
-      },
-      user: {
-        id: 'USR-005',
-        email: 'student5@example.com',
-        name: 'David Wilson'
-      },
-      validatedBy: {
-        id: 'OP-003',
-        email: 'operator3@academy.com',
-        name: 'Operator Three'
-      }
+  transactions: Transaction[] = [];
+
+  getStatusSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | undefined {
+    switch (status) {
+      case 'completed':
+        return 'success';
+      case 'ready_to_be_checked':
+        return 'warn';
+      default:
+        return 'info';
     }
-  ];
+  }
+
+  getPaymentMethodSeverity(method: string): 'success' | 'info' | 'warn' | 'danger' | undefined {
+    switch (method) {
+      case 'zelle':
+        return 'info';
+      case 'paypal':
+        return 'success';
+      default:
+        return 'warn';
+    }
+  }
+
+  getPaymentSchemeSeverity(scheme: string): 'success' | 'info' | 'warn' | 'danger' | undefined {
+    switch (scheme) {
+      case 'single_payment':
+        return 'success';
+      case 'installments':
+        return 'warn';
+      default:
+        return 'info';
+    }
+  }
+
 }

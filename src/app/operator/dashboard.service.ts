@@ -30,6 +30,11 @@ export class DashboardService {
     );
   }
 
+  getTransactionsHistory() {
+    return this.http.get<Transaction[]>(`${this.API_URL}/transaction/operator-transactions-history`).pipe(
+      catchError(this.handleError)
+    );
+    }
     handleError(error: HttpErrorResponse) {
       let errorMessage = 'Ocurrió un error';
   
