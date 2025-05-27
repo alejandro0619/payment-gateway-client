@@ -71,6 +71,10 @@ export class MainMenu implements OnInit {
   ngOnInit() {
     this.loadCourses();
   }
+  goToSignupAdmin() {
+    console.log("Navigating to signup admin...");
+    this.router.navigate(['auth/signup-admin']); 
+  }
   goToDashboard() {
     console.log("Navigating to dashboard...");
     this.router.navigate(['admin/dashboard']); 

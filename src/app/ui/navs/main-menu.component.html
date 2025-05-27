@@ -80,7 +80,13 @@
                 <i class="pi text-sm" [ngClass]="{'pi-chevron-down': !employeesVisible, 'pi-chevron-up': employeesVisible}"></i>
               </div>
               <ul *ngIf="employeesVisible" class="list-none pl-4 space-y-1">
-                
+                <li (click)="goToSignupAdmin()">
+                  <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
+                    <i class="pi pi-user-plus text-sm mr-1"></i>
+                    <span class="font-medium text-sm">Registrar Administrador </span>
+                  </a>
+                </li>
+
                 <li (click)="goToSignUpOperator()">
                   <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
                     <i class="pi pi-user-plus text-sm mr-1"></i>
