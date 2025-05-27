@@ -4,7 +4,7 @@ import { LoginComponent } from './auth/login/login.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { SignupAdminComponent } from './auth/signup-admin/signup-admin.component';
 import { SignupOperatorComponent } from './auth/signup-operator/signup-operator.component';
-import { OnboardingComponent } from './auth/onboarding/onboarding.component';
+
 import { ProtectedComponent } from './protected/protected.component';
 import { CoursesComponent } from './admin/courses/courses.component';
 import { DashboardComponent as UserDashboard } from './user/dashboard.component';
@@ -16,10 +16,16 @@ import { FirstRunGuard } from '../core/guards/first-run.guard';
 import { OperatorsComponent } from './admin/operators/operators.component';
 import { PaymentRecordComponent } from './operator/payment-record.component';
 import { StepOneComponent } from './onboarding/step_one/step_one.component';
+import { StepTwoComponent } from './onboarding/step_two/step_two.component';
+
 export const routes: Routes = [
   {
     path: 'onboarding/step-one',
     component: StepOneComponent,
+  },
+  {
+    path: 'onboarding/step-two',
+    component: StepTwoComponent,
   },
   {
     path: '',
@@ -47,11 +53,6 @@ export const routes: Routes = [
       {
         path: 'auth/signup-operator',
         component: SignupOperatorComponent,
-        canActivate: [FirstRunGuard],
-      },
-      {
-        path: 'auth/onboarding',
-        component: OnboardingComponent,
         canActivate: [FirstRunGuard],
       },
       {

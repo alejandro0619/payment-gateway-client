@@ -63,7 +63,14 @@ private toastr = inject(ToastrService);
         next: (response: any) => {
           console.log('Registro exitoso:', response);
           this.toastr.success('¡Registro exitoso!', 'Bienvenido');
-          this.router.navigate(['/auth/login']);
+          if (this.fragment === 'signup-admin') {
+            this.toastr.info('Administrador registrado', 'Información');
+            this.router.navigate(['/admin/dashboard']);
+          } else {
+            this.toastr.info('Usuario registrado', 'Información');
+            this.router.navigate(['/onboarding/step-two']);
+          }
+          
         },
         error: (error: any) => {
           console.error('Error en el registro:', error);
