@@ -15,6 +15,7 @@ import { AuthGuard } from './auth/auth.guard';
 import { FirstRunGuard } from '../core/guards/first-run.guard';
 import { OperatorsComponent } from './admin/operators/operators.component';
 import { PaymentRecordComponent } from './operator/payment-record.component';
+import { PaymentRecordComponent as PaymentRecordComponentStudent } from './user/payment-record.component';
 import { StepOneComponent } from './onboarding/step_one/step_one.component';
 import { StepTwoComponent } from './onboarding/step_two/step_two.component';
 
@@ -68,6 +69,11 @@ export const routes: Routes = [
       {
         path: 'operator/payment-record',
         component: PaymentRecordComponent,
+        canActivate: [FirstRunGuard],
+      },
+      {
+        path: 'user/payment-record',
+        component: PaymentRecordComponentStudent,
         canActivate: [FirstRunGuard],
       },
       {

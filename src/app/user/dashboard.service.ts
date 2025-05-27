@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, forkJoin, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from '../../envs/env.dev';
-import { Company, Course, CreateTRXResponse, UserBalance, UserCoursesFeed } from '../global.types';
+import { Company, Course, CreateTRXResponse, Transaction, UserBalance, UserCoursesFeed } from '../global.types';
 
 
 @Injectable({
@@ -102,7 +102,7 @@ export class DashboardService {
 
   setPaymentMethod(trxId: string, paymentMethod: 'paypal' | 'zelle') {
     let status: string | undefined = undefined;
-    
+
     if (paymentMethod === 'paypal') {
       status = 'in_process';
     }
@@ -115,7 +115,11 @@ export class DashboardService {
         catchError(this.handleError)
       );
   }
-
+  getTransactionsHistory() {
+    return this.http.get<Transaction[]>(`${this.API_URL}/transaction/user-transactions-history`).pipe(
+      catchError(this.handleError)
+    );
+  }
   handleError(error: HttpErrorResponse) {
     let errorMessage = 'Ocurrió un error';
 

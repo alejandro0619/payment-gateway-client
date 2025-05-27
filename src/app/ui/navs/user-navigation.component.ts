@@ -15,6 +15,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'user-navigation',
   imports: [
@@ -36,7 +38,7 @@ import { DialogModule } from 'primeng/dialog';
 export class UserNavigationComponent {
   displayDialog: boolean = false;
   configForm: FormGroup; // FormGroup;
-  constructor(private authService: AuthService, private fb: FormBuilder) {
+  constructor(private authService: AuthService, private fb: FormBuilder, private router: Router) {
     this.configForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -67,6 +69,7 @@ export class UserNavigationComponent {
     {
       label: 'Histórico de pagos',
       icon: 'pi pi-clock',
+      command: () => {this.router.navigate(['/user/payment-record'])}
     },
   ];
 

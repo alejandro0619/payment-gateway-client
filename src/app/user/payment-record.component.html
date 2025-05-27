@@ -1,0 +1,46 @@
+<operator-navigation></operator-navigation>
+
+<div class="mt-5 ml-2 mr-20 rounded-2xl">
+  <div class="mb-4 flex items-center">
+    <p-dropdown optionLabel="label" placeholder="Seleccionar filtro" class="mr-4" optionValue="value"></p-dropdown>
+    <input pInputText type="text" placeholder="Buscar" class="p-inputtext-sm border-2 rounded-md border-gray-300 " />
+    <button class="ml-2" pButton icon="pi pi-search" label="Buscar"></button>
+  </div>
+  <p-table [value]="transactions">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Curso</th>
+        <th>Estudiante</th>
+        <th>Cédula</th>
+        <th>Correo</th>
+        <th>Monto</th>
+        <th>Método</th>
+        <th>Estado</th>
+        <th>Esquema</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-tx>
+      <tr>
+        <td>{{ tx.course.name }}</td>
+        <td>{{ tx.user.firstName }} {{ tx.user.lastName }}</td>
+        <td>{{ tx.user.identificationNumber }}</td>
+        <td>{{ tx.user.email }}</td>
+        <td>{{ tx.amount }}</td>
+        <td>
+          <p-tag [value]="tx.paymentMethod ? tx.paymentMethod : 'Pago interno'"
+            [severity]="getPaymentMethodSeverity(tx.paymentMethod)">
+          </p-tag>
+        </td>
+        <td>
+          <p-tag [value]="getStatusTranslation(tx.status)" [severity]="getStatusSeverity(tx.status)">
+          </p-tag>
+        </td>
+        <td>
+          <p-tag [value]="getSchemeTranslation(tx.course.paymentScheme)"
+            [severity]="getPaymentSchemeSeverity(tx.course.paymentScheme)">
+          </p-tag>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

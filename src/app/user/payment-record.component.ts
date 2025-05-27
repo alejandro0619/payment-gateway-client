@@ -53,13 +53,14 @@ export class PaymentRecordComponent implements OnInit {
 
   getStatusTranslation(status: string): string {
     return this.translationService.translatePaymentStatus(status);
-  }
-  getPaymentMethodTranslation(method: string): string {
+  } 
+  getMethodTranslation(method: string): string {
     return this.translationService.translatePaymentMethod(method);
   }
-  getPaymentSchemeTranslation(scheme: string): string {
+  getSchemeTranslation(scheme: string): string {
     return this.translationService.translatePaymentScheme(scheme);
   }
+  
   getStatusSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | undefined {
     switch (status) {
       case 'completed':

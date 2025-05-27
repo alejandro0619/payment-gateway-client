@@ -28,15 +28,15 @@
                 <td>{{ tx.user.email }}</td>
                 <td>{{ tx.amount }}</td>
                 <td>
-                    <p-tag [value]="tx.paymentMethod" [severity]="getPaymentMethodSeverity(tx.paymentMethod)">
+                    <p-tag [value]="getPaymentMethodTranslation(tx.paymentMethod)" [severity]="getPaymentMethodSeverity(tx.paymentMethod)">
                     </p-tag>
                 </td>
                 <td>
-                    <p-tag [value]="tx.status" [severity]="getStatusSeverity(tx.status)">
+                    <p-tag [value]="getStatusTranslation(tx.status)" [severity]="getStatusSeverity(tx.status)">
                     </p-tag>
                 </td>
                 <td>
-                    <p-tag [value]="tx.course.paymentScheme"
+                    <p-tag [value]="getPaymentSchemeTranslation(tx.course.paymentScheme)"
                         [severity]="getPaymentSchemeSeverity(tx.course.paymentScheme)">
                     </p-tag>
                 </td>
