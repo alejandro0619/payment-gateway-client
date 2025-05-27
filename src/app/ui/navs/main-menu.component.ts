@@ -30,16 +30,16 @@ import { Company } from '../../global.types';
     Ripple,
     AvatarModule,
     CreateCourseComponent,
-    InputTextModule, 
-    PasswordModule, 
-    InputNumberModule, 
+    InputTextModule,
+    PasswordModule,
+    InputNumberModule,
     DialogModule,
     ReactiveFormsModule,
-  
+
   ],
   templateUrl: './main-menu.component.html',
 })
-  // CHECK FOR USEFFECT HOOK ANGULAR'S VERSION
+// CHECK FOR USEFFECT HOOK ANGULAR'S VERSION
 export class MainMenu implements OnInit {
   @ViewChild('createCourseModal') createCourseModal!: CreateCourseComponent;
   displayDialog: boolean = false;
@@ -71,45 +71,45 @@ export class MainMenu implements OnInit {
     });
   }
 
-  
+
   ngOnInit() {
     this.loadCourses();
 
     // This might have some overhead, but it ensures that the company data is always up-to-date.
     // One day I might want to use a more efficient way to handle this, like using a service with BehaviorSubject.
     setInterval(() => {
-    const companyStr = localStorage.getItem('company');
-    const parsedCompany = companyStr ? JSON.parse(companyStr) : null;
+      const companyStr = localStorage.getItem('company');
+      const parsedCompany = companyStr ? JSON.parse(companyStr) : null;
 
-    if (JSON.stringify(this.company) !== JSON.stringify(parsedCompany)) {
-      this.company = parsedCompany;
-      
-    }
-  }, 1000);
+      if (JSON.stringify(this.company) !== JSON.stringify(parsedCompany)) {
+        this.company = parsedCompany;
+
+      }
+    }, 1000);
   }
   goToSignupAdmin() {
     console.log("Navigating to signup admin...");
-    this.router.navigate(['auth/signup-admin']); 
+    this.router.navigate(['auth/signup-admin']);
   }
   goToDashboard() {
     console.log("Navigating to dashboard...");
-    this.router.navigate(['admin/dashboard']); 
+    this.router.navigate(['admin/dashboard']);
   }
-  goToSignUpOperator(){
+  goToSignUpOperator() {
     console.log("Navigating to signUp-Operator...");
-    this.router.navigate(['auth/signup-operator']); 
+    this.router.navigate(['auth/signup-operator']);
   }
-  goToShowCourses(){
+  goToShowCourses() {
     console.log("Navigating to Courses...");
-    this.router.navigate(['admin/courses']); 
+    this.router.navigate(['admin/courses']);
   }
-  goToTransactions(){
+  goToTransactions() {
     console.log("Navigating to Transactions...");
-    this.router.navigate(['admin/transactions']); 
+    this.router.navigate(['admin/transactions']);
   }
-  goToEmployees(){
+  goToEmployees() {
     console.log("Navigating to Employees...");
-    this.router.navigate(['admin/employees']); 
+    this.router.navigate(['admin/employees']);
   }
   loadCourses() {
     this.coursesService.getCourses().subscribe({
@@ -126,7 +126,7 @@ export class MainMenu implements OnInit {
       }
     });
   }
-   mostrarModal() {
+  mostrarModal() {
     this.displayDialog = true;
   }
 
