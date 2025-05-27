@@ -88,6 +88,13 @@ export class DashboardService {
         catchError(this.handleError)
       );
   }
+  getCompanyLogo() {
+    return this.http.get<Company[]>(`${this.API_URL}/company`)
+      .pipe(
+        map((resp: Company[]) => resp[0]?.image || null),
+        catchError(this.handleError)
+      );
+  }
   sendConfirmation(trx: string, confirmation: string) {
     return this.http.patch(`${this.API_URL}/transaction/reference`, {
       id: trx,

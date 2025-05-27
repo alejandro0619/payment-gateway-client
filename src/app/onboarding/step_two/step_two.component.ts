@@ -21,7 +21,8 @@ import { Router } from '@angular/router';
     ButtonModule,
     FileUploadModule,
     ToastModule
-  ]
+  ],
+  providers: [StepTwoService, MessageService],
 })
 export class StepTwoComponent {
 
@@ -94,6 +95,7 @@ export class StepTwoComponent {
           summary: 'Empresa creada',
           detail: 'La empresa fue creada exitosamente'
         });
+        localStorage.setItem('first-run-false', "true");
         setTimeout(() => {
           this.router.navigate(['/auth/login']);
         }, 1500);
