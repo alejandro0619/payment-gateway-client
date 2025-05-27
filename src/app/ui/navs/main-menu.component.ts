@@ -74,6 +74,18 @@ export class MainMenu implements OnInit {
   
   ngOnInit() {
     this.loadCourses();
+
+    // This might have some overhead, but it ensures that the company data is always up-to-date.
+    // One day I might want to use a more efficient way to handle this, like using a service with BehaviorSubject.
+    setInterval(() => {
+    const companyStr = localStorage.getItem('company');
+    const parsedCompany = companyStr ? JSON.parse(companyStr) : null;
+
+    if (JSON.stringify(this.company) !== JSON.stringify(parsedCompany)) {
+      this.company = parsedCompany;
+      
+    }
+  }, 1000);
   }
   goToSignupAdmin() {
     console.log("Navigating to signup admin...");
