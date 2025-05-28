@@ -1,0 +1,57 @@
+<p-dialog header="Recuperar Contraseña" [(visible)]="displayModal" [modal]="true" [closable]="true" [style]="{ width: '420px' }"
+  (onHide)="onDialogClose()">
+
+  <div class="p-fluid">
+    <!-- Paso 1: Ingresar cédula -->
+    <ng-container *ngIf="step === 'cedula'">
+      <div class="text-center mb-4">
+        <i class="pi pi-id-card" style="font-size: 2rem; color: #2196f3;"></i>
+        <h3 class="mt-2 mb-1">Validar identidad</h3>
+        <p class="text-sm text-secondary">Ingresa tu número de cédula para continuar</p>
+      </div>
+
+      <form [formGroup]="cedulaForm" (ngSubmit)="onCedulaSubmit()">
+        <div class="mb-3">
+          <label for="cedula" class="block font-semibold mb-1">Cédula</label>
+          <p-inputNumber id="identificationNumber" formControlName="identificationNumber" [useGrouping]="false"
+            mode="decimal" placeholder="Ingrese solo números" class="w-full" [maxlength]="10"></p-inputNumber>
+
+          <small *ngIf="cedulaForm.controls['identificationNumber'].invalid && cedulaForm.controls['identificationNumber'].touched" class="p-error">
+            La cédula es requerida.
+          </small>
+        </div>
+
+        <div class="flex justify-end">
+          <p-button type="submit" label="Enviar código" [loading]="isLoading"
+            class="p-button-lg p-button-primary"></p-button>
+        </div>
+      </form>
+    </ng-container>
+
+    <!-- Paso 2: Ingresar OTP -->
+    <ng-container *ngIf="step === 'otp'">
+      <div class="text-center mb-4">
+        <i class="pi pi-envelope" style="font-size: 2rem; color: #4caf50;"></i>
+        <h3 class="mt-2 mb-1">Verifica tu correo</h3>
+        <p class="text-sm text-secondary">Escribe el código que recibiste por correo electrónico</p>
+      </div>
+
+      <form [formGroup]="otpForm" (ngSubmit)="onOtpSubmit()">
+        <div class="mb-3">
+          <label for="otp" class="block font-semibold mb-1">Código OTP</label>
+          <input id="otp" type="text" pInputText formControlName="otp" maxlength="6" placeholder="######"
+            autocomplete="off" class="w-full" />
+          <small *ngIf="otpForm.controls['otp'].invalid && otpForm.controls['otp'].touched" class="p-error">
+            Ingresa un código válido de 6 dígitos.
+          </small>
+        </div>
+
+        <div class="flex justify-end">
+          <p-button type="submit" label="Verificar código" [loading]="isLoading"
+            class="p-button-lg p-button-success"></p-button>
+        </div>
+      </form>
+    </ng-container>
+
+  </div>
+</p-dialog>

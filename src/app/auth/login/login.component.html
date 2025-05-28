@@ -7,14 +7,9 @@
       <form class="mt-4 space-y-4" [formGroup]="form()" (ngSubmit)="onSubmit()">
         <div class="grid gap-2">
           <label for="id" class="text-sm font-medium text-gray-700">Cédula de identidad</label>
-          <input
-            id="id"
-            type="text"
-            formControlName="id"
-            placeholder="12345678"
+          <input id="id" type="text" formControlName="id" placeholder="12345678"
             class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-black focus:ring-black focus:ring-1"
-            required
-          />
+            required />
           <p *ngIf="form().controls.id.invalid && form().controls.id.touched" class="text-red-500 text-sm">
             El ID debe tener entre 8 y 9 caracteres.
           </p>
@@ -23,27 +18,22 @@
         <div class="grid gap-2">
           <div class="flex items-center justify-between">
             <label for="password" class="text-sm font-medium text-gray-700">Contraseña</label>
-            <a href="#" class="text-sm text-blue-600 hover:underline">¿Olvidaste tu contraseña?</a>
+            <p class="text-sm text-blue-600 hover:underline cursor-pointer" (click)="showModalPwdRecovery = true">
+              ¿Olvidaste tu contraseña?
+            </p>
+
+
           </div>
-          <input
-            formControlName="password"
-            id="password"
-            type="password"
+          <input formControlName="password" id="password" type="password"
             class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-black focus:ring-black focus:ring-1"
-            required
-          />
+            required />
           <p *ngIf="form().controls.password.invalid && form().controls.password.touched" class="text-red-500 text-sm">
             La contraseña es obligatoria.
           </p>
         </div>
 
         <div class="w-full flex justify-center">
-          <p-button
-            type="submit"
-            [disabled]="form().invalid || isLoading"
-            [loading]="isLoading"
-            styleClass="px-4 py-2"
-          >
+          <p-button type="submit" [disabled]="form().invalid || isLoading" [loading]="isLoading" styleClass="px-4 py-2">
             Iniciar sesión
           </p-button>
         </div>
@@ -57,9 +47,10 @@
           {{ errorMessage }}
         </p>
 
-        
+
       </form>
     </div>
   </div>
 </div>
 
+<app-password-recovery [(displayModal)]="showModalPwdRecovery"></app-password-recovery>

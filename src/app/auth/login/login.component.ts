@@ -7,11 +7,11 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { RedirectService } from '../services/redirect.service';
 import { ButtonModule } from 'primeng/button';
-
+import { PasswordRecoveryComponent } from '../reset-passwords/generate.component';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ButtonModule],
+  imports: [CommonModule, ReactiveFormsModule, ButtonModule, PasswordRecoveryComponent],
   providers: [AuthService, RedirectService],
   templateUrl: './login.component.html',
 })
@@ -19,11 +19,11 @@ export class LoginComponent {
   private toastr = inject(ToastrService);
   private authService: AuthService = inject(AuthService);
   private redirectService: RedirectService = inject(RedirectService);
-
+  showModalPwdRecovery = false;
   private router: Router = inject(Router);
   loginResponse: SignInResponse | null = null;
   errorMessage: string | null = null;
-  isLoading = false;  
+  isLoading = false; 
 
   form = signal(
     new FormGroup({
@@ -31,6 +31,7 @@ export class LoginComponent {
       password: new FormControl('', [Validators.required]),
     })
   );
+  
 
   async onSubmit() {
     if (this.form().invalid) {
@@ -69,4 +70,5 @@ export class LoginComponent {
       this.toastr.error('Error en el registro', 'Por favor, verifica los datos.');
     }
   }
+  
 }
