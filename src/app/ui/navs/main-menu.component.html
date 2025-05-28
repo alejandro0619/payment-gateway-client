@@ -16,25 +16,28 @@
           <ul class="list-none space-y-2">
 
             <li>
-              <div pRipple class="py-3 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition" (click)="goToDashboard()">
+              <div pRipple
+                class="py-3 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
+                (click)="goToDashboard()">
                 <span class="flex items-center gap-1">
                   <i class="pi pi-home text-base"></i>
                   <span class="font-medium text-sm">Home</span>
                 </span>
               </div>
               <!-- Courses -->
-              <div pRipple class="py-2 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
+              <div pRipple
+                class="py-2 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
                 (click)="coursesVisible = !coursesVisible">
                 <span class="flex items-center gap-1">
                   <i class="pi pi-book text-base"></i>
                   <span class="font-medium text-sm">Cursos</span>
                 </span>
-                <i class="pi text-sm" [ngClass]="{'pi-chevron-down': !coursesVisible, 'pi-chevron-up': coursesVisible}"></i>
+                <i class="pi text-sm"
+                  [ngClass]="{'pi-chevron-down': !coursesVisible, 'pi-chevron-up': coursesVisible}"></i>
               </div>
               <ul *ngIf="coursesVisible" class="list-none pl-4 space-y-1">
                 <li (click)="openCreateCourseModal()">
-                  <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition"
-                    >
+                  <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
                     <i class="pi pi-file text-sm mr-1"></i>
                     <span class="font-medium text-sm">Crear curso</span>
                   </a>
@@ -51,19 +54,21 @@
 
             <!-- Transactions -->
             <li>
-              <div pRipple class="py-2 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
+              <div pRipple
+                class="py-2 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
                 (click)="transactionsVisible = !transactionsVisible">
                 <span class="flex items-center gap-1">
                   <i class="pi pi-wallet text-base"></i>
                   <span class="font-medium text-sm">Transacciones</span>
                 </span>
-                <i class="pi text-sm" [ngClass]="{'pi-chevron-down': !transactionsVisible, 'pi-chevron-up': transactionsVisible}"></i>
+                <i class="pi text-sm"
+                  [ngClass]="{'pi-chevron-down': !transactionsVisible, 'pi-chevron-up': transactionsVisible}"></i>
               </div>
               <ul *ngIf="transactionsVisible" class="list-none pl-4 space-y-1">
                 <li (click)="goToTransactions()">
                   <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
                     <i class="pi pi-clock text-sm mr-1"></i>
-                    <span  class="font-medium text-sm">Historial de Pagos</span>
+                    <span class="font-medium text-sm">Historial de Pagos</span>
                   </a>
                 </li>
               </ul>
@@ -71,13 +76,15 @@
 
             <!-- employees -->
             <li>
-              <div pRipple class="py-2 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
+              <div pRipple
+                class="py-2 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
                 (click)="employeesVisible = !employeesVisible">
                 <span class="flex items-center gap-1">
                   <i class="pi pi-users text-base"></i>
                   <span class="font-medium text-sm">Empleados</span>
                 </span>
-                <i class="pi text-sm" [ngClass]="{'pi-chevron-down': !employeesVisible, 'pi-chevron-up': employeesVisible}"></i>
+                <i class="pi text-sm"
+                  [ngClass]="{'pi-chevron-down': !employeesVisible, 'pi-chevron-up': employeesVisible}"></i>
               </div>
               <ul *ngIf="employeesVisible" class="list-none pl-4 space-y-1">
                 <li (click)="goToSignupAdmin()">
@@ -94,19 +101,28 @@
                   </a>
                 </li>
 
-                <li (click) = "goToEmployees()">
+                <li (click)="goToEmployees()">
                   <a pRipple class="flex items-center cursor-pointer py-2 px-3 rounded-md hover:bg-gray-100 transition">
                     <i class="pi pi-list text-sm mr-1"></i>
                     <span class="font-medium text-sm">Lista de Empleados</span>
                   </a>
                 </li>
               </ul>
+              <div pRipple
+                class="py-3 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
+                (click)="goToSettings()">
+                <span class="flex items-center gap-1">
+                  <i class="pi pi-pencil text-base"></i>
+                  <span class="font-medium text-sm">Ediciones</span>
+                </span>
+              </div>
             </li>
           </ul>
         </div>
 
         <div class="shrink-0 border-t border-gray-300 bg-white p-4 flex items-center gap-2">
-          <button pButton icon="pi pi-user" class="w-full" outlined (click)="mostrarModal()">Cuenta</button>
+          <button pButton icon="pi pi-user" class="w-full" outlined *ngIf="currentUserId"
+            (click)="showCurrentUserDetails()">Cuenta</button>
           <button pButton icon="pi pi-sign-out" class="w-full" severity="danger" (click)="logout()">Salir</button>
         </div>
       </div>
@@ -114,48 +130,50 @@
   </p-drawer>
 </div>
 <app-create-course #createCourseModal (courseCreated)="loadCourses()"></app-create-course>
-<p-button (click)="visible = true" icon="pi pi-bars" class="shadow-lg p-0 rounded-md mb-4" severity="secondary" raised="true"/>
+<p-button (click)="visible = true" icon="pi pi-bars" class="shadow-lg p-0 rounded-md mb-4" severity="secondary"
+  raised="true" />
 
 <p-dialog header="Editar Datos del Administrador" [(visible)]="displayDialog" [style]="{width: '500px'}" [modal]="true">
   <form [formGroup]="configForm" class="p-fluid grid gap-3">
     <!-- Campos del formulario -->
     <div class="field flex flex-col gap-2">
-        <label for="firstName">Nombre</label>
-        <input id="firstName" pInputText formControlName="firstName" />
-        <small *ngIf="configForm.get('firstName')?.invalid" class="p-error">
-          Nombre es requerido
-        </small>
-      </div>
+      <label for="firstName">Nombre</label>
+      <input id="firstName" pInputText formControlName="firstName" />
+      <small *ngIf="configForm.get('firstName')?.invalid" class="p-error">
+        Nombre es requerido
+      </small>
+    </div>
 
-      <div class="field flex flex-col gap-2">
-        <label for="lastName">Apellido</label>
-        <input id="lastName" pInputText formControlName="lastName" />
-        <small *ngIf="configForm.get('lastName')?.invalid" class="p-error">
-          Apellido es requerido
-        </small>
-      </div>
     <div class="field flex flex-col gap-2">
-        <label for="identificationNumber">Identificación</label>
-        <p-inputNumber id="identificationNumber" formControlName="identificationNumber" [useGrouping]="false"
-          mode="decimal" placeholder="Ingrese solo números"></p-inputNumber>
-        <small *ngIf="configForm.get('identificationNumber')?.errors?.['required']" class="p-error">
-          Identificación es requerida
-        </small>
-        <small *ngIf="configForm.get('identificationNumber')?.errors?.['pattern']" class="p-error">
-          Solo se permiten números
-        </small>
-      </div>
-      <div class="field flex flex-col gap-2">
-        <label for="password">Contraseña</label>
-        <p-password id="password" formControlName="password" [feedback]="false"
-          placeholder="Dejar vacío para no cambiar" [toggleMask]="true"></p-password>
-      </div>
+      <label for="lastName">Apellido</label>
+      <input id="lastName" pInputText formControlName="lastName" />
+      <small *ngIf="configForm.get('lastName')?.invalid" class="p-error">
+        Apellido es requerido
+      </small>
+    </div>
+    <div class="field flex flex-col gap-2">
+      <label for="identificationNumber">Identificación</label>
+      <p-inputNumber id="identificationNumber" formControlName="identificationNumber" [disabled]="true"
+        [useGrouping]="false" mode="decimal" placeholder="Ingrese solo números"></p-inputNumber>
+      <small *ngIf="configForm.get('identificationNumber')?.errors?.['required']" class="p-error">
+        Identificación es requerida
+      </small>
+      <small *ngIf="configForm.get('identificationNumber')?.errors?.['pattern']" class="p-error">
+        Solo se permiten números
+      </small>
+    </div>
+    <div class="field flex flex-col gap-2">
+      <label for="password">Contraseña</label>
+      <p-password id="password" formControlName="password" [feedback]="false" placeholder="Dejar vacío para no cambiar"
+        [toggleMask]="true"></p-password>
+    </div>
   </form>
 
   <ng-template pTemplate="footer">
     <div class="flex justify-content-end gap-2">
       <p-button label="Cancelar" (onClick)="displayDialog = false"></p-button>
-      <p-button label="Guardar" [disabled]="configForm.invalid"></p-button>
+      <p-button label="Guardar" [disabled]="configForm.invalid || isLoading" [loading]="isLoading"
+        (click)="updateAdmin()" [disabled]="configForm.invalid"></p-button>
     </div>
   </ng-template>
 </p-dialog>

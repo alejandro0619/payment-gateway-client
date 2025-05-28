@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuModule } from 'primeng/menu';
@@ -17,6 +17,9 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
 import { Router } from '@angular/router';
 
+import { User, Roles } from '../../global.types';
+import { UserService } from './user-navigation.service';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'user-navigation',
   imports: [
@@ -36,9 +39,26 @@ import { Router } from '@angular/router';
   styleUrls: ['./user-navigation.component.css'],
 })
 export class UserNavigationComponent {
+  private toastr = inject(ToastrService);
   displayDialog: boolean = false;
   configForm: FormGroup; // FormGroup;
-  constructor(private authService: AuthService, private fb: FormBuilder, private router: Router) {
+
+  users: User[] = [];
+    loading: boolean = true;
+    totalRecords: number = 0;
+    selectedUser: User | null = null;
+    selectedFilter: string = 'user.identificationNumber';
+    searchText: string = '';
+    filteredAdmins: User[] = [];
+    currentUserId: string | null = null;
+    isDisabled: boolean = true; 
+    isLoading: boolean = false;
+
+
+
+  constructor(private authService: AuthService, private fb: FormBuilder, private router: Router, private userService: UserService) {
+    this.currentUserId = this.authService.getCurrentUserId();
+
     this.configForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -57,7 +77,7 @@ export class UserNavigationComponent {
         {
           label: 'Configuración',
           icon: 'pi pi-cog',
-          command: () => this.mostrarModal(),
+          command: () => this.showCurrentUserDetails(),
         },
         {
           label: 'Cerrar sesión',
@@ -73,9 +93,7 @@ export class UserNavigationComponent {
     },
   ];
 
-  mostrarModal() {
-    this.displayDialog = true;
-  }
+  
 
   logout() {
     this.authService.logout().subscribe({
@@ -87,4 +105,108 @@ export class UserNavigationComponent {
       },
     });
   }
+
+  ngOnInit() {
+    this.getUsers();
+  }
+
+
+  getUsers() {
+      this.userService.getUsers().subscribe(
+        (data: User[]) => {
+          this.users = data;
+          this.totalRecords = data.length;
+          this.filteredAdmins = [...data];
+          this.loading = false;
+          console.log('Users obtenidos:', this.users);
+        },
+        (error) => {
+          console.error('Error fetching users:', error);
+          this.loading = false;
+        }
+      );
+    }
+  
+    showUserDetails(user: User) {
+      // Verificar si el admin seleccionado es el usuario actual
+      if (user.id !== this.currentUserId) {
+        this.toastr.warning('Solo puedes editar tu propia información');
+        return;
+      }
+  
+      this.selectedUser = user;
+      this.configForm.patchValue({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        identificationNumber: parseInt(user.identificationNumber, 10),
+        email: user.email,
+        password: '',
+      });
+      this.displayDialog = true;
+    }
+    showCurrentUserDetails() {
+      const currentUser = this.users.find(
+        (user) => user.id === this.currentUserId
+      );
+      if (currentUser) {
+        this.showUserDetails(currentUser);
+      }
+    }
+  
+    updateUser() {
+  if (this.configForm.invalid || !this.selectedUser) return;
+
+  const formData = {
+    ...this.prepareUpdateData(),
+    id: this.selectedUser.id,
+  };
+
+  this.userService.updateUser(formData).subscribe({
+    next: (updatedUser) => {
+      this.updateLocalData(updatedUser);
+      this.displayDialog = false;
+      this.toastr.success('Usuario actualizado exitosamente');
+      this.getUsers();
+    },
+    error: (error) => {
+      if (error.status === 401) {
+        this.toastr.error('Sesión expirada', 'Por favor, inicia sesión nuevamente.');
+        this.authService.logout(); // Cierra sesión
+        this.router.navigate(['/login']); // Redirige al login
+      } else {
+        this.toastr.error('Error actualizando usuario', error.message);
+      }
+    },
+  });
+}
+  
+    private prepareUpdateData(): any {
+      const data: any = { ...this.configForm.value };
+  
+      // Limpiar datos no modificados
+      if (!data.password) delete data.password;
+      data.identificationNumber = data.identificationNumber.toString();
+      data.role = 'user' as Roles.USER; 
+      return data;
+    }
+  
+    private updateLocalData(updatedUser: User) {
+      const index = this.users.findIndex((u) => u.id === updatedUser.id);
+      if (index > -1) {
+        this.users[index] = updatedUser;
+        this.users = [...this.users]; // Forzar detección de cambios
+      }
+    }
+  
+    get f() {
+      return this.configForm.controls;
+    }
+  
+    private prepareAdminUpdateData(): any {
+      const data = { ...this.configForm.value };
+  
+      if (!data.password) delete data.password;
+      data.identificationNumber = data.identificationNumber.toString();
+      return data;
+    }
 }

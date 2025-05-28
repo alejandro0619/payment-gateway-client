@@ -11,7 +11,7 @@
     </ng-template>
   </p-menubar>
 </div>
-<p-dialog header="Editar Operador" [(visible)]="displayDialog" [style]="{width: '500px'}" [modal]="true">
+<p-dialog header="Editar Perfil" [(visible)]="displayDialog" [style]="{width: '500px'}" [modal]="true">
   <form [formGroup]="configForm" class="p-fluid grid gap-3">
     <!-- Campos del formulario -->
     <div class="field flex flex-col gap-2">
@@ -50,7 +50,7 @@
   <ng-template pTemplate="footer">
     <div class="flex justify-content-end gap-2">
       <p-button label="Cancelar" (onClick)="displayDialog = false"></p-button>
-      <p-button label="Guardar" [disabled]="configForm.invalid"></p-button>
+      <p-button label="Guardar" (click)="updateUser()" [disabled]="configForm.invalid"></p-button>
     </div>
   </ng-template>
 </p-dialog>

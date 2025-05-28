@@ -71,6 +71,7 @@ export type TransactionStatus =
 export type PaymentMethod =
   | 'zelle'
   | 'paypal'
+  | ''
 
 export type PaymentScheme =
   | 'single_payment'

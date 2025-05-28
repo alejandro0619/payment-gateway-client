@@ -2,11 +2,15 @@
 
 <div class="mt-5 ml-2 mr-20 rounded-2xl">
   <div class="mb-4 flex items-center">
-    <p-dropdown optionLabel="label" placeholder="Seleccionar filtro" class="mr-4" optionValue="value"></p-dropdown>
-    <input pInputText type="text" placeholder="Buscar" class="p-inputtext-sm border-2 rounded-md border-gray-300 " />
-    <button class="ml-2" pButton icon="pi pi-search" label="Buscar"></button>
+    <p-dropdown optionLabel="label" placeholder="Seleccionar filtro" class="mr-4" optionValue="value"
+      [options]="filterOptions" [(ngModel)]="selectedFilter">
+    </p-dropdown>
+    <input pInputText type="text" placeholder="Buscar" class="p-inputtext-sm border-2 rounded-md border-gray-300"
+      [(ngModel)]="searchText" (input)="filterTable()" />
+    <button class="ml-2" pButton icon="pi pi-search" (click)="filterTable()" label="Buscar">
+    </button>
   </div>
-  <p-table [value]="transactions">
+  <p-table [value]="filteredTransactions">
     <ng-template pTemplate="header">
       <tr>
         <th>Curso</th>

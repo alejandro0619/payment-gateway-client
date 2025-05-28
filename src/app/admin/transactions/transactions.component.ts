@@ -21,6 +21,8 @@ import { FieldsetModule } from 'primeng/fieldset';
 import { PanelModule } from 'primeng/panel';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Nullable } from 'primeng/ts-helpers';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-transactions',
@@ -232,7 +234,7 @@ export class TransactionsComponent {
         return 'success';
       case 'ready_to_be_checked':
         return 'warn';
-      case 'rejected': 
+      case 'rejected':
         return 'danger';
       case 'in_process':
         return 'info';
@@ -256,6 +258,260 @@ export class TransactionsComponent {
         return 'Rechazada';
       default:
         return 'Desconocido';
+    }
+  }
+  async downloadStyledPDF() {
+    try {
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      const colors = {
+        primary: '#3498db',
+        headerBg: '#57CC99',
+        headerText: '#ffffff',
+        rowEven: '#f8f9fa',
+        rowOdd: '#ffffff',
+        border: '#e0e0e0',
+        success: '#27ae60',
+        warning: '#f39c12',
+        danger: '#e74c3c',
+        text: '#333333',
+      };
+
+      const margin = {
+        left: 10,
+        right: 10,
+        top: 20,
+        bottom: 20,
+      };
+
+      const pageWidth =
+        pdf.internal.pageSize.getWidth() - margin.left - margin.right;
+      let yPos = margin.top;
+
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(14);
+      pdf.setTextColor(colors.headerBg);
+      pdf.text(
+        'REPORTE DE TRANSACCIONES',
+        pdf.internal.pageSize.getWidth() / 2,
+        yPos,
+        {
+          align: 'center',
+        }
+      );
+      yPos += 10;
+
+      pdf.setFontSize(10);
+      pdf.setTextColor(100);
+      pdf.text(
+        `Generado el ${new Date().toLocaleDateString()} a las ${new Date().toLocaleTimeString()}`,
+        pdf.internal.pageSize.getWidth() / 2,
+        yPos,
+        {
+          align: 'center',
+        }
+      );
+      yPos += 15;
+
+      const columns = [
+        { title: 'ID', dataKey: 'id', width: 20, align: 'center' as const },
+        {
+          title: 'CURSO',
+          dataKey: 'course',
+          width: 50,
+          align: 'center' as const,
+        },
+        {
+          title: 'MONTO',
+          dataKey: 'amount',
+          width: 25,
+          align: 'center' as const,
+        },
+        {
+          title: 'MÉTODO',
+          dataKey: 'method',
+          width: 30,
+          align: 'center' as const,
+        },
+        {
+          title: 'ESTADO',
+          dataKey: 'status',
+          width: 30,
+          align: 'center' as const,
+        },
+        {
+          title: 'ESTUDIANTE',
+          dataKey: 'student',
+          width: 45,
+          align: 'center' as const,
+        },
+        {
+          title: 'VALIDADO POR',
+          dataKey: 'validator',
+          width: 45,
+          align: 'center' as const,
+        },
+        {
+          title: 'FECHA',
+          dataKey: 'date',
+          width: 30,
+          align: 'center' as const,
+        },
+      ];
+
+      const drawTableHeader = () => {
+        pdf.setFillColor(colors.headerBg);
+        pdf.rect(margin.left, yPos, pageWidth, 12, 'F');
+        pdf.setFontSize(10);
+        pdf.setTextColor(colors.headerText);
+        pdf.setFont('bold');
+        let xPos = margin.left;
+        columns.forEach((col) => {
+          pdf.text(
+            col.title,
+            xPos + (col.align === 'center' ? col.width / 2 : 5),
+            yPos + 8,
+            {
+              align: col.align,
+            }
+          );
+          xPos += col.width;
+        });
+        yPos += 12;
+      };
+
+      const addNewPage = () => {
+        pdf.addPage('landscape');
+        yPos = margin.top;
+        pdf.setFontSize(12);
+        pdf.setTextColor(colors.headerBg);
+        pdf.text(
+          'REPORTE DE TRANSACCIONES (CONTINUACIÓN)',
+          pdf.internal.pageSize.getWidth() / 2,
+          yPos,
+          {
+            align: 'center',
+          }
+        );
+        yPos += 15;
+        drawTableHeader();
+      };
+
+      const tableData = this.transactions.map((transaction) => ({
+        id: transaction.id,
+        course: transaction.course?.name || 'N/A',
+        amount:
+          typeof transaction.amount === 'number'
+            ? `$${transaction.amount}`
+            : transaction.amount,
+        method: transaction.paymentMethod ? transaction.paymentMethod : 'Pago interno',
+        status: this.getStatusLabel(transaction.status),
+        student: transaction.user?.email || 'N/A',
+        validator: transaction.validatedBy?.email || 'N/A',
+        date: transaction.createdAt
+          ? new Date(transaction.createdAt).toLocaleDateString()
+          : 'N/A',
+        statusType: transaction.status,
+      }));
+
+      drawTableHeader();
+      pdf.setFont('helvetica');
+      pdf.setFontSize(9);
+
+      tableData.forEach((row, index) => {
+        let xPos = margin.left;
+        const cellHeights: number[] = [];
+
+        const cellLines = columns.map((col) => {
+          const text = String(row[col.dataKey as keyof typeof row]);
+          const lines = pdf.splitTextToSize(text, col.width - 4);
+          cellHeights.push(lines.length);
+          return lines;
+        });
+
+        const maxLines = Math.max(...cellHeights);
+        const rowHeight = maxLines * 4 + 4;
+
+        if (
+          yPos + rowHeight >
+          pdf.internal.pageSize.getHeight() - margin.bottom
+        ) {
+          addNewPage();
+        }
+
+        const rowColor = index % 2 === 0 ? colors.rowEven : colors.rowOdd;
+        pdf.setFillColor(rowColor);
+        pdf.rect(margin.left, yPos, pageWidth, rowHeight, 'F');
+
+        columns.forEach((col, i) => {
+          const lines = cellLines[i];
+          lines.forEach((line: string, lineIndex: number) => {
+            const textY = yPos + 6 + lineIndex * 4;
+
+            if (col.dataKey === 'amount') {
+              pdf.setTextColor(colors.success);
+            } else if (col.dataKey === 'status') {
+              const statusColor =
+                row.statusType === 'completed'
+                  ? colors.success
+                  : row.statusType === 'rejected'
+                  ? colors.danger
+                  : colors.warning;
+              pdf.setTextColor(statusColor);
+            } else {
+              pdf.setTextColor(colors.text);
+            }
+
+            pdf.text(line, xPos + col.width / 2, textY, {
+              align: 'center',
+              maxWidth: col.width - 4,
+            });
+          });
+
+          xPos += col.width;
+        });
+
+        pdf.setDrawColor(colors.border);
+        pdf.line(
+          margin.left,
+          yPos + rowHeight,
+          margin.left + pageWidth,
+          yPos + rowHeight
+        );
+
+        yPos += rowHeight;
+      });
+
+      pdf.setFontSize(10);
+      pdf.setTextColor(colors.headerBg);
+      pdf.text(
+        `Total de transacciones: ${this.transactions.length}`,
+        margin.left,
+        pdf.internal.pageSize.getHeight() - margin.bottom
+      );
+
+      pdf.text(
+        '© Sistema Académico',
+        pdf.internal.pageSize.getWidth() - margin.right,
+        pdf.internal.pageSize.getHeight() - margin.bottom,
+        { align: 'right' }
+      );
+
+      const fileName = `Reporte_Transacciones_${new Date()
+        .toISOString()
+        .slice(0, 10)}.pdf`;
+      pdf.save(fileName);
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo generar el PDF. Por favor intente nuevamente.',
+      });
     }
   }
 

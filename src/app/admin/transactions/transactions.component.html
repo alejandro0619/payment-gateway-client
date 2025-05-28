@@ -10,8 +10,7 @@
       <input pInputText type="text" [(ngModel)]="searchText" (input)="filterTable()" placeholder="Buscar"
         class="p-inputtext-sm border-2 rounded-md border-gray-300 " />
       <button class="ml-2" pButton icon="pi pi-search" label="Buscar" (click)="filterTable()"></button>
-      <button class="ml-2" pButton icon="pi pi-file-import" ></button>
-
+      <button class="ml-2" pButton icon="pi pi-file-import" (click)="downloadStyledPDF()" label="Exportar PDF" ></button>
     </div>
 
     <p-table [value]="filteredTransactions" selectionMode="single" [(selection)]="selectedTransaction" dataKey="id"
@@ -36,7 +35,7 @@
           <td>{{ transaction.course?.name }}</td>
           <td>{{ transaction.amount }}</td>
           <td>
-            <p-tag [value]="transaction.paymentMethod" [severity]="getPaymentMethodSeverity(transaction.paymentMethod)"
+            <p-tag [value]="transaction.paymentMethod ? transaction.paymentMethod : 'Pago interno'" [severity]="getPaymentMethodSeverity(transaction.paymentMethod)"
               icon="pi pi-tag" />
           </td>
           <td>

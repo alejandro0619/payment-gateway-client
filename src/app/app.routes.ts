@@ -18,6 +18,7 @@ import { PaymentRecordComponent } from './operator/payment-record.component';
 import { PaymentRecordComponent as PaymentRecordComponentStudent } from './user/payment-record.component';
 import { StepOneComponent } from './onboarding/step_one/step_one.component';
 import { StepTwoComponent } from './onboarding/step_two/step_two.component';
+import { SettingsComponent } from './admin/settings/settings.component';
 
 export const routes: Routes = [
   {
@@ -94,6 +95,11 @@ export const routes: Routes = [
       {
         path: 'admin/transactions',
         component: TransactionsComponent,
+        canActivate: [FirstRunGuard],
+      },
+      {
+        path: 'admin/settings',
+        component: SettingsComponent,
         canActivate: [FirstRunGuard],
       },
     ],
