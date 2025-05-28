@@ -21,14 +21,16 @@ export class AuthInterceptor implements HttpInterceptor {
     '/auth/first-signup',
     '/auth/check-first-run',
     '/auth/signup-admin',
-    '/auth/signup-operator'
+    '/auth/signup-operator',
+    '/one-time-password/generate',
+    '/one-time-password/validate',
   ];
 
   constructor(private authService: AuthService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const accessToken = localStorage.getItem('accessToken');
-    console.log('Token actual:', accessToken);
+
     if (accessToken) {
       const clonedRequest = request.clone({
         setHeaders: {
@@ -46,6 +48,7 @@ export class AuthInterceptor implements HttpInterceptor {
       );
     } else {
       if (this.isPublicRequest(request)) {
+        console.log('Petición pública, no se requiere token');
         return next.handle(request);
       } else {
         this.authService.redirectToLogin('Acceso no autorizado');

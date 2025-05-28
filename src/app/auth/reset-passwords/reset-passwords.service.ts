@@ -21,6 +21,7 @@ export class ResetPasswordsService {
    * @returns Un observable que emite la respuesta del servidor con el código OTP.
    */
   requestPasswordReset(id: string): Observable<GenerateOTPResponse> {
+    console.log('Requesting password reset for ID:', id);
     return this.http.post<GenerateOTPResponse>(`${this.BACKEND_URL}/one-time-password/generate`, { identificationNumber: id }).pipe(
       catchError(this.handleError)
     );
