@@ -128,12 +128,10 @@ export class UserNavigationComponent {
     }
   
     showUserDetails(user: User) {
-      // Verificar si el admin seleccionado es el usuario actual
       if (user.id !== this.currentUserId) {
         this.toastr.warning('Solo puedes editar tu propia información');
         return;
       }
-  
       this.selectedUser = user;
       this.configForm.patchValue({
         firstName: user.firstName,
@@ -144,12 +142,14 @@ export class UserNavigationComponent {
       });
       this.displayDialog = true;
     }
+    
     showCurrentUserDetails() {
-      const currentUser = this.users.find(
-        (user) => user.id === this.currentUserId
-      );
+      const currentUserId = this.authService.getCurrentUserId();
+      const currentUser = this.users.find(u => u.id === currentUserId);
       if (currentUser) {
         this.showUserDetails(currentUser);
+      } else {
+        this.toastr.error('No se encontró el usuario actual en la lista');
       }
     }
   
