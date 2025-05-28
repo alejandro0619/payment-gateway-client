@@ -69,14 +69,13 @@ export class SettingsComponent implements OnInit {
   rowsPerPage: number = this.rowsPerPageOptions[0];
   currentPage: number = 0;
   displayDialog: boolean = false;
-
+  selectedUser: User | null = null;
   filterOptions = [
     { label: 'Identificación', value: 'identificationNumber' },
     { label: 'Nombre', value: 'firstName' },
     { label: 'Apellido', value: 'lastName' },
     { label: 'Email', value: 'email' },
     { label: 'Estado', value: 'status' },
-    { label: 'Fecha', value: 'createdAt' },
   ];
   constructor(
     private fb: FormBuilder,
@@ -88,13 +87,16 @@ export class SettingsComponent implements OnInit {
       lastName: ['', [Validators.required, Validators.maxLength(50)]],
       identificationNumber: [
         null,
-        [Validators.required, Validators.pattern(/^[0-9]*$/)],
+        [Validators.pattern(/^[0-9]*$/)],
       ],
       password: ['', [Validators.minLength(8)]],
     });
   }
-  mostrarDialog() {
+  showDialog(user: User) {
+
     this.displayDialog = true;
+    this.selectedUser = user;
+
   }
 
   filterTable() {
@@ -113,15 +115,7 @@ export class SettingsComponent implements OnInit {
         return false;
       }
 
-      // Si es fecha, formatearla como 'dd/MM/yyyy' para compararla
-      if (fieldPath === 'createdAt' && typeof fieldValue === 'string') {
-        try {
-          const date = new Date(fieldValue);
-          fieldValue = formatDate(date, 'dd/MM/yyyy', 'en-US');
-        } catch (e) {
-          return false;
-        }
-      }
+
 
       return fieldValue.toString().toLowerCase().includes(search);
     });
@@ -139,13 +133,67 @@ export class SettingsComponent implements OnInit {
   ngOnInit(): void {
     this.loadUsers();
   }
+  private prepareUserData(data: any): any {
+    const cleanedData: any = {};
 
+    for (const key in data) {
+      const value = data[key];
+      // Si el valor no está vacío ni null ni undefined, lo agregamos
+      if (
+        value !== null &&
+        value !== undefined &&
+        !(typeof value === 'string' && value.trim() === '')
+      ) {
+        cleanedData[key] = value;
+      }
+    }
+
+    return cleanedData;
+  }
+
+  updateUser() {
+    console.log('Updating user with data:', this.editForm.value);
+    if (this.editForm.invalid) {
+      console.log('Form is invalid:', this.editForm.errors);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Formulario inválido',
+        detail: 'Por favor, complete todos los campos requeridos correctamente.',
+      });
+      return;
+    }
+    const rawUserData = this.editForm.value;
+    const cleanedUserData = this.prepareUserData(rawUserData);
+
+
+    const userId = this.selectedUser?.id;
+    this.settingsService.updateUser({ ...cleanedUserData, id: userId }).subscribe({
+      next: () => {
+        console.log('User updated successfully');
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Usuario actualizado',
+          detail: 'El usuario ha sido actualizado correctamente.',
+        });
+        this.loadUsers();
+        this.displayDialog = false;
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error al actualizar usuario',
+          detail: error.message,
+        });
+      },
+    });
+  }
   loadUsers(): void {
     this.settingsService.getUsers().subscribe({
       next: (users) => {
         this.users = users;
         this.filteredUsers = [...users]; // Inicializa también la tabla filtrada
         this.totalRecords = users.length;
+        console.log('Usuarios cargados:', this.users);
       },
       error: (error) => {
         this.messageService.add({

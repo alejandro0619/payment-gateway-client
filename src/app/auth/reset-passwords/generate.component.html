@@ -8,7 +8,8 @@
     <div class="field">
       <label for="identificationNumber">Cédula</label>
       <input id="identificationNumber" type="text" pInputText formControlName="identificationNumber"
-        [class.ng-invalid]="cedulaForm.get('identificationNumber')?.invalid && cedulaForm.get('identificationNumber')?.touched" />
+        [class.ng-invalid]="cedulaForm.get('identificationNumber')?.invalid && cedulaForm.get('identificationNumber')?.touched"
+        maxlength="9" />
     </div>
 
     <div class="flex justify-end mt-4">

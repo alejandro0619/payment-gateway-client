@@ -1,7 +1,6 @@
-
-  <aside class="absolute top-5 left-5">
-    <main-menu />
-  </aside>
+<aside class="absolute top-5 left-5">
+  <main-menu />
+</aside>
 
 <div class="mt-20 ml-20 mr-20 rounded-2xl">
   <div class="mb-6 flex flex-wrap items-center gap-4">
@@ -11,9 +10,9 @@
       class="p-inputtext-sm border-2 rounded-md border-gray-300 w-96" />
     <button pButton icon="pi pi-search" label="Buscar" (click)="filterTable()"></button>
   </div>
-  <p-table [value]="filteredUsers.length ? filteredUsers : users"  [paginator]="true"
-    [rows]="rowsPerPage" [totalRecords]="totalRecords" [rowsPerPageOptions]="rowsPerPageOptions"
-    styleClass="p-datatable-gridlines" class="mt-4">
+  <p-table [value]="filteredUsers.length ? filteredUsers : users" [paginator]="true" [rows]="rowsPerPage"
+    [totalRecords]="totalRecords" [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-gridlines"
+    class="mt-4">
 
     <ng-template pTemplate="header">
       <tr>
@@ -39,7 +38,7 @@
         <td>{{ user.createdAt | date:'dd/MM/yyyy' }}</td>
         <td>
           <div class="flex gap-2">
-            <p-button icon="pi pi-info-circle" [rounded]="true" severity="info" (click)="mostrarDialog()"
+            <p-button icon="pi pi-info-circle" [rounded]="true" severity="info" (click)="showDialog(user)"
               [text]="true" />
 
           </div>
@@ -56,7 +55,7 @@
   </p-table>
 
   <p-dialog header="Editar Estudiante" [(visible)]="displayDialog" [style]="{width: '500px'}" [modal]="true">
-    <form [formGroup]="editForm"  class="p-fluid grid gap-3">
+    <form [formGroup]="editForm" class="p-fluid grid gap-3">
 
       <div class="field flex flex-col gap-2">
         <label for="firstName">Nombre</label>
@@ -77,10 +76,8 @@
       <div class="field flex flex-col gap-2">
         <label for="identificationNumber">Identificación</label>
         <p-inputNumber id="identificationNumber" formControlName="identificationNumber" [useGrouping]="false"
-          mode="decimal" placeholder="Ingrese solo números"></p-inputNumber>
-        <small *ngIf="editForm.get('identificationNumber')?.errors?.['required']" class="p-error">
-          Identificación es requerida
-        </small>
+          mode="decimal" placeholder="Ingrese solo números" maxlength="9"></p-inputNumber>
+
         <small *ngIf="editForm.get('identificationNumber')?.errors?.['pattern']" class="p-error">
           Solo se permiten números
         </small>
@@ -99,8 +96,8 @@
         <p-button label="Cancelar" icon="pi pi-times" (click)="displayDialog = false"
           styleClass="p-button-text p-button-danger"></p-button>
 
-        <p-button label="Guardar" icon="pi pi-check" [disabled]="editForm.invalid"
-          styleClass="p-button-success"></p-button>
+        <p-button label="Guardar" icon="pi pi-check" [disabled]="editForm.invalid" styleClass="p-button-success"
+          (click)="updateUser()"></p-button>
       </div>
     </ng-template>
   </p-dialog>
