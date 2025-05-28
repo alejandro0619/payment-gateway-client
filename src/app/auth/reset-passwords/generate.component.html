@@ -1,57 +1,83 @@
-<p-dialog header="Recuperar Contraseña" [(visible)]="displayModal" [modal]="true" [closable]="true" [style]="{ width: '420px' }"
-  (onHide)="onDialogClose()">
+<p-toast></p-toast>
 
-  <div class="p-fluid">
-    <!-- Paso 1: Ingresar cédula -->
-    <ng-container *ngIf="step === 'cedula'">
-      <div class="text-center mb-4">
-        <i class="pi pi-id-card" style="font-size: 2rem; color: #2196f3;"></i>
-        <h3 class="mt-2 mb-1">Validar identidad</h3>
-        <p class="text-sm text-secondary">Ingresa tu número de cédula para continuar</p>
-      </div>
+<p-dialog 
+  header="Recuperar contraseña" 
+  [(visible)]="displayModal" 
+  [modal]="true" 
+  [closable]="false"
+  (onHide)="onDialogClose()" 
+  [style]="{ width: '400px' }">
 
-      <form [formGroup]="cedulaForm" (ngSubmit)="onCedulaSubmit()">
-        <div class="mb-3">
-          <label for="cedula" class="block font-semibold mb-1">Cédula</label>
-          <p-inputNumber id="identificationNumber" formControlName="identificationNumber" [useGrouping]="false"
-            mode="decimal" placeholder="Ingrese solo números" class="w-full" [maxlength]="10"></p-inputNumber>
+  <!-- Paso 1: Introducir cédula -->
+  <form *ngIf="step === 'cedula'" [formGroup]="cedulaForm" (ngSubmit)="onCedulaSubmit()">
+    <div class="field">
+      <label for="identificationNumber">Cédula</label>
+      <input
+        id="identificationNumber"
+        type="text"
+        pInputText
+        formControlName="identificationNumber"
+        [class.ng-invalid]="cedulaForm.get('identificationNumber')?.invalid && cedulaForm.get('identificationNumber')?.touched"
+      />
+    </div>
 
-          <small *ngIf="cedulaForm.controls['identificationNumber'].invalid && cedulaForm.controls['identificationNumber'].touched" class="p-error">
-            La cédula es requerida.
-          </small>
-        </div>
+    <div class="flex justify-end mt-4">
+      <button
+        pButton
+        label="Enviar código"
+        type="submit"
+        [disabled]="isLoading || cedulaForm.invalid"
+        [loading]="isLoading"
+        class="p-button-primary"
+      ></button>
+    </div>
+  </form>
 
-        <div class="flex justify-end">
-          <p-button type="submit" label="Enviar código" [loading]="isLoading"
-            class="p-button-lg p-button-primary"></p-button>
-        </div>
-      </form>
-    </ng-container>
+  <!-- Paso 2: Ingresar OTP y nueva contraseña -->
+  <form *ngIf="step === 'otp'" [formGroup]="otpForm" (ngSubmit)="onOtpSubmit()">
+    <div class="field">
+      <label for="otp">Código OTP</label>
+      <input
+        id="otp"
+        type="text"
+        pInputText
+        formControlName="otp"
+        maxlength="6"
+        [class.ng-invalid]="otpForm.get('otp')?.invalid && otpForm.get('otp')?.touched"
+      />
+    </div>
 
-    <!-- Paso 2: Ingresar OTP -->
-    <ng-container *ngIf="step === 'otp'">
-      <div class="text-center mb-4">
-        <i class="pi pi-envelope" style="font-size: 2rem; color: #4caf50;"></i>
-        <h3 class="mt-2 mb-1">Verifica tu correo</h3>
-        <p class="text-sm text-secondary">Escribe el código que recibiste por correo electrónico</p>
-      </div>
+    <div class="field mt-3">
+      <label for="newPassword">Nueva contraseña</label>
+      <input
+        id="newPassword"
+        type="password"
+        pInputText
+        formControlName="newPassword"
+        [class.ng-invalid]="otpForm.get('newPassword')?.invalid && otpForm.get('newPassword')?.touched"
+      />
+    </div>
 
-      <form [formGroup]="otpForm" (ngSubmit)="onOtpSubmit()">
-        <div class="mb-3">
-          <label for="otp" class="block font-semibold mb-1">Código OTP</label>
-          <input id="otp" type="text" pInputText formControlName="otp" maxlength="6" placeholder="######"
-            autocomplete="off" class="w-full" />
-          <small *ngIf="otpForm.controls['otp'].invalid && otpForm.controls['otp'].touched" class="p-error">
-            Ingresa un código válido de 6 dígitos.
-          </small>
-        </div>
+    <div class="field mt-3">
+      <label for="confirmPassword">Confirmar contraseña</label>
+      <input
+        id="confirmPassword"
+        type="password"
+        pInputText
+        formControlName="confirmPassword"
+        [class.ng-invalid]="otpForm.get('confirmPassword')?.invalid && otpForm.get('confirmPassword')?.touched"
+      />
+    </div>
 
-        <div class="flex justify-end">
-          <p-button type="submit" label="Verificar código" [loading]="isLoading"
-            class="p-button-lg p-button-success"></p-button>
-        </div>
-      </form>
-    </ng-container>
-
-  </div>
+    <div class="flex justify-end mt-4">
+      <button
+        pButton
+        label="Cambiar contraseña"
+        type="submit"
+        [disabled]="isLoading || otpForm.invalid"
+        [loading]="isLoading"
+        class="p-button-success"
+      ></button>
+    </div>
+  </form>
 </p-dialog>

@@ -1,11 +1,38 @@
 .field {
+  display: flex;
+  flex-direction: column;
   margin-bottom: 1rem;
+}
+
+.field label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+input.ng-invalid.ng-touched {
+  border: 1px solid #f87171; /* borde rojo si es inválido y tocado */
+}
+
+p-dialog {
+  --padding: 1rem;
+}
+
+button {
+  min-width: 120px;
 }
 
 .mt-3 {
   margin-top: 1rem;
 }
 
-.w-full {
-  width: 100%;
+.mt-4 {
+  margin-top: 1.5rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-end {
+  justify-content: flex-end;
 }
