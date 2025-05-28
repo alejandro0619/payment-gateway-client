@@ -23,7 +23,7 @@ export class LoginComponent {
   private router: Router = inject(Router);
   loginResponse: SignInResponse | null = null;
   errorMessage: string | null = null;
-  isLoading = false; 
+  isLoading = false;
 
   form = signal(
     new FormGroup({
@@ -31,7 +31,7 @@ export class LoginComponent {
       password: new FormControl('', [Validators.required]),
     })
   );
-  
+
 
   async onSubmit() {
     if (this.form().invalid) {
@@ -47,22 +47,19 @@ export class LoginComponent {
       this.authService.signIn(id as string, password as string).subscribe({
         next: (response: SignInResponse) => {
           this.loginResponse = response;
-          console.log(response.user)
           this.toastr.success('¡Registro exitoso!', 'Bienvenido a la plataforma.');
           this.toastr.info('Redirigiendo...', 'Por favor, espera un momento.');
           localStorage.setItem('usr_info', response.user.id);
           this.router.navigate([this.redirectService.redirect(response.user.role)]);
+          this.isLoading = false; // ✅ Asegúrate de desactivar el loading aquí también
         },
         error: (error: any) => {
           this.errorMessage = 'Error al iniciar sesión. Verifica tus credenciales.';
           this.toastr.error('Error en el registro', 'Por favor, verifica los datos.');
-          this.isLoading = false;
-        },
-
-        complete: () => {
-          this.isLoading = false;
+          this.isLoading = false; // ✅ Asegura que el loading se detiene en caso de error
         }
       });
+
 
 
     } catch (error) {
@@ -70,5 +67,5 @@ export class LoginComponent {
       this.toastr.error('Error en el registro', 'Por favor, verifica los datos.');
     }
   }
-  
+
 }
