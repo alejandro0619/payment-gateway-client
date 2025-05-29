@@ -21,7 +21,6 @@ import { ResetPasswordsService } from './reset-passwords.service';
     DialogModule,
     CommonModule,
     InputText,
-    InputNumber,
     ToastModule
   ],
   providers: [MessageService]

@@ -5,8 +5,10 @@
         <!-- Header -->
         <div class="flex items-center justify-between px-6 pt-4 shrink-0">
           <span class="inline-flex items-center gap-1">
-            <i class="pi pi-star text-xl text-primary"></i>
-            <span class="font-semibold text-xl text-primary">{{company!.name}}</span>
+            <div class="flex items-center gap-4">
+              <img [src]="company?.image" alt="Company Logo" class="h-12 w-auto object-contain" />
+
+            </div>
           </span>
           <p-button type="button" (click)="visible = false" icon="pi pi-times" rounded="true" outlined="true"
             styleClass="h-8 w-8"></p-button>

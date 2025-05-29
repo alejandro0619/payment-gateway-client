@@ -16,17 +16,18 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { UserService } from './user-navigation.service';
 import { User } from '../../auth/auth.types';
+import { Company } from '../../global.types';
 
 @Component({
   selector: 'operator-navigation',
   standalone: true,
   imports: [
     CommonModule,
-    MenubarModule, 
-    ButtonModule, 
-    InputTextModule, 
-    PasswordModule, 
-    InputNumberModule, 
+    MenubarModule,
+    ButtonModule,
+    InputTextModule,
+    PasswordModule,
+    InputNumberModule,
     DialogModule,
     ReactiveFormsModule
   ],
@@ -36,7 +37,7 @@ export class OperatorNavigationComponent implements OnInit {
   displayDialog: boolean = false;
   configForm: FormGroup;
   currentUser: User | null = null;
-
+  company: Company | null = null;
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
@@ -51,7 +52,19 @@ export class OperatorNavigationComponent implements OnInit {
   }
 
   ngOnInit() {
-      this.currentUser = this.authService.getCurrentUser();
+    this.company = localStorage.getItem('company') ? JSON.parse(localStorage.getItem('company')!) : null;
+    this.currentUser = this.authService.getCurrentUser();
+
+    // This might have some overhead, but it ensures that the company data is always up-to-date.
+    // One day I might want to use a more efficient way to handle this, like using a service with BehaviorSubject.
+    setInterval(() => {
+      const companyStr = localStorage.getItem('company');
+      const parsedCompany = companyStr ? JSON.parse(companyStr) : null;
+
+      if (JSON.stringify(this.company) !== JSON.stringify(parsedCompany)) {
+        this.company = parsedCompany;
+      }
+    }, 1000);
   }
 
   items: MenuItem[] = [
@@ -74,12 +87,12 @@ export class OperatorNavigationComponent implements OnInit {
     {
       label: 'Página principal',
       icon: 'pi pi-fw pi-home',
-      command: () => {this.router.navigate(['/operator/dashboard'])}
+      command: () => { this.router.navigate(['/operator/dashboard']) }
     },
     {
       label: 'Histórico de pagos',
       icon: 'pi pi-clock',
-      command: () => {this.router.navigate(['/operator/payment-record'])}
+      command: () => { this.router.navigate(['/operator/payment-record']) }
     },
   ];
 

@@ -17,7 +17,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
 import { Router } from '@angular/router';
 
-import { User, Roles } from '../../global.types';
+import { User, Roles, Company } from '../../global.types';
 import { UserService } from './user-navigation.service';
 import { ToastrService } from 'ngx-toastr';
 @Component({
@@ -53,7 +53,7 @@ export class UserNavigationComponent {
   currentUserId: string | null = null;
   isDisabled: boolean = true;
   isLoading: boolean = false;
-
+  company: Company | null = null;
 
 
   constructor(private authService: AuthService, private fb: FormBuilder, private router: Router, private userService: UserService) {
@@ -107,6 +107,17 @@ export class UserNavigationComponent {
 
   ngOnInit() {
     this.getUsers();
+
+    // This might have some overhead, but it ensures that the company data is always up-to-date.
+    // One day I might want to use a more efficient way to handle this, like using a service with BehaviorSubject.
+    setInterval(() => {
+      const companyStr = localStorage.getItem('company');
+      const parsedCompany = companyStr ? JSON.parse(companyStr) : null;
+
+      if (JSON.stringify(this.company) !== JSON.stringify(parsedCompany)) {
+        this.company = parsedCompany;
+      }
+    }, 1000);
   }
 
 

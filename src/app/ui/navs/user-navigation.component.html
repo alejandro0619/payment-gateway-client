@@ -1,6 +1,9 @@
 <div class="bg-white shadow-md p-4 w-full flex justify-between items-center">
   <!-- Logo -->
-  <span class="font-bold text-lg">LOGO</span>
+  <div class="flex items-center gap-4">
+    <img [src]="company?.image" alt="Company Logo" class="h-12 w-auto object-contain" />
+
+  </div>
 
   <!-- Menú usando Menubar de PrimeNG -->
   <p-menubar [model]="items" [styleClass]="'border-none bg-transparent shadow-none'">
@@ -15,25 +18,25 @@
   <form [formGroup]="configForm" class="p-fluid grid gap-3">
     <!-- Campos del formulario -->
     <div class="field flex flex-col gap-2">
-        <label for="firstName">Nombre</label>
-        <input id="firstName" pInputText formControlName="firstName" />
-        <small *ngIf="configForm.get('firstName')?.invalid" class="p-error">
-          Nombre es requerido
-        </small>
-      </div>
+      <label for="firstName">Nombre</label>
+      <input id="firstName" pInputText formControlName="firstName" />
+      <small *ngIf="configForm.get('firstName')?.invalid" class="p-error">
+        Nombre es requerido
+      </small>
+    </div>
 
-      <div class="field flex flex-col gap-2">
-        <label for="lastName">Apellido</label>
-        <input id="lastName" pInputText formControlName="lastName" />
-        <small *ngIf="configForm.get('lastName')?.invalid" class="p-error">
-          Apellido es requerido
-        </small>
-      </div>
-      <div class="field flex flex-col gap-2">
-        <label for="password">Contraseña</label>
-        <p-password id="password" formControlName="password" [feedback]="false"
-          placeholder="Dejar vacío para no cambiar" [toggleMask]="true"></p-password>
-      </div>
+    <div class="field flex flex-col gap-2">
+      <label for="lastName">Apellido</label>
+      <input id="lastName" pInputText formControlName="lastName" />
+      <small *ngIf="configForm.get('lastName')?.invalid" class="p-error">
+        Apellido es requerido
+      </small>
+    </div>
+    <div class="field flex flex-col gap-2">
+      <label for="password">Contraseña</label>
+      <p-password id="password" formControlName="password" [feedback]="false" placeholder="Dejar vacío para no cambiar"
+        [toggleMask]="true"></p-password>
+    </div>
   </form>
 
   <ng-template pTemplate="footer">

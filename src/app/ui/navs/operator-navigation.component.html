@@ -1,5 +1,8 @@
 <div class="bg-white shadow-md p-4 w-full flex justify-between items-center">
-  <span class="font-bold text-lg">LOGO</span>
+  <div class="flex items-center gap-4">
+    <img [src]="company?.image" alt="Company Logo" class="h-12 w-auto object-contain" />
+    
+  </div>
   <p-menubar [model]="items"></p-menubar>
 </div>
 
