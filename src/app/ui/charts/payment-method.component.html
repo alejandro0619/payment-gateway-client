@@ -1,14 +1,37 @@
-<!-- payment-method-chart.component.html -->
-<div class="w-full  p-4 border-2 border-gray-200 rounded-lg shadow-md bg-white">
-  <div class="mb-4">
-      <h3 class="text-xl font-bold mb-2">Distribución de pagos</h3>
-      <p class="text-2xl text-primary-500">Total: $4,850.00 USD</p>
+<div class="w-full p-6 flex gap-6">
+  <!-- Widget 1 -->
+  <div class="p-8 bg-white border border-gray-200 rounded-2xl shadow-lg flex flex-col justify-between">
+    <h3 class="text-2xl font-bold mb-6 text-gray-800">Distribución de métodos de pago</h3>
+    <div class="space-y-6">
+      <div>
+        <p class="text-base font-medium text-gray-600 mb-2">Zelle</p>
+        <p-progressbar [value]="paymentMethods[0].percentage" [showValue]="false" styleClass="h-3 rounded-full" />
+      </div>
+      <div>
+        <p class="text-base font-medium text-gray-600 mb-2">Paypal</p>
+        <p-progressbar [value]="paymentMethods[1].percentage" [showValue]="false"
+          styleClass="h-3 bg-blue-200 rounded-full" />
+      </div>
+      <div class="flex gap-3 pt-4">
+        <p-tag severity="success" value="Zelle ({{paymentMethods[0].percentage}}%)" />
+        <p-tag severity="secondary" value="PayPal ({{paymentMethods[1].percentage}}%)" />
+      </div>
+    </div>
   </div>
-  <p-chart 
-      type="bar" 
-      [data]="data" 
-      [options]="options" 
-      style="height: 80px"
-  ></p-chart>
+
+<!-- Widget 2: Gráfico de transacciones -->
+<div class="p-8 bg-white border border-gray-200 rounded-2xl shadow-lg flex flex-col w-full h-[400px]">
+  <h3 class="text-2xl font-bold mb-4 text-gray-800">Gráfico de transacciones</h3>
   
+  <!-- Contenedor flexible para el gráfico -->
+  <div class="flex-1">
+    <p-chart
+      type="bar"
+      [data]="data"
+      width="400" height="300"
+      [options]="options"
+    ></p-chart>
+  </div>
+</div>
+
 </div>
