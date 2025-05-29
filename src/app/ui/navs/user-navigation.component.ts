@@ -44,15 +44,15 @@ export class UserNavigationComponent {
   configForm: FormGroup; // FormGroup;
 
   users: User[] = [];
-    loading: boolean = true;
-    totalRecords: number = 0;
-    selectedUser: User | null = null;
-    selectedFilter: string = 'user.identificationNumber';
-    searchText: string = '';
-    filteredAdmins: User[] = [];
-    currentUserId: string | null = null;
-    isDisabled: boolean = true; 
-    isLoading: boolean = false;
+  loading: boolean = true;
+  totalRecords: number = 0;
+  selectedUser: User | null = null;
+  selectedFilter: string = 'user.identificationNumber';
+  searchText: string = '';
+  filteredAdmins: User[] = [];
+  currentUserId: string | null = null;
+  isDisabled: boolean = true;
+  isLoading: boolean = false;
 
 
 
@@ -88,11 +88,11 @@ export class UserNavigationComponent {
     {
       label: 'Histórico de pagos',
       icon: 'pi pi-clock',
-      command: () => {this.router.navigate(['/user/payment-record'])}
+      command: () => { this.router.navigate(['/user/payment-record']) }
     },
   ];
 
-  
+
 
   logout() {
     this.authService.logout().subscribe({
@@ -111,91 +111,91 @@ export class UserNavigationComponent {
 
 
   getUsers() {
-      this.userService.getUsers().subscribe(
-        (data: User[]) => {
-          this.users = data;
-          this.totalRecords = data.length;
-          this.filteredAdmins = [...data];
-          this.loading = false;
-          console.log('Users obtenidos:', this.users);
-        },
-        (error) => {
-          console.error('Error fetching users:', error);
-          this.loading = false;
+    this.userService.getUsers().subscribe(
+      (data: User[]) => {
+        this.users = data;
+        this.totalRecords = data.length;
+        this.filteredAdmins = [...data];
+        this.loading = false;
+        console.log('Users obtenidos:', this.users);
+      },
+      (error) => {
+        console.error('Error fetching users:', error);
+        this.loading = false;
+      }
+    );
+  }
+
+  showUserDetails(user: User) {
+    if (user.id !== this.currentUserId) {
+      this.toastr.warning('Solo puedes editar tu propia información');
+      return;
+    }
+    this.selectedUser = user;
+    this.configForm.patchValue({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      password: '',
+    });
+    this.displayDialog = true;
+  }
+
+  showCurrentUserDetails() {
+    const currentUserId = this.authService.getCurrentUserId();
+    const currentUser = this.users.find(u => u.id === currentUserId);
+    if (currentUser) {
+      this.showUserDetails(currentUser);
+    } else {
+      this.toastr.error('No se encontró el usuario actual en la lista');
+    }
+  }
+
+  updateUser() {
+    if (this.configForm.invalid || !this.selectedUser) return;
+
+    const formData = {
+      ...this.prepareUpdateData(),
+      id: this.selectedUser.id,
+    };
+
+    this.userService.updateUser(formData).subscribe({
+      next: (updatedUser) => {
+        this.updateLocalData(updatedUser);
+        this.displayDialog = false;
+        this.toastr.success('Usuario actualizado exitosamente');
+        this.getUsers();
+      },
+      error: (error) => {
+        if (error.status === 401) {
+          this.toastr.error('Sesión expirada', 'Por favor, inicia sesión nuevamente.');
+          this.authService.logout(); // Cierra sesión
+          this.router.navigate(['/login']); // Redirige al login
+        } else {
+          this.toastr.error('Error actualizando usuario', error.message);
         }
-      );
-    }
-  
-    showUserDetails(user: User) {
-      if (user.id !== this.currentUserId) {
-        this.toastr.warning('Solo puedes editar tu propia información');
-        return;
-      }
-      this.selectedUser = user;
-      this.configForm.patchValue({
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        password: '',
-      });
-      this.displayDialog = true;
-    }
-    
-    showCurrentUserDetails() {
-      const currentUserId = this.authService.getCurrentUserId();
-      const currentUser = this.users.find(u => u.id === currentUserId);
-      if (currentUser) {
-        this.showUserDetails(currentUser);
-      } else {
-        this.toastr.error('No se encontró el usuario actual en la lista');
-      }
-    }
-  
-    updateUser() {
-  if (this.configForm.invalid || !this.selectedUser) return;
+      },
+    });
+  }
 
-  const formData = {
-    ...this.prepareUpdateData(),
-    id: this.selectedUser.id,
-  };
+  private prepareUpdateData(): any {
+    const data: any = { ...this.configForm.value };
 
-  this.userService.updateUser(formData).subscribe({
-    next: (updatedUser) => {
-      this.updateLocalData(updatedUser);
-      this.displayDialog = false;
-      this.toastr.success('Usuario actualizado exitosamente');
-      this.getUsers();
-    },
-    error: (error) => {
-      if (error.status === 401) {
-        this.toastr.error('Sesión expirada', 'Por favor, inicia sesión nuevamente.');
-        this.authService.logout(); // Cierra sesión
-        this.router.navigate(['/login']); // Redirige al login
-      } else {
-        this.toastr.error('Error actualizando usuario', error.message);
-      }
-    },
-  });
-}
-  
-    private prepareUpdateData(): any {
-      const data: any = { ...this.configForm.value };
-  
-      // Limpiar datos no modificados
-      if (!data.password) delete data.password;
-      return data;
+    // Limpiar datos no modificados
+    if (!data.password) delete data.password;
+    return data;
+  }
+
+  private updateLocalData(updatedUser: User) {
+    const index = this.users.findIndex((u) => u.id === updatedUser.id);
+    if (index > -1) {
+      this.users[index] = updatedUser;
+      this.users = [...this.users]; // Forzar detección de cambios
     }
-  
-    private updateLocalData(updatedUser: User) {
-      const index = this.users.findIndex((u) => u.id === updatedUser.id);
-      if (index > -1) {
-        this.users[index] = updatedUser;
-        this.users = [...this.users]; // Forzar detección de cambios
-      }
-    }
-  
-    get f() {
-      return this.configForm.controls;
-    }
+  }
+
+  get f() {
+    return this.configForm.controls;
+  }
 
 }

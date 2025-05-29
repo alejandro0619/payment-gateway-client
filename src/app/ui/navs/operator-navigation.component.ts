@@ -1,24 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
-import { MenuModule } from 'primeng/menu';
+
 import { AuthService } from '../../auth/services/auth.service';
 
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { TagModule } from 'primeng/tag';
-import { PanelMenuModule } from 'primeng/panelmenu';
-import { SplitterModule } from 'primeng/splitter';
+
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
-import { FieldsetModule } from 'primeng/fieldset';
-import { PanelModule } from 'primeng/panel';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
+
 import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { UserService } from './user-navigation.service';
+import { User } from '../../auth/auth.types';
 
 @Component({
   selector: 'operator-navigation',
@@ -38,23 +35,23 @@ import { CommonModule } from '@angular/common';
 export class OperatorNavigationComponent implements OnInit {
   displayDialog: boolean = false;
   configForm: FormGroup;
-  currentUser: any; // Variable para almacenar los datos del usuario
+  currentUser: User | null = null;
 
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private service: UserService
   ) {
     this.configForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
-      identificationNumber: [null, Validators.required],
       password: ['']
     });
   }
 
   ngOnInit() {
-
+      this.currentUser = this.authService.getCurrentUser();
   }
 
   items: MenuItem[] = [
@@ -65,7 +62,7 @@ export class OperatorNavigationComponent implements OnInit {
         {
           label: 'Configuración',
           icon: 'pi pi-cog',
-          command: () => this.mostrarModal()
+          command: () => this.showModal()
         },
         {
           label: 'Cerrar sesión',
@@ -86,8 +83,31 @@ export class OperatorNavigationComponent implements OnInit {
     },
   ];
 
-  mostrarModal() {
+  showModal() {
     this.displayDialog = true;
+  }
+
+  updateOperator() {
+    if (this.configForm.valid) {
+      const updatedUser = {
+        id: this.currentUser!.id,
+        ...this.configForm.value
+      };
+
+      console.log('Updating user:', updatedUser);
+      this.service.updateUser(updatedUser).subscribe({
+        next: (response) => {
+          console.log('User updated successfully:', response);
+          this.displayDialog = false;
+          this.router.navigate(['/operator/dashboard']);
+        },
+        error: (error) => {
+          console.error('Error updating user:', error);
+        }
+      });
+    } else {
+      console.error('Form is invalid');
+    }
   }
 
   logout() {
