@@ -98,7 +98,7 @@ export const routes: Routes = [
         canActivate: [FirstRunGuard],
       },
       {
-        path: 'admin/settings',
+        path: 'admin/students',
         component: SettingsComponent,
         canActivate: [FirstRunGuard],
       },

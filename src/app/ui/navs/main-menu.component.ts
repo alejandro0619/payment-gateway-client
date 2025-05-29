@@ -172,10 +172,12 @@ export class MainMenu implements OnInit {
         this.displayDialog = false;
         this.toastr.success('Administrador actualizado exitosamente');
         this.getAdmins();
+        this.isLoading = false;
       },
       error: (error) => {
         this.toastr.error('Error actualizando administrador', error.message);
         console.error('Error actualizando administrador:', error);
+        this.isLoading = false;
       },
     });
   }
@@ -234,9 +236,10 @@ export class MainMenu implements OnInit {
     console.log('Navigating to Employees...');
     this.router.navigate(['admin/employees']);
   }
+  // ? ney?
   goToSettings() {
     console.log('Navigating to Settings...');
-    this.router.navigate(['admin/settings']);
+    this.router.navigate(['admin/students']);
   }
   loadCourses() {
     this.coursesService.getCourses().subscribe({
@@ -253,7 +256,7 @@ export class MainMenu implements OnInit {
       },
     });
   }
-  mostrarModal() {
+  showModal() {
     this.displayDialog = true;
   }
 
