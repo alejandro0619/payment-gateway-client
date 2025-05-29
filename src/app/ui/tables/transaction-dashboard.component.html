@@ -1,34 +1,33 @@
-<!-- Transacciones component HTML -->
-<div class="card w-full ">
-  <p-table
-      [value]="transactions"
-      [paginator]="true"
-      [rows]="4"
-      [tableStyle]="{ 'min-width': '400px' }"
-      
-      selectionMode="single"
-      (onRowSelect)="onRowClick($event)"
-      dataKey="id"
-  >
-      <ng-template #header>
-          <tr>
-              <th style="width:25%">ID Transacción</th>
-              <th style="width:35%">Curso</th>
-              <th style="width:20%">Monto</th>
-              <th style="width:20%">Estado</th>
-          </tr>
+<div class="w-full px-4">
+  <div class="card w-[1600px]">
+    <p-table
+        [value]="transactions"
+        [paginator]="true"
+        [rows]="4"
+        [tableStyle]="{ 'min-width': '100%' }"
+        selectionMode="single"
+        dataKey="id"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:25%">ID Transacción</th>
+          <th style="width:35%">Curso</th>
+          <th style="width:20%">Estudiante</th>
+          <th style="width:20%">Estado</th>
+        </tr>
       </ng-template>
-      <ng-template #body let-transaction>
-          <tr class="cursor-pointer hover:bg-gray-50">
-              <td class="truncate">{{ transaction.id | slice:0:8 }}...</td>
-              <td>{{ transaction.courseName }}</td>
-              <td>{{ transaction.amount | currency }}</td>
-              <td>
-                  <p-tag [value]="transaction.status" 
-                        [severity]="getStatusSeverity(transaction.status)">
-                  </p-tag>
-              </td>
-          </tr>
+      <ng-template pTemplate="body" let-transaction>
+        <tr class="cursor-pointer hover:bg-gray-50">
+          <td class="truncate">{{ transaction.transactionId | slice:0:8 }}...</td>
+          <td>{{ transaction.courseName }}</td>
+          <td>{{ transaction.userEmail }}</td>
+          <td>
+            <p-tag [value]="transaction.status" 
+                   [severity]="getStatusSeverity(transaction.status)">
+            </p-tag>
+          </td>
+        </tr>
       </ng-template>
-  </p-table>
+    </p-table>
+  </div>
 </div>

@@ -156,7 +156,7 @@ export class DashboardComponent implements OnInit {
   }
 
   setSelectedCourse(course: Course, status: string): void {
-    this.closeDetails(); // Close any previous details
+    // this.closeDetails(); // Close any previous details
     this.selectedCourse = course;
     this.selectedCourseStatus = status;
     this.drawerVisible = true;
@@ -164,6 +164,18 @@ export class DashboardComponent implements OnInit {
     // Check if the current course is available for purchase
     const result = this.isCourseInNotBoughtOrExpired(course.id);
 
+    this.dashboardService.cancelExpiredTransactionsByUser().subscribe({
+      next: (response) => {
+        console.log('Transacciones expiradas canceladas:', response);
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudieron cancelar las transacciones expiradas'
+        });
+      }
+    })
     if (result.flag) {
 
 
@@ -220,6 +232,18 @@ export class DashboardComponent implements OnInit {
   loadCourses(): void {
     // Get userId from localStorage
     const userId: string = localStorage.getItem("usr_info")!; // Should always exist, since the user is logged in
+    this.dashboardService.cancelExpiredTransactionsByUser().subscribe({
+      next: (response) => {
+        console.log('Transacciones expiradas canceladas:', response);
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudieron cancelar las transacciones expiradas'
+        });
+      }
+    });
     this.dashboardService.getUserCoursesFeed(userId).subscribe({
       next: (courses) => {
         this.courses = courses;

@@ -13,6 +13,12 @@ export interface PaymentMethod {
   percentage: number;
 }
 
+export interface Transaction {
+  transactionId: string;
+  courseName: string;
+  userEmail: string;
+  status: string;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -29,6 +35,13 @@ export class AdminDashboardInfoService {
     return this.http.get<PaymentMethod[]>(`${this.BACKEND_URL}/transaction/payment-method-percentage`).pipe(
       catchError(this.handleError)
     )
+  }
+
+  getLastTransactions(): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(`${this.BACKEND_URL}/transaction/last-transactions`)
+      .pipe(
+        catchError(this.handleError)
+      );
   }
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Ocurrió un error';

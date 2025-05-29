@@ -98,7 +98,13 @@ export class DashboardService {
         catchError(this.handleError)
       );
   }
+  cancelExpiredTransactionsByUser() {
 
+    return this.http.post(`${this.API_URL}/transaction/expired-transactions-by-user`, {})
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
 
   setPaymentMethod(trxId: string, paymentMethod: 'paypal' | 'zelle') {
     let status: string | undefined = undefined;
