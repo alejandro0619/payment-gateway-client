@@ -141,7 +141,7 @@
           </ng-container>
 
           <ng-template #content>
-            <div *ngIf="this.balance >= +this.createdTRX!.finalAmount || this.createdTRX!.finalAmount === 0; ">
+            <div *ngIf="this.createdTRX!.finalAmount === 0; ">
               <div class="mb-6 text-center">
                 <button
                   class="w-full px-6 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition cursor-pointer"
@@ -156,7 +156,7 @@
               </div>
             </div>
 
-            <div *ngIf="this.balance < +this.createdTRX!.finalAmount"
+            <div *ngIf="this.createdTRX!.finalAmount > 0"
               class="flex gap-3 justify-around items-center mb-6">
               <p>
                 <span class="font-medium">Selecciona un método de pago:</span>
