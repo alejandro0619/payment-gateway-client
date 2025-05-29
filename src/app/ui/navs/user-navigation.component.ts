@@ -62,7 +62,6 @@ export class UserNavigationComponent {
     this.configForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
-      identificationNumber: [null, Validators.required],
       password: [''],
     });
   }
@@ -136,7 +135,6 @@ export class UserNavigationComponent {
       this.configForm.patchValue({
         firstName: user.firstName,
         lastName: user.lastName,
-        identificationNumber: parseInt(user.identificationNumber, 10),
         email: user.email,
         password: '',
       });
@@ -185,8 +183,6 @@ export class UserNavigationComponent {
   
       // Limpiar datos no modificados
       if (!data.password) delete data.password;
-      data.identificationNumber = data.identificationNumber.toString();
-      data.role = 'user' as Roles.USER; 
       return data;
     }
   
@@ -201,12 +197,5 @@ export class UserNavigationComponent {
     get f() {
       return this.configForm.controls;
     }
-  
-    private prepareAdminUpdateData(): any {
-      const data = { ...this.configForm.value };
-  
-      if (!data.password) delete data.password;
-      data.identificationNumber = data.identificationNumber.toString();
-      return data;
-    }
+
 }

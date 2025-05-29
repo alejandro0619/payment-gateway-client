@@ -29,17 +29,6 @@
           Apellido es requerido
         </small>
       </div>
-    <div class="field flex flex-col gap-2">
-        <label for="identificationNumber">Identificación</label>
-        <p-inputNumber id="identificationNumber" formControlName="identificationNumber" [useGrouping]="false"
-          mode="decimal" placeholder="Ingrese solo números"></p-inputNumber>
-        <small *ngIf="configForm.get('identificationNumber')?.errors?.['required']" class="p-error">
-          Identificación es requerida
-        </small>
-        <small *ngIf="configForm.get('identificationNumber')?.errors?.['pattern']" class="p-error">
-          Solo se permiten números
-        </small>
-      </div>
       <div class="field flex flex-col gap-2">
         <label for="password">Contraseña</label>
         <p-password id="password" formControlName="password" [feedback]="false"
