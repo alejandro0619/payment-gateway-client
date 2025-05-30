@@ -34,7 +34,7 @@ export class AuthService {
           }
 
           this.getCompanyInfo().subscribe({
-            next: () => {},
+            next: () => { console.log('Información de la empresa obtenida correctamente', localStorage.getItem('company')); },
             error: (err) => {
               console.error(
                 'Error al obtener la información de la empresa:',
@@ -91,9 +91,10 @@ export class AuthService {
     );
   }
   getCompanyInfo() {
-    return this.http.get<Company[]>(`${this.API_URL}/company`).pipe(
-      map((resp: Company[]) =>
-        localStorage.setItem('company', JSON.stringify(resp[0]))
+    return this.http.get<Company>(`${this.API_URL}/company`).pipe(
+      map((resp: Company) =>
+        
+        localStorage.setItem('company', JSON.stringify(resp))
       ),
       catchError(this.handleError)
     );

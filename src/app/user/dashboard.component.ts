@@ -7,7 +7,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { MessageService } from 'primeng/api';
 import { CardModule } from 'primeng/card';
 import { DashboardService } from './dashboard.service';
-import { Course, CreateTRXResponse, UserCoursesFeed } from '../global.types';
+import { Company, Course, CreateTRXResponse, UserCoursesFeed } from '../global.types';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { PanelModule } from 'primeng/panel';
 import { TagModule } from 'primeng/tag';
@@ -61,7 +61,7 @@ export class DashboardComponent implements OnInit {
   selectedCourseStatus: string = '';
   balance: number = 0; //   User balance
   isLoadingCourseDetails: boolean = false; // Loading course details
-
+  companyInformation: Company | null = null;
   // This is relevant for the drawer component
   drawerVisible: boolean = false;
   drawerPosition: 'left' | 'right' = 'left';
@@ -83,6 +83,8 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.getCompanyEmail().subscribe({
       next: (email) => {
         this.companyEmail = email;
+        // set the company info from LS to a local variable
+        this.companyInformation = JSON.parse(localStorage.getItem('company') || '{}');
       }
       , error: (error) => {
         this.messageService.add({
@@ -92,6 +94,7 @@ export class DashboardComponent implements OnInit {
         });
       }
     });
+    
   }
 
   closeDetails(): void {

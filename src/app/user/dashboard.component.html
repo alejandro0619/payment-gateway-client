@@ -178,7 +178,7 @@
               <span class="font-medium">Selecciona un método de pago:</span>
             </p>
             <!-- Botón PayPal -->
-            <button class="paypal-button flex items-center justify-center gap-2 px-6 py-3 
+            <button  *ngIf="companyInformation?.payment_preference == 'paypal' || companyInformation?.payment_preference == 'both'" class="paypal-button flex items-center justify-center gap-2 px-6 py-3 
             border-2 border-blue-600 bg-transparent hover:bg-blue-50 
             rounded-xl transition-all duration-300 w-fit cursor-pointer" (click)="setPaymentMethod('paypal')">
               <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-current">
@@ -190,7 +190,7 @@
             </button>
 
             <!-- Botón Zelle -->
-            <button class="zelle-button flex items-center justify-center gap-2 px-6 py-3 
+            <button *ngIf="companyInformation?.payment_preference == 'zelle' || companyInformation?.payment_preference == 'both'" class="zelle-button flex items-center justify-center gap-2 px-6 py-3 
             border-2 border-green-600 bg-transparent hover:bg-blue-50 
             rounded-xl transition-all duration-300 w-fit cursor-pointer" (click)="setPaymentMethod('zelle')">
               <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-current">

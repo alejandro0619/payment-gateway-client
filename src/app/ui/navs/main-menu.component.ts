@@ -76,7 +76,6 @@ export class MainMenu implements OnInit {
   company: Company | null = null;
   items: MenuItem[] = [];
   home: MenuItem = { icon: 'pi pi-home', routerLink: '/' };
-
   admins: User[] = [];
   loading: boolean = true;
   totalRecords: number = 0;
@@ -90,6 +89,7 @@ export class MainMenu implements OnInit {
   showCompanyConfig: boolean = false;
   previewImage: string | null = null;
   BACKEND_URL = environment.BACKEND_URL
+
   constructor(
     private router: Router,
     private coursesService: CoursesService,
@@ -128,13 +128,13 @@ export class MainMenu implements OnInit {
 
     // We initialize this form here and not in the constructor because is nice to have the company data ready before initializing the form to fill them in.
     this.form = this.fb.group({
-      name: [this.company ? this.company.name : '', Validators.required],
+      name: [this.company ? this.company.name : ''],
       description: [this.company ? this.company.description : ''],
       address: [this.company ? this.company.address : ''],
       telephone_number: [this.company ? this.company.telephone_number : ''],
-      email: [this.company ? this.company.email : '', [Validators.email]],
-      payment_preference: [this.company ? this.company.payment_preference : ''],
-      image: [this.company ? this.company.image || '' : ''],
+      email: [this.company ? this.company.email : ''],
+      payment_preference: [this.company ? this.company.payment_preference : 'both'],
+      image: [this.company ? this.company.image: ''],
     });
 
 
