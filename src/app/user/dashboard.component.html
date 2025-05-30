@@ -91,7 +91,7 @@
               {{ selectedCourseStatus === 'not_bought' ? selectedCourse?.name : selectedCourse?.course?.name }}
             </span>
           </div>
-          <button (click)="selectedCourse = null; selectedCourseStatus = ''"
+          <button (click)="selectedCourse = null; selectedCourseStatus = ''; drawerVisible = false"
             class="p-2 hover:bg-surface-100 rounded-full">
             <i class="pi pi-times text-lg"></i>
           </button>
