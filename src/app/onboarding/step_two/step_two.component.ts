@@ -8,7 +8,7 @@ import { StepTwoService, Company } from './step_two.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
-
+import { environment } from '../../../envs/env.dev';
 
 @Component({
   selector: 'app-company-form',
@@ -25,7 +25,7 @@ import { Router } from '@angular/router';
   providers: [StepTwoService, MessageService],
 })
 export class StepTwoComponent {
-
+  BACKEND_URL = environment.BACKEND_URL; // Cambia esto según tu configuración
   form: FormGroup;
   isLoading = false;
   previewImage: string | null = null;
@@ -64,7 +64,7 @@ export class StepTwoComponent {
     formData.append('file', file);
 
     try {
-      const response: any = await this.http.put('http://localhost:3000/course/upload', formData).toPromise();
+      const response: any = await this.http.put(`${this.BACKEND_URL}/course/upload`, formData).toPromise();
       const imageUrl = response.url;
       this.form.patchValue({ image: imageUrl });
       console.log('Imagen subida exitosamente:', imageUrl);

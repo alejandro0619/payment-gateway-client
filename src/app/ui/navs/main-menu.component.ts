@@ -21,6 +21,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
+import { environment } from '../../../envs/env.dev';
 import {
   ReactiveFormsModule,
   FormGroup,
@@ -33,9 +34,13 @@ import { User } from '../../global.types';
 import { MessageService } from 'primeng/api';
 import { Roles } from '../../global.types';
 import { ToastrService } from 'ngx-toastr';
+import { FileUploadModule } from 'primeng/fileupload';
+import { HttpClient } from '@angular/common/http';
+import { ToastModule } from 'primeng/toast';
 @Component({
   selector: 'main-menu',
   standalone: true,
+  providers: [MessageService],
   imports: [
     CommonModule,
     TableModule,
@@ -50,6 +55,8 @@ import { ToastrService } from 'ngx-toastr';
     InputNumberModule,
     DialogModule,
     ReactiveFormsModule,
+    FileUploadModule,
+    ToastModule
   ],
   templateUrl: './main-menu.component.html',
 })
@@ -59,7 +66,7 @@ export class MainMenu implements OnInit {
   private toastr = inject(ToastrService);
   displayDialog: boolean = false;
   configForm: FormGroup;
-
+  form!: FormGroup;
   courses: any[] = [];
   visible: boolean = false;
   coursesVisible: boolean = false;
@@ -78,15 +85,19 @@ export class MainMenu implements OnInit {
   searchText: string = '';
   filteredAdmins: User[] = [];
   currentUserId: string | null = null;
-  isDisabled: boolean = true; 
+  isDisabled: boolean = true;
   isLoading: boolean = false;
-  
+  showCompanyConfig: boolean = false;
+  previewImage: string | null = null;
+  BACKEND_URL = environment.BACKEND_URL
   constructor(
     private router: Router,
     private coursesService: CoursesService,
     private authService: AuthService,
     private fb: FormBuilder,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private http: HttpClient,
+    private messageService: MessageService
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
     const companyStr = localStorage.getItem('company');
@@ -97,6 +108,7 @@ export class MainMenu implements OnInit {
       identificationNumber: [null, Validators.required],
       password: [''],
     });
+
   }
 
   ngOnInit() {
@@ -113,8 +125,50 @@ export class MainMenu implements OnInit {
         this.company = parsedCompany;
       }
     }, 1000);
+
+    // We initialize this form here and not in the constructor because is nice to have the company data ready before initializing the form to fill them in.
+    this.form = this.fb.group({
+      name: [this.company ? this.company.name : '', Validators.required],
+      description: [this.company ? this.company.description : ''],
+      address: [this.company ? this.company.address : ''],
+      telephone_number: [this.company ? this.company.telephone_number : ''],
+      email: [this.company ? this.company.email : '', [Validators.email]],
+      payment_preference: [this.company ? this.company.payment_preference : ''],
+      image: [this.company ? this.company.image || '' : ''],
+    });
+
+
   }
 
+  async onImageUpload(event: any) {
+    const file: File = event.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response: any = await this.http.put(`${this.BACKEND_URL}/course/upload`, formData).toPromise();
+      const imageUrl = response.url;
+      this.previewImage = imageUrl;
+      this.form.patchValue({ image: imageUrl });
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: 'Imagen subida exitosamente',
+      });
+
+    } catch (error) {
+      console.error('Error al subir imagen:', error);
+    }
+  }
+  configCompany() {
+    this.showCompanyConfig = true;
+  }
   getAdmins() {
     this.adminService.getAdmins().subscribe(
       (data: User[]) => {
@@ -259,7 +313,32 @@ export class MainMenu implements OnInit {
   showModal() {
     this.displayDialog = true;
   }
+  submit() {
+    if (this.form.invalid) return;
+    this.isLoading = true;
 
+    this.adminService.modifyCompany(this.form.value).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        this.showCompanyConfig = false;
+
+        console.log('Company updated successfully:', this.previewImage);
+        this.company = { ...this.form.value } as Company; // Update local company data
+        localStorage.setItem('company', JSON.stringify(this.company));
+        this.messageService.add(
+          { severity: 'success', summary: 'Éxito', detail: 'Empresa actualizada correctamente' }
+        )
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error updating company:', error);
+        this.toastr.error('Error al actualizar la empresa', error.message);
+        this.messageService.add(
+          { severity: 'danger', summary: 'Error', detail: 'No se pudo actualizar la empresa, inicie sesión nuevamente' }
+        )
+      },
+    });
+  }
   logout() {
     this.authService.logout().subscribe({
       next: () => {

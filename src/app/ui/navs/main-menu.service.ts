@@ -2,15 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '../../../envs/env.dev';
-import { User } from '../../global.types';
+import { Company, User } from '../../global.types';
 import { HttpHeaders } from '@angular/common/http';
+
 @Injectable({
   providedIn: 'root',
 })
 export class AdminService {
   private API_URL = environment.BACKEND_URL;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
   getAdmins(): Observable<any[]> {
     return this.http
       .get<User[]>(`${this.API_URL}/user/role/admin`)
@@ -23,7 +24,9 @@ export class AdminService {
       .patch<User>(`${this.API_URL}/user/update/${admin.id}`, admin)
       .pipe(catchError(this.handleError));
   }
-
+  modifyCompany(data: Company): Observable<any> {
+    return this.http.put(`${this.API_URL}/company/update`, data);
+  }
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Ocurrió un error';
 

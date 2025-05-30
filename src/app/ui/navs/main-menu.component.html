@@ -1,3 +1,5 @@
+<p-toast></p-toast>
+
 <div class="card flex justify-center">
   <p-drawer #drawerRef [(visible)]="visible">
     <ng-template #headless>
@@ -118,6 +120,14 @@
                   <span class="font-medium text-sm">Estudiantes</span>
                 </span>
               </div>
+              <div pRipple
+                class="py-3 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
+                (click)="configCompany()">
+                <span class="flex items-center gap-1">
+                  <i class="pi pi-building text-base"></i>
+                  <span class="font-medium text-sm">Compañía</span>
+                </span>
+              </div>
             </li>
           </ul>
         </div>
@@ -178,4 +188,83 @@
         (click)="updateAdmin()" [disabled]="configForm.invalid"></p-button>
     </div>
   </ng-template>
+</p-dialog>
+
+<p-dialog header="Actualización de Empresa" [(visible)]="showCompanyConfig" [modal]="true" [style]="{width: '50vw'}"
+  [closable]="true" [dismissableMask]="true">
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Nombre -->
+      <div class="col-span-1 md:col-span-2">
+        <label for="name" class="text-sm font-medium text-gray-700">Nombre de la empresa</label>
+        <input id="name" type="text" formControlName="name" placeholder="Ej: Tecplaza"
+          class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black" />
+        <span class="text-xs text-red-500" *ngIf="form.get('name')?.hasError('required') && form.get('name')?.touched">
+          El nombre es obligatorio
+        </span>
+      </div>
+
+      <!-- Imagen -->
+      <div class="col-span-1 pt-6 pb-2">
+        <div class="bg-gray-300 w-full h-full flex flex-col items-center justify-center rounded-md">
+          <label class="text-sm font-medium text-gray-700">Logo o Imagen</label>
+          <p-fileUpload name="image" mode="basic" [auto]="true" customUpload (uploadHandler)="onImageUpload($event)"
+            accept="image/*" chooseLabel="Subir Imagen" class="w-full mt-1" />
+          <div *ngIf="previewImage" class="mt-4">
+            <img [src]="previewImage" alt="Vista previa" class="max-h-48 rounded shadow-md" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div class="col-span-1">
+        <label for="description" class="text-sm font-medium text-gray-700">Descripción</label>
+        <textarea id="description" formControlName="description" rows="6"
+          placeholder="Ej: Empresa dedicada a soluciones tecnológicas..."
+          class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black"></textarea>
+      </div>
+
+      <!-- Dirección -->
+      <div class="col-span-1">
+        <label for="address" class="text-sm font-medium text-gray-700">Dirección</label>
+        <input id="address" type="text" formControlName="address" placeholder="Ej: Av. Libertador, Caracas"
+          class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black" />
+      </div>
+
+      <!-- Teléfono -->
+      <div class="col-span-1">
+        <label for="telephone_number" class="text-sm font-medium text-gray-700">Teléfono</label>
+        <input id="telephone_number" type="text" formControlName="telephone_number" placeholder="+58 412-1234567"
+          class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black" />
+      </div>
+
+      <!-- Email -->
+      <div class="col-span-1">
+        <label for="email" class="text-sm font-medium text-gray-700">Correo electrónico</label>
+        <input id="email" type="email" formControlName="email" placeholder="empresa@correo.com"
+          class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black" />
+        <span class="text-xs text-red-500" *ngIf="form.get('email')?.hasError('email') && form.get('email')?.touched">
+          Correo inválido
+        </span>
+      </div>
+
+      <!-- Preferencia de pago -->
+      <div class="col-span-1">
+        <label for="payment_preference" class="text-sm font-medium text-gray-700">Preferencia de Pago</label>
+        <select id="payment_preference" formControlName="payment_preference"
+          class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black">
+          <option value="zelle">Zelle</option>
+          <option value="paypal">Paypal</option>
+          <option value="both">Ambos</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Botón -->
+    <div class="mt-8 flex justify-center">
+      <p-button type="submit" [disabled]="form.invalid || isLoading" [loading]="isLoading" styleClass="px-4 py-2">
+        Actualizar Empresa
+      </p-button>
+    </div>
+  </form>
 </p-dialog>
