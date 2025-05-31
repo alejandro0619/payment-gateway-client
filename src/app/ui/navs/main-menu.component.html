@@ -8,8 +8,8 @@
         <div class="flex items-center justify-between px-6 pt-4 shrink-0">
           <span class="inline-flex items-center gap-1">
             <div class="flex items-center gap-4">
-              <img [src]="company?.image" alt="Company Logo" class="h-12 w-auto object-contain" />
-
+              <img [src]="company?.image" alt="Company Logo" class="h-12 w-auto object-contain cursor-pointer"
+                (click)="redirectToDashboard()">
             </div>
           </span>
           <p-button type="button" (click)="visible = false" icon="pi pi-times" rounded="true" outlined="true"
@@ -252,7 +252,7 @@
       <div class="col-span-1">
         <label for="payment_preference" class="text-sm font-medium text-gray-700">Preferencia de Pago</label>
         <select id="payment_preference" formControlName="payment_preference"
-          class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black" >
+          class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black">
           <option value="zelle">Zelle</option>
           <option value="paypal">Paypal</option>
           <option value="both">Ambos</option>

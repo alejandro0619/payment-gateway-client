@@ -17,6 +17,7 @@ import { CommonModule } from '@angular/common';
 import { UserService } from './user-navigation.service';
 import { User } from '../../auth/auth.types';
 import { Company } from '../../global.types';
+import { RedirectDashboardGuard } from '../../../core/redirect-dashboard';
 
 @Component({
   selector: 'operator-navigation',
@@ -42,7 +43,8 @@ export class OperatorNavigationComponent implements OnInit {
     private authService: AuthService,
     private fb: FormBuilder,
     private router: Router,
-    private service: UserService
+    private service: UserService,
+    private redirectService: RedirectDashboardGuard
   ) {
     this.configForm = this.fb.group({
       firstName: ['', Validators.required],
@@ -100,6 +102,10 @@ export class OperatorNavigationComponent implements OnInit {
     this.displayDialog = true;
   }
 
+  redirectToDashboard() {
+    console.log('Redirecting to dashboard');
+    this.redirectService.redirectToDashboard();
+  }
   updateOperator() {
     if (this.configForm.valid) {
       const updatedUser = {

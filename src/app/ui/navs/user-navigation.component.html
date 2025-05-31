@@ -1,8 +1,8 @@
 <div class="bg-white shadow-md p-4 w-full flex justify-between items-center">
   <!-- Logo -->
   <div class="flex items-center gap-4">
-    <img [src]="company?.image" alt="Company Logo" class="h-12 w-auto object-contain" />
-
+    <img [src]="company?.image" alt="Company Logo" class="h-12 w-auto object-contain cursor-pointer"
+      (click)="redirectToDashboard()">
   </div>
 
   <!-- Menú usando Menubar de PrimeNG -->

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OperatorNavigationComponent } from "../ui/navs/operator-navigation.component";
+import { UserNavigationComponent } from "../ui/navs/user-navigation.component";
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
@@ -20,7 +20,7 @@ import { PaymentTranslationService } from '../../core/guards/translate-status';
   standalone: true,
   imports: [
     CommonModule,
-    OperatorNavigationComponent,
+    UserNavigationComponent,
     FormsModule,
     TableModule,
     ToastModule,

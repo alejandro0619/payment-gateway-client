@@ -15,11 +15,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { User, Roles, Company } from '../../global.types';
 import { UserService } from './user-navigation.service';
 import { ToastrService } from 'ngx-toastr';
+import { RedirectDashboardGuard } from '../../../core/redirect-dashboard';
 @Component({
   selector: 'user-navigation',
   imports: [
@@ -56,7 +57,7 @@ export class UserNavigationComponent {
   company: Company | null = null;
 
 
-  constructor(private authService: AuthService, private fb: FormBuilder, private router: Router, private userService: UserService) {
+  constructor(private authService: AuthService, private fb: FormBuilder, private router: Router, private userService: UserService, private route: ActivatedRoute, private redirectService: RedirectDashboardGuard) {
     this.currentUserId = this.authService.getCurrentUserId();
 
     this.configForm = this.fb.group({
@@ -105,6 +106,9 @@ export class UserNavigationComponent {
     });
   }
 
+  redirectToDashboard() {
+    this.redirectService.redirectToDashboard();
+  }
   ngOnInit() {
     this.getUsers();
 

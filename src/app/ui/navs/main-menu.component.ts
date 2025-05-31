@@ -37,6 +37,7 @@ import { ToastrService } from 'ngx-toastr';
 import { FileUploadModule } from 'primeng/fileupload';
 import { HttpClient } from '@angular/common/http';
 import { ToastModule } from 'primeng/toast';
+import { RedirectDashboardGuard } from '../../../core/redirect-dashboard';
 @Component({
   selector: 'main-menu',
   standalone: true,
@@ -97,7 +98,8 @@ export class MainMenu implements OnInit {
     private fb: FormBuilder,
     private adminService: AdminService,
     private http: HttpClient,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private redirectService: RedirectDashboardGuard
   ) {
     this.currentUserId = this.authService.getCurrentUserId();
     const companyStr = localStorage.getItem('company');
@@ -253,7 +255,9 @@ export class MainMenu implements OnInit {
       this.admins = [...this.admins]; // Forzar detección de cambios
     }
   }
-
+  redirectToDashboard() {
+    this.redirectService.redirectToDashboard();
+  }
   get f() {
     return this.configForm.controls;
   }
