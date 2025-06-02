@@ -7,9 +7,8 @@
         <!-- Header -->
         <div class="flex items-center justify-between px-6 pt-4 shrink-0">
           <span class="inline-flex items-center gap-1">
-            <div class="flex items-center gap-4">
-              <img [src]="company?.image" alt="Company Logo" class="h-12 w-auto object-contain cursor-pointer"
-                (click)="redirectToDashboard()">
+            <div class="flex items-center gap-4b" (click)="redirectToDashboard()">
+              <img [src]="company?.image || '/DEFAULT_LOGO_WHILE_LOADING.png'" alt="Company Logo" class="h-12 w-auto object-contain cursor-pointer" loading="lazy">
             </div>
           </span>
           <p-button type="button" (click)="visible = false" icon="pi pi-times" rounded="true" outlined="true"
@@ -112,17 +111,18 @@
                   </a>
                 </li>
               </ul>
+            <li (click)="goToSettings()">
               <div pRipple
-                class="py-3 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
-                (click)="goToSettings()">
+                class="py-3 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition">
                 <span class="flex items-center gap-1">
                   <i class="pi pi-pencil text-base"></i>
                   <span class="font-medium text-sm">Estudiantes</span>
                 </span>
               </div>
+            </li>
+            <li (click)="configCompany()">
               <div pRipple
-                class="py-3 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition"
-                (click)="configCompany()">
+                class="py-3 px-3 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer rounded-md hover:bg-gray-100 transition">
                 <span class="flex items-center gap-1">
                   <i class="pi pi-building text-base"></i>
                   <span class="font-medium text-sm">Compañía</span>
@@ -185,7 +185,7 @@
     <div class="flex justify-content-end gap-2">
       <p-button label="Cancelar" (onClick)="displayDialog = false"></p-button>
       <p-button label="Guardar" [disabled]="configForm.invalid || isLoading" [loading]="isLoading"
-        (click)="updateAdmin()" [disabled]="configForm.invalid"></p-button>
+        (click)="updateAdmin()"></p-button>
     </div>
   </ng-template>
 </p-dialog>

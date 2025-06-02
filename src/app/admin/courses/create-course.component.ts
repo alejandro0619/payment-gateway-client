@@ -13,8 +13,8 @@ import {
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
+import { environment } from '../../../envs/env.dev';
 
-// Importa los módulos de PrimeNG necesarios
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -76,6 +76,7 @@ export class CreateCourseComponent {
   visible: boolean = false;
   uploadedFiles: File | null = null;
   loading: boolean = false;
+  API_URL = environment.BACKEND_URL;
   /*
     First the user selects the payment scheme option, if it is "single_payment" the total is the one specified in the course's price.
     Otherwise, when the user selects "installment" as payment scheme, the user must select the number of installments and the percentage of each installment.
@@ -306,7 +307,7 @@ export class CreateCourseComponent {
       };
       console.log("esto es lo que se va a guardar", courseData);
       // 3. Guardar el curso
-      await this.http.post('http://localhost:3000/course/', courseData, {
+      await this.http.post(`${this.API_URL}/course/`, courseData, {
         headers: { 'Content-Type': 'application/json' },
       }).toPromise();
 
@@ -341,7 +342,7 @@ export class CreateCourseComponent {
     formData.append('file', this.uploadedFiles, this.uploadedFiles.name); // usa el nombre real del archivo
 
     return this.http.put<{ url: string }>(
-      'http://localhost:3000/course/upload',
+      `${this.API_URL}/course/upload`,
       formData
     ).pipe(
       map(response => response.url),
