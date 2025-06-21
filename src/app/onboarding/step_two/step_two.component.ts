@@ -42,6 +42,13 @@ export class StepTwoComponent {
       address: [''],
       telephone_number: [''],
       email: ['', Validators.email],
+      rif: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^[JGVEP]-\d{8}-\d$/)
+        ]
+      ],
       description: [''],
       payment_preference: ['both'],
       image: ['']
@@ -82,7 +89,7 @@ export class StepTwoComponent {
     if (this.form.invalid) return;
 
     this.isLoading = true;
-    const formValue: Company = this.form.value;
+    const formValue: Company = {...this.form.value, company_identification: this.form.value.rif};
 
     this.stepTwoService.createCompany(formValue).subscribe({
       next: (res) => {

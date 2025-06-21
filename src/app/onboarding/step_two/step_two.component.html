@@ -55,6 +55,20 @@
             <input id="telephone_number" type="text" formControlName="telephone_number" placeholder="+58 412-1234567"
               class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black" />
           </div>
+          <!-- RIF -->
+          <div class="col-span-1">
+            <label for="rif" class="text-sm font-medium text-gray-700">RIF</label>
+            <input id="rif" type="text" formControlName="rif" placeholder="Ej: J-12345678-9"
+              class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:ring-1 focus:ring-black" />
+            <span class="text-xs text-red-500"
+              *ngIf="form.get('rif')?.hasError('required') && form.get('rif')?.touched">
+              El RIF es obligatorio
+            </span>
+            <span class="text-xs text-red-500" *ngIf="form.get('rif')?.hasError('pattern') && form.get('rif')?.touched">
+              Formato de RIF inválido (Ej: J-12345678-9)
+            </span>
+
+          </div>
 
           <!-- Email -->
           <div class="col-span-1">
@@ -89,5 +103,3 @@
     </div>
   </div>
 </div>
-
-
