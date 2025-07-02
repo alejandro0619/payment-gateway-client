@@ -2,28 +2,17 @@
 
 <div class="mt-5 ml-2 mr-20 rounded-2xl">
     <div class="mb-4 flex items-center">
-        <p-dropdown 
-            [options]="filterOptions" 
-            [(ngModel)]="selectedFilter" 
-            optionLabel="label" 
-            placeholder="Seleccionar filtro" 
-            class="mr-4 w-52" 
-            optionValue="value">
+        <p-dropdown [options]="filterOptions" [(ngModel)]="selectedFilter" optionLabel="label"
+            placeholder="Seleccionar filtro" class="mr-4 w-52" optionValue="value">
         </p-dropdown>
-        <input 
-            pInputText 
-            type="text" 
-            placeholder="Buscar"
-            class="p-inputtext-sm border-2 rounded-md border-gray-300 w-64"
-            [(ngModel)]="searchText"
+        <input pInputText type="text" placeholder="Buscar"
+            class="p-inputtext-sm border-2 rounded-md border-gray-300 w-64" [(ngModel)]="searchText"
             (keyup.enter)="filterTable()" />
-        <button 
-            class="ml-2" 
-            pButton 
-            icon="pi pi-search" 
-            label="Buscar"
-            (click)="filterTable()">
+        <button class="ml-2" pButton icon="pi pi-search" label="Buscar" (click)="filterTable()">
         </button>
+        <button pButton type="button" label="Descargar PDF" icon="pi pi-download" (click)="downloadStyledPDF()"
+            class="ml-2"></button>
+
     </div>
     <p-table [value]="filteredTransactions.length > 0 ? filteredTransactions : transactions">
         <ng-template pTemplate="header">
@@ -46,18 +35,17 @@
                 <td>{{ tx.user?.email }}</td>
                 <td>{{ tx.amount | currency }}</td>
                 <td>
-                    <p-tag [value]="getPaymentMethodTranslation(tx.paymentMethod)" 
-                           [severity]="getPaymentMethodSeverity(tx.paymentMethod)">
+                    <p-tag [value]="getPaymentMethodTranslation(tx.paymentMethod)"
+                        [severity]="getPaymentMethodSeverity(tx.paymentMethod)">
                     </p-tag>
                 </td>
                 <td>
-                    <p-tag [value]="getStatusTranslation(tx.status)" 
-                           [severity]="getStatusSeverity(tx.status)">
+                    <p-tag [value]="getStatusTranslation(tx.status)" [severity]="getStatusSeverity(tx.status)">
                     </p-tag>
                 </td>
                 <td>
                     <p-tag [value]="getPaymentSchemeTranslation(tx.course?.paymentScheme)"
-                           [severity]="getPaymentSchemeSeverity(tx.course?.paymentScheme)">
+                        [severity]="getPaymentSchemeSeverity(tx.course?.paymentScheme)">
                     </p-tag>
                 </td>
             </tr>

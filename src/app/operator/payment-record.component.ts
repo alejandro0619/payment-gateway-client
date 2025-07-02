@@ -67,6 +67,113 @@ export class PaymentRecordComponent implements OnInit {
   }
   transactions: Transaction[] = [];
 
+  async downloadStyledPDF() {
+  const { jsPDF } = await import('jspdf');
+
+  const pdf = new jsPDF({
+    orientation: 'landscape',
+    unit: 'mm',
+    format: 'a4',
+  });
+
+  const colors = {
+    primary: '#3498db',
+    headerBg: '#4CAF50',
+    headerText: '#ffffff',
+    rowEven: '#f9f9f9',
+    rowOdd: '#ffffff',
+    text: '#333333',
+  };
+
+  const margin = { top: 20, left: 10, right: 10, bottom: 20 };
+  const pageWidth = pdf.internal.pageSize.getWidth() - margin.left - margin.right;
+  let yPos = margin.top;
+
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(14);
+  pdf.setTextColor(colors.headerBg);
+  pdf.text('REPORTE DE PAGOS', pdf.internal.pageSize.getWidth() / 2, yPos, {
+    align: 'center',
+  });
+
+  yPos += 10;
+
+  pdf.setFontSize(10);
+  pdf.setTextColor(100);
+  pdf.text(
+    `Generado el ${new Date().toLocaleDateString()} a las ${new Date().toLocaleTimeString()}`,
+    pdf.internal.pageSize.getWidth() / 2,
+    yPos,
+    { align: 'center' }
+  );
+
+  yPos += 15;
+
+  const columns = [
+    { title: 'CURSO', dataKey: 'course' },
+    { title: 'ESTUDIANTE', dataKey: 'student' },
+    { title: 'CÉDULA', dataKey: 'idNumber' },
+    { title: 'CORREO', dataKey: 'email' },
+    { title: 'MONTO', dataKey: 'amount' },
+    { title: 'MÉTODO', dataKey: 'method' },
+    { title: 'ESTADO', dataKey: 'status' },
+    { title: 'ESQUEMA', dataKey: 'scheme' },
+  ];
+
+  const dataToExport = this.filteredTransactions.length > 0 ? this.filteredTransactions : this.transactions;
+
+  const tableData = dataToExport.map((trx) => ({
+    course: trx.course?.name || 'N/A',
+    student: trx.user?.firstName || 'N/A',
+    idNumber: trx.user?.identificationNumber || 'N/A',
+    email: trx.user?.email || 'N/A',
+    amount: typeof trx.amount === 'number' ? `$${trx.amount}` : trx.amount,
+    method: this.getPaymentMethodTranslation(trx.paymentMethod || 'N/A'),
+    status: this.getStatusTranslation(trx.status),
+    scheme: this.getPaymentSchemeTranslation(trx.course?.paymentScheme || 'N/A'),
+  }));
+
+  const autoTable = (await import('jspdf-autotable')).default;
+  autoTable(pdf, {
+    startY: yPos,
+    head: [columns.map((c) => c.title)],
+    body: tableData.map((row) =>
+      columns.map((c) => row[c.dataKey as keyof typeof row])
+    ),
+    styles: {
+      fontSize: 9,
+      textColor: colors.text,
+    },
+    headStyles: {
+      fillColor: colors.headerBg,
+      textColor: colors.headerText,
+    },
+    alternateRowStyles: { fillColor: colors.rowEven },
+    margin: { left: margin.left, right: margin.right },
+    theme: 'grid',
+    didDrawPage: (data: any) => {
+      if (data.pageNumber === pdf.getNumberOfPages()) {
+        pdf.setFontSize(10);
+        pdf.setTextColor(colors.primary);
+        pdf.text(
+          `Total de transacciones: ${dataToExport.length}`,
+          margin.left,
+          pdf.internal.pageSize.getHeight() - margin.bottom
+        );
+        pdf.text(
+          '© Sistema Académico',
+          pdf.internal.pageSize.getWidth() - margin.right,
+          pdf.internal.pageSize.getHeight() - margin.bottom,
+          { align: 'right' }
+        );
+      }
+    },
+  });
+
+  const fileName = `Reporte_Pagos_${new Date().toISOString().slice(0, 10)}.pdf`;
+  pdf.save(fileName);
+}
+
   getStatusTranslation(status: string): string {
     return this.translationService.translatePaymentStatus(status);
   }
