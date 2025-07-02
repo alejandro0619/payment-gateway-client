@@ -68,7 +68,125 @@ export class PaymentRecordComponent implements OnInit {
       }
     });
   }
+  async downloadStyledPDF() {
+  const { jsPDF } = await import('jspdf');
+  const autoTable = (await import('jspdf-autotable')).default;
 
+  const pdf = new jsPDF({
+    orientation: 'landscape',
+    unit: 'mm',
+    format: 'a4',
+  });
+
+  const colors = {
+    primary: '#3498db',
+    headerBg: '#4CAF50',
+    headerText: '#ffffff',
+    rowEven: '#f9f9f9',
+    text: '#333333',
+  };
+
+  const margin = { top: 20, left: 10, right: 10, bottom: 20 };
+  let yPos = margin.top;
+
+  // Encabezado
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(14);
+  pdf.setTextColor(colors.headerBg);
+  pdf.text('REPORTE DE PAGOS', pdf.internal.pageSize.getWidth() / 2, yPos, {
+    align: 'center',
+  });
+
+  yPos += 10;
+
+  pdf.setFontSize(10);
+  pdf.setTextColor(100);
+  pdf.text(
+    `Generado el ${new Date().toLocaleDateString()} a las ${new Date().toLocaleTimeString()}`,
+    pdf.internal.pageSize.getWidth() / 2,
+    yPos,
+    { align: 'center' }
+  );
+
+  yPos += 10;
+
+  // Agregar texto de filtro si aplica
+  if (this.searchText.trim()) {
+    const selectedLabel = this.filterOptions.find(opt => opt.value === this.selectedFilter)?.label || this.selectedFilter;
+    pdf.setFontSize(10);
+    pdf.setTextColor(colors.primary);
+    pdf.text(
+      `Filtrado por: ${selectedLabel} contiene "${this.searchText}"`,
+      margin.left,
+      yPos
+    );
+    yPos += 10;
+  }
+
+  // Columnas
+  const columns = [
+    { title: 'CURSO', dataKey: 'course' },
+    { title: 'ESTUDIANTE', dataKey: 'student' },
+    { title: 'CÉDULA', dataKey: 'idNumber' },
+    { title: 'CORREO', dataKey: 'email' },
+    { title: 'MONTO', dataKey: 'amount' },
+    { title: 'MÉTODO', dataKey: 'method' },
+    { title: 'ESTADO', dataKey: 'status' },
+    { title: 'ESQUEMA', dataKey: 'scheme' },
+  ];
+
+  const dataToExport = this.filteredTransactions.length > 0 ? this.filteredTransactions : this.transactions;
+
+  const tableData = dataToExport.map((trx) => ({
+    course: trx.course?.name || 'N/A',
+    student: trx.user?.firstName || 'N/A',
+    idNumber: trx.user?.identificationNumber || 'N/A',
+    email: trx.user?.email || 'N/A',
+    amount: typeof trx.amount === 'number' ? `$${trx.amount}` : trx.amount,
+    method: this.getMethodTranslation(trx.paymentMethod || 'N/A'),
+    status: this.getStatusTranslation(trx.status),
+    scheme: this.getSchemeTranslation(trx.course?.paymentScheme || 'N/A'),
+  }));
+
+  autoTable(pdf, {
+    startY: yPos,
+    head: [columns.map(col => col.title)],
+    body: tableData.map(row => columns.map(col => row[col.dataKey as keyof typeof row])),
+    styles: {
+      fontSize: 9,
+      textColor: colors.text,
+    },
+    headStyles: {
+      fillColor: colors.headerBg,
+      textColor: colors.headerText,
+    },
+    alternateRowStyles: { fillColor: colors.rowEven },
+    margin: { left: margin.left, right: margin.right },
+    theme: 'grid',
+    didDrawPage: (data) => {
+      if (data.pageNumber === pdf.getNumberOfPages()) {
+        pdf.setFontSize(10);
+        pdf.setTextColor(colors.primary);
+        pdf.text(
+          `Total de transacciones: ${dataToExport.length}`,
+          margin.left,
+          pdf.internal.pageSize.getHeight() - margin.bottom
+        );
+        pdf.text(
+          '© Sistema Académico',
+          pdf.internal.pageSize.getWidth() - margin.right,
+          pdf.internal.pageSize.getHeight() - margin.bottom,
+          { align: 'right' }
+        );
+      }
+    }
+  });
+
+  const fileName = `Reporte_Pagos_${new Date().toISOString().slice(0, 10)}.pdf`;
+  pdf.save(fileName);
+}
+
+  
   filterTable() {
   const search = this.searchText.toLowerCase().trim();
   const fieldPath = this.selectedFilter;

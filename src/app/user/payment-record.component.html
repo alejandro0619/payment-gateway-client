@@ -9,6 +9,9 @@
       [(ngModel)]="searchText" (input)="filterTable()" />
     <button class="ml-2" pButton icon="pi pi-search" (click)="filterTable()" label="Buscar">
     </button>
+    <button pButton type="button" label="Descargar PDF" icon="pi pi-download" (click)="downloadStyledPDF()"
+      class="ml-2"></button>
+
   </div>
   <p-table [value]="filteredTransactions">
     <ng-template pTemplate="header">
