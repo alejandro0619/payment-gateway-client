@@ -74,7 +74,7 @@ export class TransactionsComponent {
     private transactionsService: TransactionsService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
-  ) {}
+  ) { }
 
   onReview(e: Event) {
     this.showDialog(
@@ -130,9 +130,12 @@ export class TransactionsComponent {
           .subscribe({
             next: (response) => {
               console.log('Transacción actualizada:', response);
+              this.loadTrx()
+              this.displayDialog = false;
             },
             error: (error) => {
               console.error('Error al actualizar la transacción:', error);
+              this.loadTrx()
             },
           });
         this.messageService.add({
@@ -459,8 +462,8 @@ export class TransactionsComponent {
                 row.statusType === 'completed'
                   ? colors.success
                   : row.statusType === 'rejected'
-                  ? colors.danger
-                  : colors.warning;
+                    ? colors.danger
+                    : colors.warning;
               pdf.setTextColor(statusColor);
             } else {
               pdf.setTextColor(colors.text);
@@ -515,7 +518,7 @@ export class TransactionsComponent {
     }
   }
 
-  ngOnInit(): void {
+  loadTrx() {
     this.transactionsService.getTransactions().subscribe({
       next: (data) => {
         console.log('Datos recibidos del backend:', data);
@@ -526,5 +529,8 @@ export class TransactionsComponent {
         console.error('Error fetching transactions:', error);
       },
     });
+  }
+  ngOnInit(): void {
+    this.loadTrx()
   }
 }
