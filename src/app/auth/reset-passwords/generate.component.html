@@ -22,7 +22,7 @@
   <form *ngIf="step === 'otp'" [formGroup]="otpForm" (ngSubmit)="onOtpSubmit()">
     <div class="field">
       <label for="otp">Código OTP</label>
-      <input id="otp" type="text" pInputText formControlName="otp" maxlength="6"
+      <input id="otp" type="number" pInputText formControlName="otp" maxlength="6"
         [class.ng-invalid]="otpForm.get('otp')?.invalid && otpForm.get('otp')?.touched" />
     </div>
 
