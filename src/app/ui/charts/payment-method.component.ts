@@ -59,7 +59,7 @@ export class PaymentMethodChartComponent implements OnInit {
 
       const labels = Object.keys(grouped);
       const dataPoints = Object.values(grouped);
-
+      console.log('Grouped Data:', grouped);
       this.data = {
         labels,
         datasets: [

@@ -74,12 +74,21 @@ export class CoursesComponent implements OnInit {
       {
         label: 'Eliminar curso',
         icon: 'pi pi-trash',
+        disabled: Boolean(this.selectedCourse?.deletedAt),
         command: (event: { originalEvent: Event }) => {
           this.onDeleteCourse(event.originalEvent);
         },
       },
     ];
   }
+
+  onOpenMenu(event: Event, course: Course, menu: Menu) {
+  this.selectedCourse = course;
+  this.setupMenuItems(); 
+  menu.toggle(event); 
+}
+
+  
   openModifyModal() {
     if (this.selectedCourse) {
       this.modifyModal.show();
@@ -94,6 +103,7 @@ export class CoursesComponent implements OnInit {
 
 
   onDeleteCourse(event: Event) {
+    console.log()
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: '¿Está seguro de que desea eliminar este curso?',

@@ -45,7 +45,7 @@
               <td class="relative">
                 <p-menu #menu [model]="items" [popup]="true" appendTo="body"></p-menu>
                 <p-button 
-                  (click)="menu.toggle($event); selectedCourse = course" 
+                  (click)="onOpenMenu($event, course, menu)" 
                   icon="pi pi-ellipsis-v"
                   class="p-button-text p-button-sm !px-2 !py-1"
                 ></p-button>

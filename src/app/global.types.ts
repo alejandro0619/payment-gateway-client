@@ -93,4 +93,4 @@ export type CreateTRXResponse = {
 
 
 export interface UserCoursesFeed { [status: string]: Course[]; }
-export const BASE_URL = 'https://payment-gateway-backend-production.up.railway.app';
+export const BASE_URL = 'https://payment-gateway-backend-production.up.railway.app'; // https://payment-gateway-backend-production.up.railway.app

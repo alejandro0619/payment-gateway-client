@@ -90,7 +90,7 @@ export class StepTwoComponent {
 
     this.isLoading = true;
     const formValue: Company = {...this.form.value, company_identification: this.form.value.rif};
-
+    console.log("Enviando datos de la empresa:", formValue);
     this.stepTwoService.createCompany(formValue).subscribe({
       next: (res) => {
         this.isLoading = false;
