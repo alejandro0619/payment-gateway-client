@@ -72,7 +72,7 @@ export class CoursesComponent implements OnInit {
   setupMenuItems() {
     this.items = [
       {
-        label: 'Eliminar curso',
+        label: 'Cancelar curso',
         icon: 'pi pi-trash',
         disabled: Boolean(this.selectedCourse?.deletedAt),
         command: (event: { originalEvent: Event }) => {

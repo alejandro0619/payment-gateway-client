@@ -82,9 +82,12 @@ export class DashboardComponent implements OnInit {
     this.getBalance();
     this.dashboardService.getCompanyEmail().subscribe({
       next: (email) => {
-        this.companyEmail = email;
+
+        this.companyEmail = JSON.parse(localStorage.getItem('company') || '{}').email;
         // set the company info from LS to a local variable
         this.companyInformation = JSON.parse(localStorage.getItem('company') || '{}');
+        console.log('companyInformation is:', this.companyInformation)
+        console.log('el correo electronico si lo estamos recibiendo y es: ', this.companyEmail)
       }
       , error: (error) => {
         this.messageService.add({
@@ -94,7 +97,7 @@ export class DashboardComponent implements OnInit {
         });
       }
     });
-    
+
   }
 
   closeDetails(): void {
@@ -118,19 +121,19 @@ export class DashboardComponent implements OnInit {
     return titles[status as keyof typeof titles] || status;
   }
   isCourseAcquired(): { flag: boolean, kind: 'acquired' | null } {
-  if (!this.courses) return { flag: false, kind: null };
-  const courseId = this.selectedCourse?.id || this.selectedCourse?.course?.id;
-  const inAcquired = Array.isArray(this.courses['acquired']) &&
-    this.courses['acquired'].some((course: any) =>
-      course?.id === courseId || course?.course?.id === courseId
-    );
+    if (!this.courses) return { flag: false, kind: null };
+    const courseId = this.selectedCourse?.id || this.selectedCourse?.course?.id;
+    const inAcquired = Array.isArray(this.courses['acquired']) &&
+      this.courses['acquired'].some((course: any) =>
+        course?.id === courseId || course?.course?.id === courseId
+      );
 
-  if (inAcquired) return { flag: true, kind: 'acquired' };
+    if (inAcquired) return { flag: true, kind: 'acquired' };
 
-  return { flag: false, kind: null };
-}
+    return { flag: false, kind: null };
+  }
 
-  
+
   isCourseInNotBoughtOrExpired(courseId: string): { flag: boolean, kind: 'not_bought' | 'expired' | null } {
     if (!this.courses) return { flag: false, kind: null };
 
@@ -252,7 +255,7 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.cancelExpiredTransactionsByUser().subscribe({
       next: (response) => {
         console.log('Transacciones expiradas canceladas:', response);
-        
+
       },
       error: (error) => {
         this.messageService.add({

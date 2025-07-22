@@ -73,7 +73,7 @@ export class paypalBtn implements OnInit, OnChanges {
           }
         ]
       },
-      advanced: {
+      advanced: { 
         commit: 'true',
         extraQueryParams: [{ name: 'disable-funding', value: 'card' }]
       },
